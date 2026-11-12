@@ -1,14 +1,29 @@
 const TelegramBot = require('node-telegram-bot-api');
+const http = require('http');
 
-// Bot Token নিরাপদ Environment Variable থেকে নেওয়া হবে
+// Bot Token
 const token = process.env.BOT_TOKEN;
 
 if (!token) {
     throw new Error("BOT_TOKEN is missing!");
 }
 
+// Telegram Bot চালু
 const bot = new TelegramBot(token, { polling: true });
 
+// HTTP Server
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('EarnNova Bot is running!');
+});
+
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+    console.log(`EarnNova server running on port ${PORT}`);
+});
+
+// Start Command
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
 
@@ -34,6 +49,7 @@ bot.onText(/\/start/, (msg) => {
     bot.sendMessage(chatId, welcomeMessage, options);
 });
 
+// Menu Buttons
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text;
