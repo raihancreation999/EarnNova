@@ -1,14 +1,24 @@
 const TelegramBot = require('node-telegram-bot-api');
+const { createClient } = require('@supabase/supabase-js');
 const http = require('http');
 
-// Bot Token
+// Environment Variables
 const token = process.env.BOT_TOKEN;
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SECRET_KEY;
 
 if (!token) {
-    throw new Error("BOT_TOKEN is missing!");
+    throw new Error('BOT_TOKEN is missing!');
 }
 
-// Telegram Bot চালু
+if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Supabase credentials are missing!');
+}
+
+// Supabase Connection
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Telegram Bot
 const bot = new TelegramBot(token, { polling: true });
 
 // HTTP Server
@@ -24,8 +34,30 @@ server.listen(PORT, () => {
 });
 
 // Start Command
-bot.onText(/\/start/, (msg) => {
+bot.onText(/\/start(?:\s|$)/, async (msg) => {
     const chatId = msg.chat.id;
+    const user = msg.from;
+
+    try {
+        const { error } = await supabase
+            .from('users')
+            .upsert({
+                telegram_id: user.id,
+                username: user.username || null,
+                first_name: user.first_name || null
+            }, {
+                onConflict: 'telegram_id'
+            });
+
+        if (error) {
+            console.error('Supabase user error:', error.message);
+        } else {
+            console.log(`User saved: ${user.id}`);
+        }
+
+    } catch (error) {
+        console.error('Database error:', error.message);
+    }
 
     const welcomeMessage = `
 🌟 স্বাগতম EarnNova-তে!
@@ -68,6 +100,10 @@ bot.on('message', (msg) => {
     if (replies[text]) {
         bot.sendMessage(chatId, replies[text]);
     }
+});
+
+bot.on('polling_error', (error) => {
+    console.error('Telegram polling error:', error.message);
 });
 
 console.log('EarnNova Bot is running!');
