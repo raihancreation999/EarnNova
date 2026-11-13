@@ -82,16 +82,51 @@ bot.onText(/\/start(?:\s|$)/, async (msg) => {
 });
 
 // Menu Buttons
-bot.on('message', (msg) => {
+bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text;
 
     if (!text || text.startsWith('/')) return;
 
+    // Balance System
+    if (text === '💰 আমার ব্যালেন্স') {
+        try {
+            const { data, error } = await supabase
+                .from('users')
+                .select('balance')
+                .eq('telegram_id', msg.from.id)
+                .single();
+
+            if (error) {
+                console.error('Balance error:', error.message);
+
+                return bot.sendMessage(
+                    chatId,
+                    '⚠️ ব্যালেন্স দেখাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।'
+                );
+            }
+
+            const balance = Number(data.balance || 0);
+
+            return bot.sendMessage(
+                chatId,
+                `💰 আপনার বর্তমান ব্যালেন্স: ${balance.toFixed(2)} টাকা`
+            );
+
+        } catch (error) {
+            console.error('Balance error:', error.message);
+
+            return bot.sendMessage(
+                chatId,
+                '⚠️ দুঃখিত! ব্যালেন্স দেখানো যাচ্ছে না।'
+            );
+        }
+    }
+
+    // Other Menu Buttons
     const replies = {
         '📢 বিজ্ঞাপন দেখুন': '📢 বিজ্ঞাপন ব্যবস্থা শিগগিরই চালু হবে।',
         '📌 টাস্ক': '📌 টাস্ক ব্যবস্থা শিগগিরই চালু হবে।',
-        '💰 আমার ব্যালেন্স': '💰 আপনার ব্যালেন্স: 0.00 টাকা',
         '👥 বন্ধু আমন্ত্রণ': '👥 রেফারেল ব্যবস্থা শিগগিরই চালু হবে।',
         '💳 টাকা উত্তোলন': '💳 উত্তোলন ব্যবস্থা শিগগিরই চালু হবে।',
         '📜 লেনদেনের ইতিহাস': '📜 এখনো কোনো লেনদেন নেই।'
@@ -102,6 +137,7 @@ bot.on('message', (msg) => {
     }
 });
 
+// Polling Error
 bot.on('polling_error', (error) => {
     console.error('Telegram polling error:', error.message);
 });
