@@ -2,41 +2,30 @@ const TelegramBot = require('node-telegram-bot-api');
 const { createClient } = require('@supabase/supabase-js');
 const http = require('http');
 
-// Environment Variables
 const token = process.env.BOT_TOKEN;
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SECRET_KEY;
 
-if (!token) {
-    throw new Error('BOT_TOKEN is missing!');
+if (!token || !supabaseUrl || !supabaseKey) {
+    throw new Error('Missing environment variables!');
 }
 
-if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Supabase credentials are missing!');
-}
-
-// Supabase Connection
 const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Telegram Bot
 const bot = new TelegramBot(token, { polling: true });
 
-// Admin Task Creation State
 const adminStates = new Map();
+const userStates = new Map();
 
-// HTTP Server
 const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('EarnNova Bot is running!');
 });
 
 const PORT = process.env.PORT || 3000;
-
 server.listen(PORT, () => {
     console.log(`EarnNova server running on port ${PORT}`);
 });
 
-// Check Admin
 async function isAdmin(telegramId) {
     const { data, error } = await supabase
         .from('admins')
@@ -53,41 +42,30 @@ async function isAdmin(telegramId) {
     return !!data;
 }
 
-// Start Command
+// START
 bot.onText(/\/start(?:\s|$)/, async (msg) => {
-    const chatId = msg.chat.id;
     const user = msg.from;
+    const chatId = msg.chat.id;
 
-    try {
-        const { error } = await supabase
-            .from('users')
-            .upsert({
-                telegram_id: user.id,
-                username: user.username || null,
-                first_name: user.first_name || null
-            }, {
-                onConflict: 'telegram_id'
-            });
+    const { error } = await supabase
+        .from('users')
+        .upsert({
+            telegram_id: user.id,
+            username: user.username || null,
+            first_name: user.first_name || null
+        }, { onConflict: 'telegram_id' });
 
-        if (error) {
-            console.error('Supabase user error:', error.message);
-        } else {
-            console.log(`User saved: ${user.id}`);
-        }
+    if (error) console.error('User save error:', error.message);
 
-    } catch (error) {
-        console.error('Database error:', error.message);
-    }
+    userStates.delete(user.id);
 
-    const welcomeMessage = `
+    await bot.sendMessage(chatId, `
 🌟 স্বাগতম EarnNova-তে!
 
-এখানে বিজ্ঞাপন দেখে, বিভিন্ন টাস্ক সম্পন্ন করে এবং বন্ধুদের আমন্ত্রণ করে রিওয়ার্ড অর্জনের সুযোগ পাবেন।
+এখানে বিভিন্ন টাস্ক সম্পন্ন করে রিওয়ার্ড অর্জনের সুযোগ পাবেন।
 
-👇 নিচের মেনু থেকে আপনার পছন্দের অপশন বেছে নিন।
-    `;
-
-    const options = {
+👇 নিচের মেনু থেকে পছন্দের অপশন বেছে নিন।
+    `, {
         reply_markup: {
             keyboard: [
                 ['📢 বিজ্ঞাপন দেখুন', '📌 টাস্ক'],
@@ -96,27 +74,16 @@ bot.onText(/\/start(?:\s|$)/, async (msg) => {
             ],
             resize_keyboard: true
         }
-    };
-
-    bot.sendMessage(chatId, welcomeMessage, options);
+    });
 });
 
-// Admin Command
+// ADMIN PANEL
 bot.onText(/\/admin(?:\s|$)/, async (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-
-    if (!(await isAdmin(userId))) {
-        return bot.sendMessage(chatId, '⛔ আপনার Admin অনুমতি নেই।');
+    if (!(await isAdmin(msg.from.id))) {
+        return bot.sendMessage(msg.chat.id, '⛔ আপনার Admin অনুমতি নেই।');
     }
 
-    bot.sendMessage(chatId, `
-🔐 EarnNova Admin Panel
-
-স্বাগতম Super Admin!
-
-এখান থেকে আপনি নতুন টাস্ক যোগ করতে পারবেন।
-    `, {
+    await bot.sendMessage(msg.chat.id, '🔐 EarnNova Admin Panel', {
         reply_markup: {
             keyboard: [
                 ['➕ নতুন টাস্ক যোগ করুন'],
@@ -127,177 +94,278 @@ bot.onText(/\/admin(?:\s|$)/, async (msg) => {
     });
 });
 
-// Menu Buttons
+// SHOW TASKS
+async function showTasks(chatId, userId) {
+    const { data: tasks, error } = await supabase
+        .from('tasks')
+        .select('id, title, description, reward_amount')
+        .eq('is_active', true)
+        .order('id', { ascending: true });
+
+    if (error) {
+        console.error('Task list error:', error.message);
+        return bot.sendMessage(chatId, '⚠️ টাস্ক লোড করা যায়নি।');
+    }
+
+    if (!tasks || tasks.length === 0) {
+        return bot.sendMessage(chatId, '📌 বর্তমানে কোনো Active Task নেই।');
+    }
+
+    const { data: completed, error: completedError } = await supabase
+        .from('user_tasks')
+        .select('task_id')
+        .eq('telegram_id', userId)
+        .eq('status', 'completed');
+
+    if (completedError) {
+        console.error('Completed tasks error:', completedError.message);
+        return bot.sendMessage(chatId, '⚠️ টাস্কের তথ্য পাওয়া যায়নি।');
+    }
+
+    const completedIds = new Set((completed || []).map(item => item.task_id));
+
+    const buttons = tasks.map(task => [{
+        text: completedIds.has(task.id)
+            ? `✅ ${task.title} (সম্পন্ন)`
+            : `📌 ${task.title} — ${Number(task.reward_amount).toFixed(2)} টাকা`,
+        callback_data: `task_${task.id}`
+    }]);
+
+    return bot.sendMessage(chatId, '📋 উপলব্ধ Task-গুলো নিচে দেওয়া হলো।', {
+        reply_markup: { inline_keyboard: buttons }
+    });
+}
+
+// TASK BUTTON
+bot.on('callback_query', async (query) => {
+    const chatId = query.message.chat.id;
+    const userId = query.from.id;
+    const data = query.data;
+
+    await bot.answerCallbackQuery(query.id);
+
+    if (!data.startsWith('task_')) return;
+
+    const taskId = Number(data.replace('task_', ''));
+
+    if (!Number.isInteger(taskId)) return;
+
+    const { data: task, error } = await supabase
+        .from('tasks')
+        .select('*')
+        .eq('id', taskId)
+        .eq('is_active', true)
+        .maybeSingle();
+
+    if (error || !task) {
+        return bot.sendMessage(chatId, '⚠️ এই Task পাওয়া যাচ্ছে না।');
+    }
+
+    const { data: previous } = await supabase
+        .from('user_tasks')
+        .select('id')
+        .eq('telegram_id', userId)
+        .eq('task_id', taskId)
+        .eq('status', 'completed')
+        .maybeSingle();
+
+    if (previous) {
+        return bot.sendMessage(chatId, '✅ আপনি এই Task আগেই সম্পন্ন করেছেন।');
+    }
+
+    userStates.set(userId, {
+        step: 'answer',
+        taskId: taskId
+    });
+
+    await bot.sendMessage(chatId, `
+📌 ${task.title}
+
+📄 ${task.description}
+
+💰 Reward: ${Number(task.reward_amount).toFixed(2)} টাকা
+
+✍️ আপনার উত্তর লিখে পাঠান:
+    `);
+});
+
+// MAIN MESSAGE HANDLER
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
-    const text = msg.text;
     const userId = msg.from.id;
+    const text = msg.text;
 
     if (!text || text.startsWith('/')) return;
 
-    // Cancel
+    // CANCEL
     if (text === '❌ বাতিল') {
         adminStates.delete(userId);
+        userStates.delete(userId);
         return bot.sendMessage(chatId, '❌ কাজ বাতিল করা হয়েছে।');
     }
 
-    // New Task Button
+    // CREATE TASK
     if (text === '➕ নতুন টাস্ক যোগ করুন') {
         if (!(await isAdmin(userId))) {
             return bot.sendMessage(chatId, '⛔ Admin অনুমতি নেই।');
         }
 
         adminStates.set(userId, { step: 'title' });
-
         return bot.sendMessage(chatId, '📝 নতুন টাস্কের নাম লিখুন:');
     }
 
-    // Admin Task Creation
-    const state = adminStates.get(userId);
+    // ADMIN TASK CREATION
+    const adminState = adminStates.get(userId);
 
-    if (state) {
+    if (adminState) {
         if (!(await isAdmin(userId))) {
             adminStates.delete(userId);
             return bot.sendMessage(chatId, '⛔ Admin অনুমতি নেই।');
         }
 
-        if (state.step === 'title') {
-            state.title = text.trim();
-
-            if (!state.title) {
-                return bot.sendMessage(chatId, 'টাস্কের নাম লিখুন।');
-            }
-
-            state.step = 'description';
-
-            return bot.sendMessage(chatId, '📄 এবার টাস্কের বিবরণ লিখুন:');
+        if (adminState.step === 'title') {
+            adminState.title = text.trim();
+            adminState.step = 'description';
+            return bot.sendMessage(chatId, '📄 টাস্কের বিবরণ লিখুন:');
         }
 
-        if (state.step === 'description') {
-            state.description = text.trim();
-
-            if (!state.description) {
-                return bot.sendMessage(chatId, 'টাস্কের বিবরণ লিখুন।');
-            }
-
-            state.step = 'reward';
-
-            return bot.sendMessage(
-                chatId,
-                '💰 এই টাস্কের Reward কত টাকা হবে? শুধু সংখ্যা লিখুন।'
-            );
+        if (adminState.step === 'description') {
+            adminState.description = text.trim();
+            adminState.step = 'answer';
+            return bot.sendMessage(chatId, '✅ এই Task-এর সঠিক উত্তর লিখুন:');
         }
 
-        if (state.step === 'reward') {
+        if (adminState.step === 'answer') {
+            adminState.correctAnswer = text.trim();
+            adminState.step = 'reward';
+            return bot.sendMessage(chatId, '💰 Reward কত টাকা হবে? যেমন: 2 অথবা 5.50');
+        }
+
+        if (adminState.step === 'reward') {
             const reward = Number(text.trim());
 
             if (!Number.isFinite(reward) || reward <= 0) {
-                return bot.sendMessage(
-                    chatId,
-                    '⚠️ সঠিক Reward লিখুন। যেমন: 2 অথবা 5.50'
-                );
+                return bot.sendMessage(chatId, '⚠️ সঠিক Amount লিখুন। যেমন: 2 অথবা 5.50');
             }
 
-            try {
-                const { data, error } = await supabase
-                    .from('tasks')
-                    .insert({
-                        title: state.title,
-                        description: state.description,
-                        reward_amount: reward,
-                        is_active: true
-                    })
-                    .select()
-                    .single();
-
-                if (error) {
-                    console.error('Task creation error:', error.message);
-
-                    adminStates.delete(userId);
-
-                    return bot.sendMessage(
-                        chatId,
-                        '❌ টাস্ক যোগ করা যায়নি। আবার চেষ্টা করুন।'
-                    );
-                }
-
-                adminStates.delete(userId);
-
-                return bot.sendMessage(chatId, `
-✅ নতুন টাস্ক সফলভাবে যোগ হয়েছে!
-
-🆔 Task ID: ${data.id}
-📝 নাম: ${data.title}
-📄 বিবরণ: ${data.description}
-💰 Reward: ${Number(data.reward_amount).toFixed(2)} টাকা
-
-📌 টাস্কটি Database-এ সংরক্ষিত হয়েছে।
-                `);
-
-            } catch (error) {
-                console.error('Task error:', error.message);
-                adminStates.delete(userId);
-
-                return bot.sendMessage(
-                    chatId,
-                    '❌ একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।'
-                );
-            }
-        }
-
-        return;
-    }
-
-    // Balance System
-    if (text === '💰 আমার ব্যালেন্স') {
-        try {
             const { data, error } = await supabase
-                .from('users')
-                .select('balance')
-                .eq('telegram_id', userId)
+                .from('tasks')
+                .insert({
+                    title: adminState.title,
+                    description: adminState.description,
+                    correct_answer: adminState.correctAnswer,
+                    reward_amount: reward,
+                    is_active: true
+                })
+                .select()
                 .single();
 
             if (error) {
-                console.error('Balance error:', error.message);
-
-                return bot.sendMessage(
-                    chatId,
-                    '⚠️ ব্যালেন্স দেখাতে সমস্যা হয়েছে।'
-                );
+                console.error('Task creation error:', error.message);
+                adminStates.delete(userId);
+                return bot.sendMessage(chatId, '❌ টাস্ক যোগ করা যায়নি।');
             }
 
-            const balance = Number(data.balance || 0);
+            adminStates.delete(userId);
 
-            return bot.sendMessage(
-                chatId,
-                `💰 আপনার বর্তমান ব্যালেন্স: ${balance.toFixed(2)} টাকা`
-            );
+            return bot.sendMessage(chatId, `
+✅ নতুন Task সফলভাবে যোগ হয়েছে!
 
-        } catch (error) {
-            console.error('Balance error:', error.message);
-
-            return bot.sendMessage(
-                chatId,
-                '⚠️ ব্যালেন্স দেখানো যাচ্ছে না।'
-            );
+🆔 ID: ${data.id}
+📝 নাম: ${data.title}
+💰 Reward: ${Number(data.reward_amount).toFixed(2)} টাকা
+            `);
         }
     }
 
-    // Other Menu Buttons
+    // USER TASK ANSWER
+    const userState = userStates.get(userId);
+
+    if (userState && userState.step === 'answer') {
+        const { data: task, error } = await supabase
+            .from('tasks')
+            .select('id, correct_answer')
+            .eq('id', userState.taskId)
+            .eq('is_active', true)
+            .maybeSingle();
+
+        if (error || !task) {
+            userStates.delete(userId);
+            return bot.sendMessage(chatId, '⚠️ Task পাওয়া যাচ্ছে না।');
+        }
+
+        if (text.trim().toLowerCase() !== String(task.correct_answer).trim().toLowerCase()) {
+            return bot.sendMessage(chatId, '❌ উত্তর সঠিক হয়নি। আবার চেষ্টা করুন।');
+        }
+
+        const { data: result, error: rewardError } = await supabase.rpc(
+            'complete_task',
+            {
+                p_telegram_id: userId,
+                p_task_id: userState.taskId,
+                p_answer: text.trim()
+            }
+        );
+
+        userStates.delete(userId);
+
+        if (rewardError) {
+            console.error('Reward error:', rewardError.message);
+            return bot.sendMessage(chatId, '⚠️ Reward যোগ করা যায়নি। Admin-কে জানান।');
+        }
+
+        if (result === 'already_completed') {
+            return bot.sendMessage(chatId, '✅ এই Task-এর Reward আপনি আগেই পেয়েছেন।');
+        }
+
+        if (result === 'wrong_answer') {
+            return bot.sendMessage(chatId, '❌ উত্তর সঠিক হয়নি।');
+        }
+
+        if (result !== 'success') {
+            return bot.sendMessage(chatId, '⚠️ Task সম্পন্ন করা যায়নি।');
+        }
+
+        return bot.sendMessage(chatId, '🎉 অভিনন্দন! সঠিক উত্তর দিয়েছেন। Reward আপনার Balance-এ যোগ হয়েছে।');
+    }
+
+    // BALANCE
+    if (text === '💰 আমার ব্যালেন্স') {
+        const { data, error } = await supabase
+            .from('users')
+            .select('balance')
+            .eq('telegram_id', userId)
+            .single();
+
+        if (error) {
+            console.error('Balance error:', error.message);
+            return bot.sendMessage(chatId, '⚠️ ব্যালেন্স দেখানো যাচ্ছে না।');
+        }
+
+        return bot.sendMessage(
+            chatId,
+            `💰 আপনার বর্তমান ব্যালেন্স: ${Number(data.balance || 0).toFixed(2)} টাকা`
+        );
+    }
+
+    // OTHER BUTTONS
+    if (text === '📌 টাস্ক') {
+        return showTasks(chatId, userId);
+    }
+
     const replies = {
         '📢 বিজ্ঞাপন দেখুন': '📢 বিজ্ঞাপন ব্যবস্থা শিগগিরই চালু হবে।',
-        '📌 টাস্ক': '📌 টাস্ক ব্যবস্থা শিগগিরই চালু হবে।',
         '👥 বন্ধু আমন্ত্রণ': '👥 রেফারেল ব্যবস্থা শিগগিরই চালু হবে।',
         '💳 টাকা উত্তোলন': '💳 উত্তোলন ব্যবস্থা শিগগিরই চালু হবে।',
         '📜 লেনদেনের ইতিহাস': '📜 এখনো কোনো লেনদেন নেই।'
     };
 
     if (replies[text]) {
-        bot.sendMessage(chatId, replies[text]);
+        return bot.sendMessage(chatId, replies[text]);
     }
 });
 
-// Polling Error
+// POLLING ERROR
 bot.on('polling_error', (error) => {
     console.error('Telegram polling error:', error.message);
 });
