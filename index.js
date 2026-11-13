@@ -22,10 +22,12 @@ const server = http.createServer((req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
 server.listen(PORT, () => {
     console.log(`EarnNova server running on port ${PORT}`);
 });
 
+// ADMIN CHECK
 async function isAdmin(telegramId) {
     const { data, error } = await supabase
         .from('admins')
@@ -55,9 +57,12 @@ bot.onText(/\/start(?:\s|$)/, async (msg) => {
             first_name: user.first_name || null
         }, { onConflict: 'telegram_id' });
 
-    if (error) console.error('User save error:', error.message);
+    if (error) {
+        console.error('User save error:', error.message);
+    }
 
     userStates.delete(user.id);
+    adminStates.delete(user.id);
 
     await bot.sendMessage(chatId, `
 🌟 স্বাগতম EarnNova-তে!
@@ -79,9 +84,14 @@ bot.onText(/\/start(?:\s|$)/, async (msg) => {
 
 // ADMIN PANEL
 bot.onText(/\/admin(?:\s|$)/, async (msg) => {
-    if (!(await isAdmin(msg.from.id))) {
+    const userId = msg.from.id;
+
+    if (!(await isAdmin(userId))) {
         return bot.sendMessage(msg.chat.id, '⛔ আপনার Admin অনুমতি নেই।');
     }
+
+    userStates.delete(userId);
+    adminStates.delete(userId);
 
     await bot.sendMessage(msg.chat.id, '🔐 EarnNova Admin Panel', {
         reply_markup: {
@@ -122,7 +132,9 @@ async function showTasks(chatId, userId) {
         return bot.sendMessage(chatId, '⚠️ টাস্কের তথ্য পাওয়া যায়নি।');
     }
 
-    const completedIds = new Set((completed || []).map(item => item.task_id));
+    const completedIds = new Set(
+        (completed || []).map(item => item.task_id)
+    );
 
     const buttons = tasks.map(task => [{
         text: completedIds.has(task.id)
@@ -132,27 +144,29 @@ async function showTasks(chatId, userId) {
     }]);
 
     return bot.sendMessage(chatId, '📋 উপলব্ধ Task-গুলো নিচে দেওয়া হলো।', {
-        reply_markup: { inline_keyboard: buttons }
+        reply_markup: {
+            inline_keyboard: buttons
+        }
     });
 }
 
 // TASK BUTTON
 bot.on('callback_query', async (query) => {
-    const chatId = query.message.chat.id;
+    const chatId = query.message?.chat?.id;
     const userId = query.from.id;
-    const data = query.data;
+    const data = query.data || '';
 
     await bot.answerCallbackQuery(query.id);
 
-    if (!data.startsWith('task_')) return;
+    if (!chatId || !data.startsWith('task_')) return;
 
     const taskId = Number(data.replace('task_', ''));
 
-    if (!Number.isInteger(taskId)) return;
+    if (!Number.isInteger(taskId) || taskId <= 0) return;
 
     const { data: task, error } = await supabase
         .from('tasks')
-        .select('*')
+        .select('id, title, description, reward_amount')
         .eq('id', taskId)
         .eq('is_active', true)
         .maybeSingle();
@@ -161,13 +175,18 @@ bot.on('callback_query', async (query) => {
         return bot.sendMessage(chatId, '⚠️ এই Task পাওয়া যাচ্ছে না।');
     }
 
-    const { data: previous } = await supabase
+    const { data: previous, error: previousError } = await supabase
         .from('user_tasks')
         .select('id')
         .eq('telegram_id', userId)
         .eq('task_id', taskId)
         .eq('status', 'completed')
         .maybeSingle();
+
+    if (previousError) {
+        console.error('Previous task check error:', previousError.message);
+        return bot.sendMessage(chatId, '⚠️ Task-এর তথ্য পাওয়া যাচ্ছে না।');
+    }
 
     if (previous) {
         return bot.sendMessage(chatId, '✅ আপনি এই Task আগেই সম্পন্ন করেছেন।');
@@ -185,7 +204,7 @@ bot.on('callback_query', async (query) => {
 
 💰 Reward: ${Number(task.reward_amount).toFixed(2)} টাকা
 
-✍️ আপনার উত্তর লিখে পাঠান:
+✍️ সঠিক উত্তরটি বাংলায় লিখুন:
     `);
 });
 
@@ -201,6 +220,7 @@ bot.on('message', async (msg) => {
     if (text === '❌ বাতিল') {
         adminStates.delete(userId);
         userStates.delete(userId);
+
         return bot.sendMessage(chatId, '❌ কাজ বাতিল করা হয়েছে।');
     }
 
@@ -210,7 +230,12 @@ bot.on('message', async (msg) => {
             return bot.sendMessage(chatId, '⛔ Admin অনুমতি নেই।');
         }
 
-        adminStates.set(userId, { step: 'title' });
+        userStates.delete(userId);
+
+        adminStates.set(userId, {
+            step: 'title'
+        });
+
         return bot.sendMessage(chatId, '📝 নতুন টাস্কের নাম লিখুন:');
     }
 
@@ -224,20 +249,45 @@ bot.on('message', async (msg) => {
         }
 
         if (adminState.step === 'title') {
+            if (!text.trim()) {
+                return bot.sendMessage(chatId, '⚠️ টাস্কের নাম লিখুন।');
+            }
+
             adminState.title = text.trim();
             adminState.step = 'description';
-            return bot.sendMessage(chatId, '📄 টাস্কের বিবরণ লিখুন:');
+
+            return bot.sendMessage(chatId, '📄 টাস্কের প্রশ্ন বা বিবরণ লিখুন:');
         }
 
         if (adminState.step === 'description') {
+            if (!text.trim()) {
+                return bot.sendMessage(chatId, '⚠️ প্রশ্ন বা বিবরণ লিখুন।');
+            }
+
             adminState.description = text.trim();
             adminState.step = 'answer';
-            return bot.sendMessage(chatId, '✅ এই Task-এর সঠিক উত্তর লিখুন:');
+
+            return bot.sendMessage(chatId, `
+✅ এই Task-এর সব গ্রহণযোগ্য সঠিক উত্তর কমা দিয়ে লিখুন।
+
+উদাহরণ:
+শাপলা, সাপলা, shapla, shapola
+            `);
         }
 
         if (adminState.step === 'answer') {
-            adminState.correctAnswer = text.trim();
+            const answers = text
+                .split(',')
+                .map(answer => answer.trim())
+                .filter(answer => answer.length > 0);
+
+            if (answers.length === 0) {
+                return bot.sendMessage(chatId, '⚠️ অন্তত একটি সঠিক উত্তর লিখুন।');
+            }
+
+            adminState.correctAnswer = answers.join(', ');
             adminState.step = 'reward';
+
             return bot.sendMessage(chatId, '💰 Reward কত টাকা হবে? যেমন: 2 অথবা 5.50');
         }
 
@@ -263,6 +313,7 @@ bot.on('message', async (msg) => {
             if (error) {
                 console.error('Task creation error:', error.message);
                 adminStates.delete(userId);
+
                 return bot.sendMessage(chatId, '❌ টাস্ক যোগ করা যায়নি।');
             }
 
@@ -282,22 +333,6 @@ bot.on('message', async (msg) => {
     const userState = userStates.get(userId);
 
     if (userState && userState.step === 'answer') {
-        const { data: task, error } = await supabase
-            .from('tasks')
-            .select('id, correct_answer')
-            .eq('id', userState.taskId)
-            .eq('is_active', true)
-            .maybeSingle();
-
-        if (error || !task) {
-            userStates.delete(userId);
-            return bot.sendMessage(chatId, '⚠️ Task পাওয়া যাচ্ছে না।');
-        }
-
-        if (text.trim().toLowerCase() !== String(task.correct_answer).trim().toLowerCase()) {
-            return bot.sendMessage(chatId, '❌ উত্তর সঠিক হয়নি। আবার চেষ্টা করুন।');
-        }
-
         const { data: result, error: rewardError } = await supabase.rpc(
             'complete_task',
             {
@@ -307,26 +342,49 @@ bot.on('message', async (msg) => {
             }
         );
 
-        userStates.delete(userId);
-
         if (rewardError) {
             console.error('Reward error:', rewardError.message);
-            return bot.sendMessage(chatId, '⚠️ Reward যোগ করা যায়নি। Admin-কে জানান।');
-        }
 
-        if (result === 'already_completed') {
-            return bot.sendMessage(chatId, '✅ এই Task-এর Reward আপনি আগেই পেয়েছেন।');
+            return bot.sendMessage(
+                chatId,
+                '⚠️ Reward যোগ করা যায়নি। Admin-কে জানান।'
+            );
         }
 
         if (result === 'wrong_answer') {
-            return bot.sendMessage(chatId, '❌ উত্তর সঠিক হয়নি।');
+            return bot.sendMessage(
+                chatId,
+                '❌ উত্তর সঠিক হয়নি। আবার চেষ্টা করুন।'
+            );
+        }
+
+        userStates.delete(userId);
+
+        if (result === 'already_completed') {
+            return bot.sendMessage(
+                chatId,
+                '✅ এই Task-এর Reward আপনি আগেই পেয়েছেন।'
+            );
+        }
+
+        if (result === 'task_not_found') {
+            return bot.sendMessage(
+                chatId,
+                '⚠️ এই Task আর Active নেই।'
+            );
         }
 
         if (result !== 'success') {
-            return bot.sendMessage(chatId, '⚠️ Task সম্পন্ন করা যায়নি।');
+            return bot.sendMessage(
+                chatId,
+                '⚠️ Task সম্পন্ন করা যায়নি।'
+            );
         }
 
-        return bot.sendMessage(chatId, '🎉 অভিনন্দন! সঠিক উত্তর দিয়েছেন। Reward আপনার Balance-এ যোগ হয়েছে।');
+        return bot.sendMessage(
+            chatId,
+            '🎉 অভিনন্দন! সঠিক উত্তর দিয়েছেন। Reward আপনার Balance-এ যোগ হয়েছে।'
+        );
     }
 
     // BALANCE
@@ -348,11 +406,12 @@ bot.on('message', async (msg) => {
         );
     }
 
-    // OTHER BUTTONS
+    // TASK MENU
     if (text === '📌 টাস্ক') {
         return showTasks(chatId, userId);
     }
 
+    // OTHER MENU
     const replies = {
         '📢 বিজ্ঞাপন দেখুন': '📢 বিজ্ঞাপন ব্যবস্থা শিগগিরই চালু হবে।',
         '👥 বন্ধু আমন্ত্রণ': '👥 রেফারেল ব্যবস্থা শিগগিরই চালু হবে।',
