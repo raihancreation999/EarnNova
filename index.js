@@ -13,6 +13,9 @@ if (!token || !supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 const bot = new TelegramBot(token, { polling: true });
 
+const BOT_USERNAME = 'EarnNova_BD_bot';
+const REFERRAL_BONUS = 1;
+
 const adminStates = new Map();
 const userStates = new Map();
 
@@ -44,42 +47,102 @@ async function isAdmin(telegramId) {
     return !!data;
 }
 
+// REFERRAL REGISTRATION
+async function registerReferral(userId, referralCode) {
+    if (!referralCode) return;
+
+    const { data: referrer, error: referrerError } = await supabase
+        .from('users')
+        .select('telegram_id')
+        .eq('referral_code', referralCode)
+        .maybeSingle();
+
+    if (referrerError) {
+        console.error('Referrer lookup error:', referrerError.message);
+        return;
+    }
+
+    if (!referrer || Number(referrer.telegram_id) === Number(userId)) {
+        return;
+    }
+
+    const { error } = await supabase
+        .from('referrals')
+        .insert({
+            referrer_telegram_id: referrer.telegram_id,
+            referred_telegram_id: userId,
+            reward_amount: REFERRAL_BONUS,
+            reward_paid: false
+        });
+
+    if (error && error.code !== '23505') {
+        console.error('Referral registration error:', error.message);
+    }
+}
+
 // START
-bot.onText(/\/start(?:\s|$)/, async (msg) => {
+bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
     const user = msg.from;
     const chatId = msg.chat.id;
 
-    const { error } = await supabase
-        .from('users')
-        .upsert({
-            telegram_id: user.id,
-            username: user.username || null,
-            first_name: user.first_name || null
-        }, { onConflict: 'telegram_id' });
+    try {
+        const { error } = await supabase
+            .from('users')
+            .upsert({
+                telegram_id: user.id,
+                username: user.username || null,
+                first_name: user.first_name || null
+            }, { onConflict: 'telegram_id' });
 
-    if (error) {
-        console.error('User save error:', error.message);
-    }
+        if (error) {
+            console.error('User save error:', error.message);
+            return bot.sendMessage(chatId, '⚠️ আপনার তথ্য সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।');
+        }
 
-    userStates.delete(user.id);
-    adminStates.delete(user.id);
+        // Referral link parameter
+        const startParameter = match && match[1]
+            ? match[1].trim()
+            : '';
 
-    await bot.sendMessage(chatId, `
+        if (startParameter.startsWith('ref_')) {
+            const referralCode = startParameter.substring(4);
+            await registerReferral(user.id, referralCode);
+        }
+
+        const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('referral_code')
+            .eq('telegram_id', user.id)
+            .single();
+
+        if (userError) {
+            console.error('Referral code lookup error:', userError.message);
+        }
+
+        userStates.delete(user.id);
+        adminStates.delete(user.id);
+
+        await bot.sendMessage(chatId, `
 🌟 স্বাগতম EarnNova-তে!
 
 এখানে বিভিন্ন টাস্ক সম্পন্ন করে রিওয়ার্ড অর্জনের সুযোগ পাবেন।
 
 👇 নিচের মেনু থেকে পছন্দের অপশন বেছে নিন।
-    `, {
-        reply_markup: {
-            keyboard: [
-                ['📢 বিজ্ঞাপন দেখুন', '📌 টাস্ক'],
-                ['💰 আমার ব্যালেন্স', '👥 বন্ধু আমন্ত্রণ'],
-                ['💳 টাকা উত্তোলন', '📜 লেনদেনের ইতিহাস']
-            ],
-            resize_keyboard: true
-        }
-    });
+        `, {
+            reply_markup: {
+                keyboard: [
+                    ['📢 বিজ্ঞাপন দেখুন', '📌 টাস্ক'],
+                    ['💰 আমার ব্যালেন্স', '👥 বন্ধু আমন্ত্রণ'],
+                    ['💳 টাকা উত্তোলন', '📜 লেনদেনের ইতিহাস']
+                ],
+                resize_keyboard: true
+            }
+        });
+
+    } catch (error) {
+        console.error('Start error:', error);
+        bot.sendMessage(chatId, '⚠️ সমস্যা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।');
+    }
 });
 
 // ADMIN PANEL
@@ -354,7 +417,7 @@ bot.on('message', async (msg) => {
         if (result === 'wrong_answer') {
             return bot.sendMessage(
                 chatId,
-                '❌ উত্তর সঠিক হয়নি। আবার চেষ্টা করুন।'
+                '❌ আপনার উত্তরটি সঠিক হয়নি। চিন্তা করবেন না, আবার চেষ্টা করুন। 😊'
             );
         }
 
@@ -381,9 +444,56 @@ bot.on('message', async (msg) => {
             );
         }
 
+        const { data: completedTask, error: taskError } = await supabase
+            .from('tasks')
+            .select('reward_amount, title')
+            .eq('id', userState.taskId)
+            .maybeSingle();
+
+        if (taskError || !completedTask) {
+            console.error('Completed task lookup error:', taskError?.message);
+            return bot.sendMessage(chatId, '🎉 অভিনন্দন! আপনার Task সম্পন্ন হয়েছে এবং Reward যোগ হয়েছে।');
+        }
+
+        let referralMessage = '';
+
+        // Pay referral bonus after the referred user completes first task.
+        const { data: referral, error: referralLookupError } = await supabase
+            .from('referrals')
+            .select('referrer_telegram_id')
+            .eq('referred_telegram_id', userId)
+            .eq('reward_paid', false)
+            .maybeSingle();
+
+        if (referralLookupError) {
+            console.error('Referral lookup error:', referralLookupError.message);
+        } else if (referral) {
+            const { data: bonus, error: bonusError } = await supabase.rpc(
+                'award_referral_bonus',
+                {
+                    p_referred_telegram_id: userId
+                }
+            );
+
+            if (bonusError) {
+                console.error('Referral bonus error:', bonusError.message);
+            } else if (Number(bonus) > 0) {
+                referralMessage = '\n\n👥 আপনার আমন্ত্রণে একজন বন্ধু প্রথম Task সম্পন্ন করেছে। তাঁকে আমন্ত্রণ করার জন্য রেফারকারীকে ১ টাকা বোনাস দেওয়া হয়েছে।';
+
+                try {
+                    await bot.sendMessage(
+                        referral.referrer_telegram_id,
+                        `🎉 অভিনন্দন!\n\nআপনার আমন্ত্রণে একজন বন্ধু প্রথম Task সম্পন্ন করেছে।\n💰 Referral Bonus: ৳${Number(bonus).toFixed(2)}`
+                    );
+                } catch (notifyError) {
+                    console.error('Referrer notification error:', notifyError.message);
+                }
+            }
+        }
+
         return bot.sendMessage(
             chatId,
-            '🎉 অভিনন্দন! সঠিক উত্তর দিয়েছেন। Reward আপনার Balance-এ যোগ হয়েছে।'
+            `🎉 অভিনন্দন!\n\nআপনি সফলভাবে "${completedTask.title}" Task সম্পন্ন করেছেন।\n\n💰 আপনার প্রাপ্ত Reward: ৳${Number(completedTask.reward_amount).toFixed(2)}\n✅ Reward আপনার Balance-এ যোগ হয়েছে।${referralMessage}\n\nEarnNova-এর সঙ্গে থাকার জন্য ধন্যবাদ! ❤️`
         );
     }
 
@@ -402,7 +512,7 @@ bot.on('message', async (msg) => {
 
         return bot.sendMessage(
             chatId,
-            `💰 আপনার বর্তমান ব্যালেন্স: ${Number(data.balance || 0).toFixed(2)} টাকা`
+            `💰 আপনার বর্তমান ব্যালেন্স: ৳${Number(data.balance || 0).toFixed(2)}`
         );
     }
 
@@ -411,12 +521,85 @@ bot.on('message', async (msg) => {
         return showTasks(chatId, userId);
     }
 
+    // REFERRAL MENU
+    if (text === '👥 বন্ধু আমন্ত্রণ') {
+        const { data: userData, error } = await supabase
+            .from('users')
+            .select('referral_code')
+            .eq('telegram_id', userId)
+            .single();
+
+        if (error || !userData?.referral_code) {
+            console.error('Referral code error:', error?.message);
+            return bot.sendMessage(chatId, '⚠️ Referral Link তৈরি করা যায়নি।');
+        }
+
+        const referralLink =
+            `https://t.me/${BOT_USERNAME}?start=ref_${userData.referral_code}`;
+
+        const { count, error: countError } = await supabase
+            .from('referrals')
+            .select('*', { count: 'exact', head: true })
+            .eq('referrer_telegram_id', userId);
+
+        if (countError) {
+            console.error('Referral count error:', countError.message);
+        }
+
+        return bot.sendMessage(chatId, `
+👥 বন্ধু আমন্ত্রণ
+
+আপনার Referral Link:
+
+${referralLink}
+
+🎁 আপনার লিংক দিয়ে বন্ধু যোগ দিয়ে প্রথম Task সম্পন্ন করলে আপনি পাবেন ৳1.00।
+
+👤 মোট আমন্ত্রিত বন্ধু: ${count || 0}
+
+📢 আপনার বন্ধুদের সঙ্গে লিংকটি শেয়ার করুন।
+        `, {
+            reply_markup: {
+                inline_keyboard: [[
+                    {
+                        text: '📤 Referral Link শেয়ার করুন',
+                        url: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent('EarnNova-তে যোগ দিন এবং Task সম্পন্ন করে Reward অর্জন করুন!')}`
+                    }
+                ]]
+            }
+        });
+    }
+
+    // TRANSACTION HISTORY
+    if (text === '📜 লেনদেনের ইতিহাস') {
+        const { data: transactions, error } = await supabase
+            .from('transactions')
+            .select('transaction_type, direction, amount, status, description, created_at')
+            .eq('telegram_id', userId)
+            .order('created_at', { ascending: false })
+            .limit(10);
+
+        if (error) {
+            console.error('Transaction history error:', error.message);
+            return bot.sendMessage(chatId, '⚠️ লেনদেনের ইতিহাস পাওয়া যাচ্ছে না।');
+        }
+
+        if (!transactions || transactions.length === 0) {
+            return bot.sendMessage(chatId, '📜 এখনো কোনো লেনদেন নেই।');
+        }
+
+        const history = transactions.map((item, index) => {
+            const sign = item.direction === 'credit' ? '+' : '-';
+            return `${index + 1}. ${item.description || item.transaction_type}\n${sign}৳${Number(item.amount).toFixed(2)} — ${item.status}`;
+        }).join('\n\n');
+
+        return bot.sendMessage(chatId, `📜 আপনার সাম্প্রতিক লেনদেন:\n\n${history}`);
+    }
+
     // OTHER MENU
     const replies = {
         '📢 বিজ্ঞাপন দেখুন': '📢 বিজ্ঞাপন ব্যবস্থা শিগগিরই চালু হবে।',
-        '👥 বন্ধু আমন্ত্রণ': '👥 রেফারেল ব্যবস্থা শিগগিরই চালু হবে।',
-        '💳 টাকা উত্তোলন': '💳 উত্তোলন ব্যবস্থা শিগগিরই চালু হবে।',
-        '📜 লেনদেনের ইতিহাস': '📜 এখনো কোনো লেনদেন নেই।'
+        '💳 টাকা উত্তোলন': '💳 উত্তোলন ব্যবস্থা শিগগিরই চালু হবে।'
     };
 
     if (replies[text]) {
