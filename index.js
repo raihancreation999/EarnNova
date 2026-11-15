@@ -99,7 +99,6 @@ bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
             return bot.sendMessage(chatId, '⚠️ আপনার তথ্য সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।');
         }
 
-        // Referral link parameter
         const startParameter = match && match[1]
             ? match[1].trim()
             : '';
@@ -457,7 +456,6 @@ bot.on('message', async (msg) => {
 
         let referralMessage = '';
 
-        // Pay referral bonus after the referred user completes first task.
         const { data: referral, error: referralLookupError } = await supabase
             .from('referrals')
             .select('referrer_telegram_id')
@@ -478,7 +476,7 @@ bot.on('message', async (msg) => {
             if (bonusError) {
                 console.error('Referral bonus error:', bonusError.message);
             } else if (Number(bonus) > 0) {
-                referralMessage = '\n\n👥 আপনার আমন্ত্রণে একজন বন্ধু প্রথম Task সম্পন্ন করেছে। তাঁকে আমন্ত্রণ করার জন্য রেফারকারীকে ১ টাকা বোনাস দেওয়া হয়েছে।';
+                referralMessage = '\n\n👥 আপনার আমন্ত্রণে একজন বন্ধু প্রথম Task সম্পন্ন করেছে। রেফারকারীকে ১ টাকা বোনাস দেওয়া হয়েছে।';
 
                 try {
                     await bot.sendMessage(
@@ -493,7 +491,7 @@ bot.on('message', async (msg) => {
 
         return bot.sendMessage(
             chatId,
-            `🎉 অভিনন্দন!\n\nআপনি সফলভাবে "${completedTask.title}" Task সম্পন্ন করেছেন।\n\n💰 আপনার প্রাপ্ত Reward: ৳${Number(completedTask.reward_amount).toFixed(2)}\n✅ Reward আপনার Balance-এ যোগ হয়েছে।${referralMessage}\n\nEarnNova-এর সঙ্গে থাকার জন্য ধন্যবাদ! ❤️`
+            `🎉 অভিনন্দন!\n\nআপনি প্রশ্নটির সঠিক উত্তর দিয়েছেন!\n\n💰 আপনার প্রাপ্ত Reward: ৳${Number(completedTask.reward_amount).toFixed(2)}\n✅ Reward আপনার Balance-এ যোগ হয়েছে।${referralMessage}\n\nEarnNova-এর সঙ্গে থাকার জন্য ধন্যবাদ! ❤️`
         );
     }
 
