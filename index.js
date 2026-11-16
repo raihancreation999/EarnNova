@@ -535,13 +535,37 @@ bot.on('message', async (msg) => {
         const referralLink =
             `https://t.me/${BOT_USERNAME}?start=ref_${userData.referral_code}`;
 
-        const { count, error: countError } = await supabase
+        // TOTAL REFERRALS
+        const { count: totalCount, error: totalError } = await supabase
             .from('referrals')
             .select('*', { count: 'exact', head: true })
             .eq('referrer_telegram_id', userId);
 
-        if (countError) {
-            console.error('Referral count error:', countError.message);
+        // VALID REFERRALS
+        const { count: validCount, error: validError } = await supabase
+            .from('referrals')
+            .select('*', { count: 'exact', head: true })
+            .eq('referrer_telegram_id', userId)
+            .eq('reward_paid', true);
+
+        // PENDING REFERRALS
+        const { count: pendingCount, error: pendingError } = await supabase
+            .from('referrals')
+            .select('*', { count: 'exact', head: true })
+            .eq('referrer_telegram_id', userId)
+            .eq('reward_paid', false);
+
+        if (totalError || validError || pendingError) {
+            console.error('Referral count error:', {
+                totalError,
+                validError,
+                pendingError
+            });
+
+            return bot.sendMessage(
+                chatId,
+                '⚠️ Referral-এর হিসাব দেখানো যাচ্ছে না। একটু পরে চেষ্টা করুন।'
+            );
         }
 
         return bot.sendMessage(chatId, `
@@ -553,7 +577,11 @@ ${referralLink}
 
 🎁 আপনার লিংক দিয়ে বন্ধু যোগ দিয়ে প্রথম Task সম্পন্ন করলে আপনি পাবেন ৳1.00।
 
-👤 মোট আমন্ত্রিত বন্ধু: ${count || 0}
+👤 মোট আমন্ত্রিত বন্ধু: ${totalCount || 0}
+
+✅ Valid Referral: ${validCount || 0}
+
+⏳ Pending Referral: ${pendingCount || 0}
 
 📢 আপনার বন্ধুদের সঙ্গে লিংকটি শেয়ার করুন।
         `, {
