@@ -1,10 +1,12 @@
 const TelegramBot = require('node-telegram-bot-api');
 const { createClient } = require('@supabase/supabase-js');
 const http = require('http');
+const crypto = require('crypto');
 
 const token = process.env.BOT_TOKEN;
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SECRET_KEY;
+const postbackSecret = process.env.POSTBACK_SECRET;
 
 if (!token || !supabaseUrl || !supabaseKey) {
     throw new Error('Missing environment variables!');
@@ -16,21 +18,376 @@ const bot = new TelegramBot(token, { polling: true });
 const BOT_USERNAME = 'EarnNova_BD_bot';
 const REFERRAL_BONUS = 1;
 
+const MONETAG_ZONE_ID = '12287336';
+const MONETAG_AD_ID = 1;
+const AD_REWARD = 0.05;
+const MINI_APP_ORIGIN = 'https://earnova-1.onrender.com';
+
 const adminStates = new Map();
 const userStates = new Map();
 
-const server = http.createServer((req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('EarnNova Bot is running!');
-});
-
 const PORT = process.env.PORT || 3000;
+
+
+// HTTP HELPERS
+
+function sendJson(res, status, data) {
+    res.writeHead(status, {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': MINI_APP_ORIGIN,
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+    });
+
+    res.end(JSON.stringify(data));
+}
+
+function sendText(res, status, message) {
+    res.writeHead(status, {
+        'Content-Type': 'text/plain'
+    });
+
+    res.end(message);
+}
+
+function readBody(req) {
+    return new Promise((resolve, reject) => {
+        let body = '';
+
+        req.on('data', chunk => {
+            body += chunk;
+
+            if (body.length > 100000) {
+                reject(new Error('Request too large'));
+                req.destroy();
+            }
+        });
+
+        req.on('end', () => {
+            try {
+                resolve(JSON.parse(body || '{}'));
+            } catch (error) {
+                reject(error);
+            }
+        });
+
+        req.on('error', reject);
+    });
+}
+
+
+// VERIFY TELEGRAM WEB APP INIT DATA
+
+function verifyTelegramInitData(initData) {
+    if (!initData || typeof initData !== 'string') {
+        return null;
+    }
+
+    try {
+        const params = new URLSearchParams(initData);
+        const receivedHash = params.get('hash');
+
+        if (!receivedHash || !/^[a-f0-9]{64}$/i.test(receivedHash)) {
+            return null;
+        }
+
+        const authDate = Number(params.get('auth_date'));
+
+        if (!Number.isFinite(authDate)) {
+            return null;
+        }
+
+        const now = Math.floor(Date.now() / 1000);
+
+        if (authDate > now + 60 || now - authDate > 86400) {
+            return null;
+        }
+
+        const entries = [];
+
+        for (const [key, value] of params.entries()) {
+            if (key !== 'hash' && key !== 'signature') {
+                entries.push([key, value]);
+            }
+        }
+
+        entries.sort((a, b) => a[0].localeCompare(b[0]));
+
+        const dataCheckString = entries
+            .map(([key, value]) => `${key}=${value}`)
+            .join('\n');
+
+        const secretKey = crypto
+            .createHmac('sha256', 'WebAppData')
+            .update(token)
+            .digest();
+
+        const calculatedHash = crypto
+            .createHmac('sha256', secretKey)
+            .update(dataCheckString)
+            .digest();
+
+        const receivedBuffer = Buffer.from(receivedHash, 'hex');
+
+        if (
+            receivedBuffer.length !== calculatedHash.length ||
+            !crypto.timingSafeEqual(receivedBuffer, calculatedHash)
+        ) {
+            return null;
+        }
+
+        const userString = params.get('user');
+
+        if (!userString) {
+            return null;
+        }
+
+        const user = JSON.parse(userString);
+
+        if (!user.id || !Number.isSafeInteger(Number(user.id))) {
+            return null;
+        }
+
+        return user;
+
+    } catch (error) {
+        console.error('Telegram initData verification error:', error.message);
+        return null;
+    }
+}
+
+
+// CREATE PENDING AD RECORD
+
+async function startRewardedAd(req, res) {
+    let body;
+
+    try {
+        body = await readBody(req);
+    } catch (error) {
+        return sendJson(res, 400, {
+            success: false,
+            message: 'Invalid request body'
+        });
+    }
+
+    const telegramUser = verifyTelegramInitData(body.initData);
+
+    if (!telegramUser) {
+        return sendJson(res, 401, {
+            success: false,
+            message: 'Telegram verification failed'
+        });
+    }
+
+    const verificationId = crypto.randomUUID();
+
+    const { data, error } = await supabase
+        .from('ad_views')
+        .insert({
+            telegram_id: telegramUser.id,
+            ad_id: MONETAG_AD_ID,
+            reward_amount: 0,
+            status: 'pending',
+            verification_id: verificationId
+        })
+        .select('verification_id')
+        .single();
+
+    if (error || !data) {
+        console.error('Ad start database error:', error?.message);
+
+        return sendJson(res, 500, {
+            success: false,
+            message: 'Could not start advertisement'
+        });
+    }
+
+    console.log('Rewarded ad started:', {
+        telegram_id: telegramUser.id,
+        verification_id: verificationId
+    });
+
+    return sendJson(res, 200, {
+        success: true,
+        ymid: data.verification_id,
+        zone_id: MONETAG_ZONE_ID,
+        reward: AD_REWARD
+    });
+}
+
+
+// MONETAG POSTBACK
+
+function secretsMatch(received, expected) {
+    if (!received || !expected) return false;
+
+    const a = Buffer.from(String(received));
+    const b = Buffer.from(String(expected));
+
+    return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+async function handleMonetagPostback(url, res) {
+    if (!postbackSecret) {
+        console.error('POSTBACK_SECRET is missing');
+
+        return sendText(res, 503, 'Postback is not configured');
+    }
+
+    const receivedSecret = url.searchParams.get('secret');
+
+    if (!secretsMatch(receivedSecret, postbackSecret)) {
+        console.error('Rejected Monetag postback: invalid secret');
+
+        return sendText(res, 403, 'Forbidden');
+    }
+
+    const ymid = url.searchParams.get('ymid');
+    const telegramId = url.searchParams.get('telegram_id');
+    const rewardEventType = url.searchParams.get('reward_event_type');
+    const zoneId = url.searchParams.get('zone_id');
+
+    if (!ymid) {
+        return sendText(res, 400, 'Missing ymid');
+    }
+
+    if (zoneId && zoneId !== MONETAG_ZONE_ID) {
+        return sendText(res, 400, 'Invalid zone');
+    }
+
+    // Only a confirmed valued event can receive a reward.
+    if (rewardEventType !== 'valued') {
+        console.log('Non-valued Monetag event ignored:', {
+            ymid,
+            rewardEventType
+        });
+
+        return sendText(res, 200, 'Event ignored');
+    }
+
+    // Verify that this ymid belongs to the supplied Telegram user.
+    const { data: adRecord, error: lookupError } = await supabase
+        .from('ad_views')
+        .select('telegram_id, status')
+        .eq('verification_id', ymid)
+        .maybeSingle();
+
+    if (lookupError) {
+        console.error('Postback lookup error:', lookupError.message);
+
+        return sendText(res, 500, 'Database error');
+    }
+
+    if (!adRecord) {
+        console.error('Unknown Monetag ymid:', ymid);
+
+        // Do not retry an unknown verification ID forever.
+        return sendText(res, 200, 'Unknown event ignored');
+    }
+
+    if (
+        telegramId &&
+        String(adRecord.telegram_id) !== String(telegramId)
+    ) {
+        console.error('Telegram ID mismatch for postback:', ymid);
+
+        return sendText(res, 403, 'User mismatch');
+    }
+
+    // Already verified means this is a duplicate postback.
+    if (adRecord.status === 'verified') {
+        console.log('Duplicate Monetag postback ignored:', ymid);
+
+        return sendText(res, 200, 'Already processed');
+    }
+
+    if (adRecord.status !== 'pending') {
+        return sendText(res, 200, 'Ad is not pending');
+    }
+
+    // The SQL function changes pending -> verified and credits the balance.
+    const { data: rewarded, error: rewardError } = await supabase.rpc(
+        'complete_rewarded_ad',
+        {
+            p_verification_id: ymid
+        }
+    );
+
+    if (rewardError) {
+        console.error('Monetag reward RPC error:', rewardError.message);
+
+        return sendText(res, 500, 'Reward processing failed');
+    }
+
+    if (rewarded !== true) {
+        console.log('Reward not applied; duplicate or invalid event:', ymid);
+
+        return sendText(res, 200, 'No reward applied');
+    }
+
+    console.log('Monetag reward successfully credited:', {
+        telegram_id: adRecord.telegram_id,
+        ymid,
+        reward: AD_REWARD
+    });
+
+    return sendText(res, 200, 'Reward credited');
+}
+
+
+// HTTP SERVER
+
+const server = http.createServer(async (req, res) => {
+    const url = new URL(req.url, 'http://localhost');
+
+    if (req.method === 'OPTIONS') {
+        res.writeHead(204, {
+            'Access-Control-Allow-Origin': MINI_APP_ORIGIN,
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type'
+        });
+
+        return res.end();
+    }
+
+    if (req.method === 'GET' && url.pathname === '/') {
+        return sendText(res, 200, 'EarnNova Bot is running!');
+    }
+
+    if (req.method === 'POST' && url.pathname === '/ad/start') {
+        try {
+            return await startRewardedAd(req, res);
+        } catch (error) {
+            console.error('Ad start error:', error.message);
+
+            return sendJson(res, 500, {
+                success: false,
+                message: 'Server error'
+            });
+        }
+    }
+
+    if (req.method === 'GET' && url.pathname === '/postback') {
+        try {
+            return await handleMonetagPostback(url, res);
+        } catch (error) {
+            console.error('Postback error:', error.message);
+
+            return sendText(res, 500, 'Internal server error');
+        }
+    }
+
+    return sendText(res, 404, 'Not found');
+});
 
 server.listen(PORT, () => {
     console.log(`EarnNova server running on port ${PORT}`);
 });
 
+
 // ADMIN CHECK
+
 async function isAdmin(telegramId) {
     const { data, error } = await supabase
         .from('admins')
@@ -47,7 +404,9 @@ async function isAdmin(telegramId) {
     return !!data;
 }
 
+
 // REFERRAL REGISTRATION
+
 async function registerReferral(userId, referralCode) {
     if (!referralCode) return;
 
@@ -80,7 +439,9 @@ async function registerReferral(userId, referralCode) {
     }
 }
 
+
 // START
+
 bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
     const user = msg.from;
     const chatId = msg.chat.id;
@@ -108,7 +469,7 @@ bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
             await registerReferral(user.id, referralCode);
         }
 
-        const { data: userData, error: userError } = await supabase
+        const { error: userError } = await supabase
             .from('users')
             .select('referral_code')
             .eq('telegram_id', user.id)
@@ -144,7 +505,9 @@ bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
     }
 });
 
+
 // ADMIN PANEL
+
 bot.onText(/\/admin(?:\s|$)/, async (msg) => {
     const userId = msg.from.id;
 
@@ -166,7 +529,9 @@ bot.onText(/\/admin(?:\s|$)/, async (msg) => {
     });
 });
 
+
 // SHOW TASKS
+
 async function showTasks(chatId, userId) {
     const { data: tasks, error } = await supabase
         .from('tasks')
@@ -212,7 +577,9 @@ async function showTasks(chatId, userId) {
     });
 }
 
+
 // TASK BUTTON
+
 bot.on('callback_query', async (query) => {
     const chatId = query.message?.chat?.id;
     const userId = query.from.id;
@@ -270,7 +637,9 @@ bot.on('callback_query', async (query) => {
     `);
 });
 
+
 // MAIN MESSAGE HANDLER
+
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -279,6 +648,7 @@ bot.on('message', async (msg) => {
     if (!text || text.startsWith('/')) return;
 
     // CANCEL
+
     if (text === '❌ বাতিল') {
         adminStates.delete(userId);
         userStates.delete(userId);
@@ -287,6 +657,7 @@ bot.on('message', async (msg) => {
     }
 
     // CREATE TASK
+
     if (text === '➕ নতুন টাস্ক যোগ করুন') {
         if (!(await isAdmin(userId))) {
             return bot.sendMessage(chatId, '⛔ Admin অনুমতি নেই।');
@@ -302,6 +673,7 @@ bot.on('message', async (msg) => {
     }
 
     // ADMIN TASK CREATION
+
     const adminState = adminStates.get(userId);
 
     if (adminState) {
@@ -392,6 +764,7 @@ bot.on('message', async (msg) => {
     }
 
     // USER TASK ANSWER
+
     const userState = userStates.get(userId);
 
     if (userState && userState.step === 'answer') {
@@ -496,6 +869,7 @@ bot.on('message', async (msg) => {
     }
 
     // BALANCE
+
     if (text === '💰 আমার ব্যালেন্স') {
         const { data, error } = await supabase
             .from('users')
@@ -515,11 +889,13 @@ bot.on('message', async (msg) => {
     }
 
     // TASK MENU
+
     if (text === '📌 টাস্ক') {
         return showTasks(chatId, userId);
     }
 
     // REFERRAL MENU
+
     if (text === '👥 বন্ধু আমন্ত্রণ') {
         const { data: userData, error } = await supabase
             .from('users')
@@ -535,20 +911,17 @@ bot.on('message', async (msg) => {
         const referralLink =
             `https://t.me/${BOT_USERNAME}?start=ref_${userData.referral_code}`;
 
-        // TOTAL REFERRALS
         const { count: totalCount, error: totalError } = await supabase
             .from('referrals')
             .select('*', { count: 'exact', head: true })
             .eq('referrer_telegram_id', userId);
 
-        // VALID REFERRALS
         const { count: validCount, error: validError } = await supabase
             .from('referrals')
             .select('*', { count: 'exact', head: true })
             .eq('referrer_telegram_id', userId)
             .eq('reward_paid', true);
 
-        // PENDING REFERRALS
         const { count: pendingCount, error: pendingError } = await supabase
             .from('referrals')
             .select('*', { count: 'exact', head: true })
@@ -597,6 +970,7 @@ ${referralLink}
     }
 
     // TRANSACTION HISTORY
+
     if (text === '📜 লেনদেনের ইতিহাস') {
         const { data: transactions, error } = await supabase
             .from('transactions')
@@ -623,8 +997,9 @@ ${referralLink}
     }
 
     // OTHER MENU
+
     const replies = {
-        '📢 বিজ্ঞাপন দেখুন': '📢 বিজ্ঞাপন ব্যবস্থা শিগগিরই চালু হবে।',
+        '📢 বিজ্ঞাপন দেখুন': '📢 বিজ্ঞাপন চালু করার প্রস্তুতি চলছে। Mini App থেকে বিজ্ঞাপন দেখতে পারবেন।',
         '💳 টাকা উত্তোলন': '💳 উত্তোলন ব্যবস্থা শিগগিরই চালু হবে।'
     };
 
@@ -633,7 +1008,9 @@ ${referralLink}
     }
 });
 
+
 // POLLING ERROR
+
 bot.on('polling_error', (error) => {
     console.error('Telegram polling error:', error.message);
 });
