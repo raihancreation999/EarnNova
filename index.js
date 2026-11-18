@@ -21,7 +21,9 @@ const REFERRAL_BONUS = 1;
 const MONETAG_ZONE_ID = '12287336';
 const MONETAG_AD_ID = 1;
 const AD_REWARD = 0.05;
-const MINI_APP_ORIGIN = 'https://earnova-1.onrender.com';
+
+// Correct Mini App URL
+const MINI_APP_ORIGIN = 'https://earnnova-1.onrender.com';
 
 const adminStates = new Map();
 const userStates = new Map();
@@ -31,14 +33,18 @@ const PORT = process.env.PORT || 3000;
 
 // HTTP HELPERS
 
-function sendJson(res, status, data) {
-    res.writeHead(status, {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': MINI_APP_ORIGIN,
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
-    });
+function setCorsHeaders(res) {
+    res.setHeader('Access-Control-Allow-Origin', MINI_APP_ORIGIN);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Vary', 'Origin');
+}
 
+function sendJson(res, status, data) {
+    setCorsHeaders(res);
+    res.writeHead(status, {
+        'Content-Type': 'application/json'
+    });
     res.end(JSON.stringify(data));
 }
 
@@ -46,7 +52,6 @@ function sendText(res, status, message) {
     res.writeHead(status, {
         'Content-Type': 'text/plain'
     });
-
     res.end(message);
 }
 
@@ -160,11 +165,15 @@ function verifyTelegramInitData(initData) {
 // CREATE PENDING AD RECORD
 
 async function startRewardedAd(req, res) {
+    console.log('Received /ad/start request');
+
     let body;
 
     try {
         body = await readBody(req);
     } catch (error) {
+        console.error('Request body error:', error.message);
+
         return sendJson(res, 400, {
             success: false,
             message: 'Invalid request body'
@@ -174,6 +183,8 @@ async function startRewardedAd(req, res) {
     const telegramUser = verifyTelegramInitData(body.initData);
 
     if (!telegramUser) {
+        console.error('Telegram verification failed');
+
         return sendJson(res, 401, {
             success: false,
             message: 'Telegram verification failed'
@@ -231,7 +242,6 @@ function secretsMatch(received, expected) {
 async function handleMonetagPostback(url, res) {
     if (!postbackSecret) {
         console.error('POSTBACK_SECRET is missing');
-
         return sendText(res, 503, 'Postback is not configured');
     }
 
@@ -239,7 +249,6 @@ async function handleMonetagPostback(url, res) {
 
     if (!secretsMatch(receivedSecret, postbackSecret)) {
         console.error('Rejected Monetag postback: invalid secret');
-
         return sendText(res, 403, 'Forbidden');
     }
 
@@ -256,7 +265,6 @@ async function handleMonetagPostback(url, res) {
         return sendText(res, 400, 'Invalid zone');
     }
 
-    // Only a confirmed valued event can receive a reward.
     if (rewardEventType !== 'valued') {
         console.log('Non-valued Monetag event ignored:', {
             ymid,
@@ -266,7 +274,6 @@ async function handleMonetagPostback(url, res) {
         return sendText(res, 200, 'Event ignored');
     }
 
-    // Verify that this ymid belongs to the supplied Telegram user.
     const { data: adRecord, error: lookupError } = await supabase
         .from('ad_views')
         .select('telegram_id, status')
@@ -275,14 +282,11 @@ async function handleMonetagPostback(url, res) {
 
     if (lookupError) {
         console.error('Postback lookup error:', lookupError.message);
-
         return sendText(res, 500, 'Database error');
     }
 
     if (!adRecord) {
         console.error('Unknown Monetag ymid:', ymid);
-
-        // Do not retry an unknown verification ID forever.
         return sendText(res, 200, 'Unknown event ignored');
     }
 
@@ -291,14 +295,11 @@ async function handleMonetagPostback(url, res) {
         String(adRecord.telegram_id) !== String(telegramId)
     ) {
         console.error('Telegram ID mismatch for postback:', ymid);
-
         return sendText(res, 403, 'User mismatch');
     }
 
-    // Already verified means this is a duplicate postback.
     if (adRecord.status === 'verified') {
         console.log('Duplicate Monetag postback ignored:', ymid);
-
         return sendText(res, 200, 'Already processed');
     }
 
@@ -306,7 +307,6 @@ async function handleMonetagPostback(url, res) {
         return sendText(res, 200, 'Ad is not pending');
     }
 
-    // The SQL function changes pending -> verified and credits the balance.
     const { data: rewarded, error: rewardError } = await supabase.rpc(
         'complete_rewarded_ad',
         {
@@ -316,13 +316,11 @@ async function handleMonetagPostback(url, res) {
 
     if (rewardError) {
         console.error('Monetag reward RPC error:', rewardError.message);
-
         return sendText(res, 500, 'Reward processing failed');
     }
 
     if (rewarded !== true) {
-        console.log('Reward not applied; duplicate or invalid event:', ymid);
-
+        console.log('Reward not applied:', ymid);
         return sendText(res, 200, 'No reward applied');
     }
 
@@ -340,14 +338,18 @@ async function handleMonetagPostback(url, res) {
 
 const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://localhost');
+    const origin = req.headers.origin || 'No origin';
 
+    console.log('HTTP Request:', {
+        method: req.method,
+        path: url.pathname,
+        origin
+    });
+
+    // CORS preflight
     if (req.method === 'OPTIONS') {
-        res.writeHead(204, {
-            'Access-Control-Allow-Origin': MINI_APP_ORIGIN,
-            'Access-Control-Allow-Methods': 'POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type'
-        });
-
+        setCorsHeaders(res);
+        res.writeHead(204);
         return res.end();
     }
 
@@ -373,7 +375,6 @@ const server = http.createServer(async (req, res) => {
             return await handleMonetagPostback(url, res);
         } catch (error) {
             console.error('Postback error:', error.message);
-
             return sendText(res, 500, 'Internal server error');
         }
     }
@@ -383,6 +384,7 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
     console.log(`EarnNova server running on port ${PORT}`);
+    console.log('Mini App allowed origin:', MINI_APP_ORIGIN);
 });
 
 
@@ -647,16 +649,12 @@ bot.on('message', async (msg) => {
 
     if (!text || text.startsWith('/')) return;
 
-    // CANCEL
-
     if (text === '❌ বাতিল') {
         adminStates.delete(userId);
         userStates.delete(userId);
 
         return bot.sendMessage(chatId, '❌ কাজ বাতিল করা হয়েছে।');
     }
-
-    // CREATE TASK
 
     if (text === '➕ নতুন টাস্ক যোগ করুন') {
         if (!(await isAdmin(userId))) {
@@ -671,8 +669,6 @@ bot.on('message', async (msg) => {
 
         return bot.sendMessage(chatId, '📝 নতুন টাস্কের নাম লিখুন:');
     }
-
-    // ADMIN TASK CREATION
 
     const adminState = adminStates.get(userId);
 
@@ -747,7 +743,6 @@ bot.on('message', async (msg) => {
             if (error) {
                 console.error('Task creation error:', error.message);
                 adminStates.delete(userId);
-
                 return bot.sendMessage(chatId, '❌ টাস্ক যোগ করা যায়নি।');
             }
 
@@ -763,8 +758,6 @@ bot.on('message', async (msg) => {
         }
     }
 
-    // USER TASK ANSWER
-
     const userState = userStates.get(userId);
 
     if (userState && userState.step === 'answer') {
@@ -779,41 +772,25 @@ bot.on('message', async (msg) => {
 
         if (rewardError) {
             console.error('Reward error:', rewardError.message);
-
-            return bot.sendMessage(
-                chatId,
-                '⚠️ Reward যোগ করা যায়নি। Admin-কে জানান।'
-            );
+            return bot.sendMessage(chatId, '⚠️ Reward যোগ করা যায়নি। Admin-কে জানান।');
         }
 
         if (result === 'wrong_answer') {
-            return bot.sendMessage(
-                chatId,
-                '❌ আপনার উত্তরটি সঠিক হয়নি। চিন্তা করবেন না, আবার চেষ্টা করুন। 😊'
-            );
+            return bot.sendMessage(chatId, '❌ আপনার উত্তরটি সঠিক হয়নি। চিন্তা করবেন না, আবার চেষ্টা করুন। 😊');
         }
 
         userStates.delete(userId);
 
         if (result === 'already_completed') {
-            return bot.sendMessage(
-                chatId,
-                '✅ এই Task-এর Reward আপনি আগেই পেয়েছেন।'
-            );
+            return bot.sendMessage(chatId, '✅ এই Task-এর Reward আপনি আগেই পেয়েছেন।');
         }
 
         if (result === 'task_not_found') {
-            return bot.sendMessage(
-                chatId,
-                '⚠️ এই Task আর Active নেই।'
-            );
+            return bot.sendMessage(chatId, '⚠️ এই Task আর Active নেই।');
         }
 
         if (result !== 'success') {
-            return bot.sendMessage(
-                chatId,
-                '⚠️ Task সম্পন্ন করা যায়নি।'
-            );
+            return bot.sendMessage(chatId, '⚠️ Task সম্পন্ন করা যায়নি।');
         }
 
         const { data: completedTask, error: taskError } = await supabase
@@ -868,8 +845,6 @@ bot.on('message', async (msg) => {
         );
     }
 
-    // BALANCE
-
     if (text === '💰 আমার ব্যালেন্স') {
         const { data, error } = await supabase
             .from('users')
@@ -888,13 +863,9 @@ bot.on('message', async (msg) => {
         );
     }
 
-    // TASK MENU
-
     if (text === '📌 টাস্ক') {
         return showTasks(chatId, userId);
     }
-
-    // REFERRAL MENU
 
     if (text === '👥 বন্ধু আমন্ত্রণ') {
         const { data: userData, error } = await supabase
@@ -935,10 +906,7 @@ bot.on('message', async (msg) => {
                 pendingError
             });
 
-            return bot.sendMessage(
-                chatId,
-                '⚠️ Referral-এর হিসাব দেখানো যাচ্ছে না। একটু পরে চেষ্টা করুন।'
-            );
+            return bot.sendMessage(chatId, '⚠️ Referral-এর হিসাব দেখানো যাচ্ছে না।');
         }
 
         return bot.sendMessage(chatId, `
@@ -969,8 +937,6 @@ ${referralLink}
         });
     }
 
-    // TRANSACTION HISTORY
-
     if (text === '📜 লেনদেনের ইতিহাস') {
         const { data: transactions, error } = await supabase
             .from('transactions')
@@ -995,8 +961,6 @@ ${referralLink}
 
         return bot.sendMessage(chatId, `📜 আপনার সাম্প্রতিক লেনদেন:\n\n${history}`);
     }
-
-    // OTHER MENU
 
     const replies = {
         '📢 বিজ্ঞাপন দেখুন': '📢 বিজ্ঞাপন চালু করার প্রস্তুতি চলছে। Mini App থেকে বিজ্ঞাপন দেখতে পারবেন।',
