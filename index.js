@@ -153,18 +153,17 @@ function verifyTelegramInitData(initData) {
             .map(([key, value]) => `${key}=${value}`)
             .join('\n');
 
-        // Telegram official HMAC validation:
-        // HMAC_SHA256(key = bot_token, message = "WebAppData")
+        // Telegram official HMAC validation
 
-        const secretKey = crypto
-            .createHmac('sha256', token)
-            .update('WebAppData')
-            .digest();
+const secretKey = crypto
+    .createHmac('sha256', 'WebAppData')
+    .update(token)
+    .digest();
 
-        const calculatedHash = crypto
-            .createHmac('sha256', secretKey)
-            .update(dataCheckString)
-            .digest();
+const calculatedHash = crypto
+    .createHmac('sha256', secretKey)
+    .update(dataCheckString)
+    .digest();
 
         const receivedBuffer = Buffer.from(receivedHash, 'hex');
 
