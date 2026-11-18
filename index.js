@@ -15,6 +15,25 @@ if (!token || !supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 const bot = new TelegramBot(token, { polling: true });
 
+// Check which Telegram bot is connected to BOT_TOKEN
+bot.getMe()
+    .then(info => {
+        console.log('================================');
+        console.log('CONNECTED BOT USERNAME:', info.username);
+        console.log('EXPECTED BOT USERNAME: EarnNova_BD_bot');
+
+        if (info.username === 'EarnNova_BD_bot') {
+            console.log('BOT TOKEN CHECK: CORRECT');
+        } else {
+            console.log('BOT TOKEN CHECK: WRONG BOT TOKEN');
+        }
+
+        console.log('================================');
+    })
+    .catch(error => {
+        console.error('BOT TOKEN CHECK FAILED:', error.message);
+    });
+
 const BOT_USERNAME = 'EarnNova_BD_bot';
 const REFERRAL_BONUS = 1;
 
