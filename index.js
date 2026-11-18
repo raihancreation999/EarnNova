@@ -111,6 +111,8 @@ function verifyTelegramInitData(initData) {
         console.log('INITDATA CHECK: Received data length:', initData.length);
 
         const params = new URLSearchParams(initData);
+        console.log('INITDATA RAW PARAMETER NAMES:', Array.from(params.keys()));
+
         const receivedHash = params.get('hash');
 
         if (!receivedHash || !/^[a-f0-9]{64}$/i.test(receivedHash)) {
