@@ -140,7 +140,7 @@ function verifyTelegramInitData(initData) {
         const entries = [];
 
         for (const [key, value] of params.entries()) {
-            if (key !== 'hash' && key !== 'signature') {
+            if (key !== 'hash') {
                 entries.push([key, value]);
             }
         }
