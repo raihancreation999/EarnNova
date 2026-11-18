@@ -22,7 +22,6 @@ const MONETAG_ZONE_ID = '12287336';
 const MONETAG_AD_ID = 1;
 const AD_REWARD = 0.05;
 
-// Correct Mini App URL
 const MINI_APP_ORIGIN = 'https://earnnova-1.onrender.com';
 
 const adminStates = new Map();
@@ -85,26 +84,35 @@ function readBody(req) {
 
 function verifyTelegramInitData(initData) {
     if (!initData || typeof initData !== 'string') {
+        console.log('INITDATA CHECK: Missing or invalid initData');
         return null;
     }
 
     try {
+        console.log('INITDATA CHECK: Received data length:', initData.length);
+
         const params = new URLSearchParams(initData);
         const receivedHash = params.get('hash');
 
         if (!receivedHash || !/^[a-f0-9]{64}$/i.test(receivedHash)) {
+            console.log('INITDATA CHECK: Hash missing or invalid');
             return null;
         }
 
         const authDate = Number(params.get('auth_date'));
 
         if (!Number.isFinite(authDate)) {
+            console.log('INITDATA CHECK: Invalid auth_date');
             return null;
         }
 
         const now = Math.floor(Date.now() / 1000);
+        const age = now - authDate;
 
-        if (authDate > now + 60 || now - authDate > 86400) {
+        console.log('INITDATA CHECK: Auth data age (seconds):', age);
+
+        if (authDate > now + 60 || age > 86400) {
+            console.log('INITDATA CHECK: Auth data expired or future dated');
             return null;
         }
 
@@ -116,15 +124,22 @@ function verifyTelegramInitData(initData) {
             }
         }
 
-        entries.sort((a, b) => a[0].localeCompare(b[0]));
+        entries.sort((a, b) => {
+            if (a[0] < b[0]) return -1;
+            if (a[0] > b[0]) return 1;
+            return 0;
+        });
 
         const dataCheckString = entries
             .map(([key, value]) => `${key}=${value}`)
             .join('\n');
 
+        // Telegram official HMAC validation:
+        // HMAC_SHA256(key = bot_token, message = "WebAppData")
+
         const secretKey = crypto
-            .createHmac('sha256', 'WebAppData')
-            .update(token)
+            .createHmac('sha256', token)
+            .update('WebAppData')
             .digest();
 
         const calculatedHash = crypto
@@ -138,20 +153,28 @@ function verifyTelegramInitData(initData) {
             receivedBuffer.length !== calculatedHash.length ||
             !crypto.timingSafeEqual(receivedBuffer, calculatedHash)
         ) {
+            console.log('INITDATA CHECK: HASH MISMATCH');
+            console.log('INITDATA CHECK: Available keys:', entries.map(e => e[0]));
             return null;
         }
+
+        console.log('INITDATA CHECK: Hash verified successfully');
 
         const userString = params.get('user');
 
         if (!userString) {
+            console.log('INITDATA CHECK: User information missing');
             return null;
         }
 
         const user = JSON.parse(userString);
 
         if (!user.id || !Number.isSafeInteger(Number(user.id))) {
+            console.log('INITDATA CHECK: Invalid Telegram user ID');
             return null;
         }
+
+        console.log('INITDATA CHECK: User verified successfully');
 
         return user;
 
@@ -346,7 +369,6 @@ const server = http.createServer(async (req, res) => {
         origin
     });
 
-    // CORS preflight
     if (req.method === 'OPTIONS') {
         setCorsHeaders(res);
         res.writeHead(204);
