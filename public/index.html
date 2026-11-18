@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#101827">
-  <title>EarnNova</title>
-
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-  <style>
+  <title>EarnNova</title>  <script src="https://telegram.org/js/telegram-web-app.js"></script>  <script src="//libtl.com/sdk.js" data-zone="12287336" data-sdk="show_12287336"></script>  <style>
     * {
       margin: 0;
       padding: 0;
@@ -153,6 +148,11 @@
       cursor: pointer;
     }
 
+    .button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
     .page {
       display: none;
       background: #1c293b;
@@ -173,6 +173,21 @@
       color: #b0bdce;
       line-height: 1.6;
       font-size: 14px;
+    }
+
+    .ad-box {
+      background: #243247;
+      border: 1px solid #2c3b50;
+      padding: 18px;
+      border-radius: 14px;
+      margin-top: 18px;
+    }
+
+    #adStatus {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #35d6a0;
+      overflow-wrap: anywhere;
     }
 
     .bottom-nav {
@@ -212,123 +227,123 @@
       margin-top: 25px;
       text-align: center;
     }
-  </style>
-</head>
+  </style></head><body>  <div class="container"><header class="header">
+  <div class="logo">✦ EarnNova</div>
+  <div class="profile" id="profileName">👤 User</div>
+</header>
 
-<body>
+<main id="homePage">
 
-  <div class="container">
+  <section class="welcome">
+    <h2 id="welcomeText">Welcome to EarnNova!</h2>
+    <p>Complete tasks and grow your rewards.</p>
+  </section>
 
-    <header class="header">
-      <div class="logo">✦ EarnNova</div>
-      <div class="profile" id="profileName">👤 User</div>
-    </header>
+  <section class="balance-card">
+    <p>YOUR TOTAL BALANCE</p>
+    <div class="balance">৳0.00</div>
+    <div class="currency">Bangladesh Taka (BDT)</div>
+  </section>
 
-    <main id="homePage">
+  <h3 class="section-title">Explore EarnNova</h3>
 
-      <section class="welcome">
-        <h2 id="welcomeText">Welcome to EarnNova!</h2>
-        <p>Complete tasks and grow your rewards.</p>
-      </section>
+  <div class="grid">
 
-      <section class="balance-card">
-        <p>YOUR TOTAL BALANCE</p>
-        <div class="balance">৳0.00</div>
-        <div class="currency">Bangladesh Taka (BDT)</div>
-      </section>
+    <div class="card" onclick="openPage('tasks')">
+      <div class="icon">📋</div>
+      <h3>Daily Tasks</h3>
+      <p>Complete tasks and earn.</p>
+    </div>
 
-      <h3 class="section-title">Explore EarnNova</h3>
+    <div class="card" onclick="openPage('ads')">
+      <div class="icon">📺</div>
+      <h3>Watch Ads</h3>
+      <p>Watch ads for rewards.</p>
+    </div>
 
-      <div class="grid">
+    <div class="card" onclick="openPage('referral')">
+      <div class="icon">👥</div>
+      <h3>Referral</h3>
+      <p>Invite friends and earn.</p>
+    </div>
 
-        <div class="card" onclick="openPage('tasks')">
-          <div class="icon">📋</div>
-          <h3>Daily Tasks</h3>
-          <p>Complete tasks and earn.</p>
-        </div>
-
-        <div class="card" onclick="openPage('ads')">
-          <div class="icon">📺</div>
-          <h3>Watch Ads</h3>
-          <p>Watch ads for rewards.</p>
-        </div>
-
-        <div class="card" onclick="openPage('referral')">
-          <div class="icon">👥</div>
-          <h3>Referral</h3>
-          <p>Invite friends and earn.</p>
-        </div>
-
-        <div class="card" onclick="openPage('history')">
-          <div class="icon">💳</div>
-          <h3>History</h3>
-          <p>View your transactions.</p>
-        </div>
-
-      </div>
-
-      <section class="referral-card">
-        <h3>🎁 Invite Friends</h3>
-        <p>Invite your friends to EarnNova and get referral rewards when they become eligible.</p>
-        <button class="button" onclick="openPage('referral')">
-          View Referral
-        </button>
-      </section>
-
-    </main>
-
-    <section class="page" id="tasks">
-      <h2>📋 Daily Tasks</h2>
-      <p>Your available tasks will appear here after connecting the EarnNova backend.</p>
-    </section>
-
-    <section class="page" id="ads">
-      <h2>📺 Watch Ads</h2>
-      <p>Advertisement features will be activated after connecting the approved ad system.</p>
-    </section>
-
-    <section class="page" id="referral">
-      <h2>👥 Referral Program</h2>
-      <p>Invite friends using your personal referral link. Your referral information will appear here after backend integration.</p>
-    </section>
-
-    <section class="page" id="history">
-      <h2>💳 Transaction History</h2>
-      <p>Your completed transactions will appear here after backend integration.</p>
-    </section>
-
-    <section class="page" id="profile">
-      <h2>👤 My Profile</h2>
-      <p id="userDetails">Telegram profile information will appear here.</p>
-    </section>
-
-    <p class="notice">
-      EarnNova • Your Journey, Your Rewards
-    </p>
+    <div class="card" onclick="openPage('history')">
+      <div class="icon">💳</div>
+      <h3>History</h3>
+      <p>View your transactions.</p>
+    </div>
 
   </div>
 
-  <nav class="bottom-nav">
+  <section class="referral-card">
+    <h3>🎁 Invite Friends</h3>
+    <p>Invite your friends to EarnNova and get referral rewards when they become eligible.</p>
+    <button class="button" onclick="openPage('referral')">
+      View Referral
+    </button>
+  </section>
 
-    <button class="nav-item active" onclick="showHome()">
-      <span>🏠</span>Home
+</main>
+
+<section class="page" id="tasks">
+  <h2>📋 Daily Tasks</h2>
+  <p>Your available tasks will appear here after connecting the EarnNova backend.</p>
+</section>
+
+<section class="page" id="ads">
+  <h2>📺 Watch Ads</h2>
+  <p>Watch a rewarded advertisement and earn ৳0.05 after server verification.</p>
+
+  <div class="ad-box">
+    <h3>🎬 Rewarded Advertisement</h3>
+    <p>Reward per completed ad: ৳0.05</p>
+
+    <button class="button" id="watchAdButton" type="button">
+      ▶ Watch Ad & Earn ৳0.05
     </button>
 
-    <button class="nav-item" onclick="openPage('tasks')">
-      <span>📋</span>Tasks
-    </button>
+    <p id="adStatus" aria-live="polite">
+      Press the button to start an advertisement.
+    </p>
+  </div>
+</section>
 
-    <button class="nav-item" onclick="openPage('referral')">
-      <span>👥</span>Referral
-    </button>
+<section class="page" id="referral">
+  <h2>👥 Referral Program</h2>
+  <p>Invite friends using your personal referral link. Your referral information will appear here after backend integration.</p>
+</section>
 
-    <button class="nav-item" onclick="openPage('profile')">
-      <span>👤</span>Profile
-    </button>
+<section class="page" id="history">
+  <h2>💳 Transaction History</h2>
+  <p>Your completed transactions will appear here after backend integration.</p>
+</section>
 
-  </nav>
+<section class="page" id="profile">
+  <h2>👤 My Profile</h2>
+  <p id="userDetails">Telegram profile information will appear here.</p>
+</section>
 
-  <script>
+<p class="notice">
+  EarnNova • Your Journey, Your Rewards
+</p>
+
+  </div>  <nav class="bottom-nav"><button class="nav-item active" onclick="showHome()">
+  <span>🏠</span>Home
+</button>
+
+<button class="nav-item" onclick="openPage('tasks')">
+  <span>📋</span>Tasks
+</button>
+
+<button class="nav-item" onclick="openPage('referral')">
+  <span>👥</span>Referral
+</button>
+
+<button class="nav-item" onclick="openPage('profile')">
+  <span>👤</span>Profile
+</button>
+
+  </nav>  <script>
     const tg = window.Telegram?.WebApp;
 
     if (tg) {
@@ -383,7 +398,68 @@
 
       if (tg) tg.HapticFeedback?.selectionChanged();
     }
-  </script>
 
-</body>
+    const watchAdButton = document.getElementById("watchAdButton");
+    const adStatus = document.getElementById("adStatus");
+
+    const BACKEND_URL = "https://earnnova-peg0.onrender.com";
+
+    watchAdButton.addEventListener("click", async () => {
+      if (!tg || !tg.initData) {
+        adStatus.textContent =
+          "Please open EarnNova from the Telegram bot.";
+        return;
+      }
+
+      if (typeof window.show_12287336 !== "function") {
+        adStatus.textContent =
+          "Advertisement SDK is not ready. Please try again later.";
+        return;
+      }
+
+      watchAdButton.disabled = true;
+      adStatus.textContent = "Preparing your advertisement...";
+
+      try {
+        const response = await fetch(BACKEND_URL + "/ad/start", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            initData: tg.initData
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success || !data.ymid) {
+          throw new Error(data.error || "Could not start advertisement.");
+        }
+
+        adStatus.textContent =
+          "Advertisement is starting. Please watch it completely.";
+
+        const result = await window.show_12287336({
+          ymid: data.ymid
+        });
+
+        if (result?.reward_event_type === "valued") {
+          adStatus.textContent =
+            "Ad completed! Your ৳0.05 reward is awaiting server verification.";
+        } else {
+          adStatus.textContent =
+            "Advertisement ended, but no paid completion was confirmed. No reward has been added.";
+        }
+
+      } catch (error) {
+        console.error("Rewarded ad error:", error);
+
+        adStatus.textContent =
+          "Could not complete the ad request. Please try again later.";
+      } finally {
+        watchAdButton.disabled = false;
+      }
+    });
+  </script></body>
 </html>
