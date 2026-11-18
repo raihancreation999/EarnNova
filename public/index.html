@@ -453,8 +453,14 @@
         }
 
       } catch (error) {
-  console.error("Rewarded ad error:", error);
+        console.error("Rewarded ad error:", error);
 
-  adStatus.textContent =
-    "Error: " + (error.message || String(error));
-} finally {
+        adStatus.textContent =
+          "Error: " + (error.message || String(error));
+
+      } finally {
+        watchAdButton.disabled = false;
+      }
+    });
+  </script></body>
+</html>
