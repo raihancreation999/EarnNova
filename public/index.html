@@ -453,13 +453,8 @@
         }
 
       } catch (error) {
-        console.error("Rewarded ad error:", error);
+  console.error("Rewarded ad error:", error);
 
-        adStatus.textContent =
-          "Could not complete the ad request. Please try again later.";
-      } finally {
-        watchAdButton.disabled = false;
-      }
-    });
-  </script></body>
-</html>
+  adStatus.textContent =
+    "Error: " + (error.message || String(error));
+} finally {
