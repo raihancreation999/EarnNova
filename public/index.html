@@ -1,58 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0B1424">
-<title>EarnNova</title>
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="//libtl.com/sdk.js" data-zone="12287336" data-sdk="show_12287336"></script>
-
-<style>
+<meta name="theme-color" content="#061827">
+<title>EarnNova</title><script src="https://telegram.org/js/telegram-web-app.js"></script><script src="//libtl.com/sdk.js" data-zone="12287336" data-sdk="show_12287336"></script><style>
 :root{
-  --bg:#0B1424;
-  --panel:#121F32;
-  --card:#17283B;
-  --border:#263D50;
-  --teal:#16C7A0;
-  --green:#39D98A;
-  --text:#F4F8FC;
-  --muted:#91A5B9;
-  --gold:#F5C66B;
+  --bg:#061827;
+  --panel:#10283A;
+  --card:#122B3E;
+  --border:#244657;
+  --teal:#08D5A0;
+  --green:#20D98B;
+  --text:#F4FAFF;
+  --muted:#9AAFC0;
+  --gold:#FFE05B;
 }
 
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
 
 body{
   background:var(--bg);
   color:var(--text);
   min-height:100vh;
-  padding-bottom:95px;
+  padding-bottom:82px;
 }
 
-button{font-family:inherit;cursor:pointer}
+button{
+  font-family:inherit;
+  cursor:pointer;
+}
 
 .container{
-  max-width:500px;
+  width:100%;
+  max-width:480px;
   margin:auto;
-  padding:20px 17px;
+  padding:17px 16px 22px;
 }
+
+/* HEADER */
 
 .header{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-bottom:27px;
+  margin-bottom:24px;
+  min-height:48px;
 }
 
 .logo{
-  font-size:24px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:25px;
   font-weight:800;
-  letter-spacing:-.7px;
+  letter-spacing:-1px;
 }
 
-.logo span{color:var(--teal)}
+.logo-icon{
+  color:var(--teal);
+  font-size:29px;
+}
+
+.logo span{
+  color:var(--teal);
+}
 
 .header-actions{
   display:flex;
@@ -60,221 +76,305 @@ button{font-family:inherit;cursor:pointer}
   gap:9px;
 }
 
-.lang-btn,.profile-btn{
+.lang-btn,.notification-btn{
   background:var(--panel);
-  border:1px solid var(--border);
   color:var(--text);
-  border-radius:13px;
-  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  min-height:38px;
+  padding:8px 11px;
   font-size:12px;
 }
 
-.welcome{margin-bottom:21px}
-.welcome h2{font-size:23px;margin-bottom:7px}
-.welcome p{font-size:13px;color:var(--muted)}
+.notification-btn{
+  font-size:18px;
+  width:39px;
+  padding:5px;
+}
+
+/* BALANCE BOX */
 
 .balance-card{
   position:relative;
   overflow:hidden;
-  background:linear-gradient(135deg,#087C70,#10A98D 60%,#26C68B);
+  border:1px solid rgba(50,255,194,.22);
   border-radius:23px;
-  padding:24px 22px;
-  margin-bottom:22px;
+  padding:20px 17px 15px;
+  margin-bottom:25px;
+  background:linear-gradient(135deg,#087D70 0%,#079F86 52%,#13C58B 100%);
+  box-shadow:0 8px 24px rgba(0,190,140,.10);
 }
 
-.balance-card:after{
+.balance-card:before{
   content:"";
   position:absolute;
-  width:180px;height:180px;
-  border:30px solid rgba(255,255,255,.08);
+  width:170px;
+  height:170px;
+  border:24px solid rgba(255,255,255,.07);
   border-radius:50%;
-  right:-70px;top:-65px;
+  right:-55px;
+  top:-65px;
+}
+
+.balance-main{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:55px 1fr 43px;
+  align-items:center;
+  gap:12px;
+}
+
+.wallet-icon{
+  font-size:39px;
 }
 
 .balance-label{
-  font-size:12px;
-  letter-spacing:1px;
-  color:#E2FFF5;
+  font-size:13px;
+  color:#E1FFF5;
+  margin-bottom:5px;
 }
 
 .balance{
-  font-size:37px;
+  font-size:34px;
   font-weight:800;
-  margin:13px 0 5px;
+  letter-spacing:-1px;
 }
 
-.balance-bottom{
-  display:flex;
-  justify-content:space-between;
-  font-size:12px;
-  color:#E1FFF5;
+.growth-icon{
+  font-size:33px;
+  color:#50F5B4;
+  text-align:center;
 }
+
+.today-earned{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  margin:15px auto 0;
+  padding:9px 13px;
+  width:fit-content;
+  max-width:100%;
+  background:rgba(0,65,60,.28);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:30px;
+  font-size:13px;
+  color:white;
+}
+
+.today-earned strong{
+  color:var(--gold);
+  font-size:15px;
+}
+
+/* SECTION */
 
 .section-title{
   font-size:18px;
-  margin:25px 0 14px;
+  font-weight:750;
+  margin:23px 0 13px;
 }
 
-.stats-grid{
+/* QUICK ACCESS */
+
+.quick-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:12px;
 }
 
-.stat-card{
-  background:var(--panel);
+.quick-card{
+  min-height:130px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:linear-gradient(145deg,#122D40,#102638);
   border:1px solid var(--border);
-  padding:16px;
-  border-radius:17px;
+  border-radius:19px;
+  padding:14px 8px;
+  cursor:pointer;
+  transition:transform .15s;
 }
 
-.stat-icon{font-size:23px;margin-bottom:11px}
-.stat-number{font-size:21px;font-weight:800;margin-bottom:5px}
-.stat-label{font-size:12px;color:var(--muted)}
-
-.ad-progress-card{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:20px;
-  margin-top:18px;
+.quick-card:active{
+  transform:scale(.97);
 }
 
-.progress-layout{
+.quick-icon{
+  font-size:34px;
+  margin-bottom:9px;
+}
+
+.quick-card h3{
+  font-size:15px;
+  margin-bottom:5px;
+}
+
+.quick-card p{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.4;
+}
+
+.quick-card .highlight{
+  color:var(--gold);
+  font-weight:700;
+}
+
+/* INVITE CARD */
+
+.invite-card{
+  margin-top:19px;
+  width:100%;
   display:flex;
   align-items:center;
-  gap:20px;
+  gap:13px;
+  padding:17px 14px;
+  border-radius:20px;
+  border:1px solid rgba(40,230,170,.25);
+  background:linear-gradient(120deg,#087B70,#0A9C82,#13B88A);
+  cursor:pointer;
+  text-align:left;
+  color:white;
 }
 
-.progress-circle{
-  width:125px;
-  height:125px;
+.invite-icon{
+  font-size:43px;
   flex-shrink:0;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:conic-gradient(var(--teal) 0deg,#26394A 0deg);
-  position:relative;
 }
 
-.progress-circle:before{
-  content:"";
-  position:absolute;
-  inset:9px;
-  border-radius:50%;
+.invite-text{
+  flex:1;
+  min-width:0;
+}
+
+.invite-text h3{
+  font-size:17px;
+  margin-bottom:6px;
+}
+
+.invite-text p{
+  font-size:13px;
+  line-height:1.5;
+  color:#E4FFF6;
+}
+
+.invite-text strong{
+  color:var(--gold);
+}
+
+.invite-arrow{
+  font-size:25px;
+  flex-shrink:0;
+}
+
+/* OTHER PAGES */
+
+.page{
+  display:none;
+  animation:fade .18s ease;
+}
+
+.page.active{
+  display:block;
+}
+
+@keyframes fade{
+  from{opacity:0;transform:translateY(4px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.page-heading{
+  font-size:21px;
+  margin:8px 0 7px;
+}
+
+.page-description{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.6;
+  margin-bottom:18px;
+}
+
+.panel{
   background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:17px;
+  padding:17px;
+  margin-bottom:13px;
 }
 
-.progress-content{
-  position:relative;
-  text-align:center;
+.panel h3{
+  font-size:15px;
+  margin-bottom:9px;
 }
 
-.progress-content strong{font-size:27px;display:block}
-.progress-content small{font-size:10px;color:var(--muted)}
-
-.progress-info h3{font-size:15px;margin-bottom:8px}
-.progress-info p{font-size:12px;color:var(--muted);line-height:1.7}
-
-.green-text{color:var(--teal)}
-
-.action-card{
-  background:linear-gradient(135deg,#142D3B,#153B3A);
-  border:1px solid #226252;
-  border-radius:19px;
-  padding:19px;
-  margin-top:18px;
+.panel p{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.7;
 }
 
-.action-card h3{font-size:16px;margin-bottom:7px}
-.action-card p{font-size:12px;color:#B4CCCE;line-height:1.6}
+.input-box{
+  width:100%;
+  padding:12px;
+  background:#091C2B;
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:10px;
+  margin-top:11px;
+  outline:none;
+  font-size:12px;
+}
 
 .primary-btn{
   border:0;
   background:linear-gradient(135deg,var(--teal),var(--green));
   color:#06251D;
   font-weight:800;
-  padding:13px 17px;
-  border-radius:12px;
-  margin-top:15px;
-  width:100%;
-  font-size:14px;
-}
-
-.primary-btn:disabled{opacity:.5;cursor:not-allowed}
-
-.feature-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.feature{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:17px;
-  padding:17px 14px;
-  min-height:112px;
-  cursor:pointer;
-}
-
-.feature:active{transform:scale(.98)}
-.feature-icon{font-size:25px;margin-bottom:12px}
-.feature h3{font-size:14px;margin-bottom:6px}
-.feature p{font-size:11px;color:var(--muted);line-height:1.5}
-
-.page{
-  display:none;
-  animation:fade .2s ease;
-}
-
-.page.active{display:block}
-
-@keyframes fade{
-  from{opacity:0;transform:translateY(5px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-.page-heading{font-size:23px;margin-bottom:8px}
-.page-description{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px}
-
-.panel{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:19px;
-  margin-bottom:14px;
-}
-
-.panel h3{font-size:16px;margin-bottom:10px}
-.panel p{font-size:13px;color:var(--muted);line-height:1.7}
-
-.input-box{
-  width:100%;
-  padding:13px;
-  background:#0C1929;
-  border:1px solid var(--border);
-  color:var(--text);
+  padding:12px 14px;
   border-radius:11px;
-  margin-top:12px;
-  outline:none;
-  font-size:12px;
+  margin-top:14px;
+  width:100%;
+  font-size:13px;
+}
+
+.primary-btn:disabled{
+  opacity:.5;
+  cursor:not-allowed;
 }
 
 .ad-box{
   text-align:center;
   background:var(--panel);
   border:1px solid var(--border);
-  border-radius:20px;
-  padding:24px 18px;
+  border-radius:19px;
+  padding:25px 17px;
 }
 
-.ad-icon{font-size:43px;margin-bottom:15px}
-.ad-box h3{margin-bottom:8px}
-.ad-box p{color:var(--muted);font-size:13px;line-height:1.7}
+.ad-icon{
+  font-size:43px;
+  margin-bottom:13px;
+}
+
+.ad-box h3{
+  font-size:19px;
+  margin-bottom:8px;
+}
+
+.ad-box p{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.7;
+}
 
 #adStatus{
-  margin-top:15px;
+  margin-top:14px;
   color:var(--teal);
   font-size:12px;
   overflow-wrap:anywhere;
@@ -282,34 +382,51 @@ button{font-family:inherit;cursor:pointer}
 }
 
 .profile-avatar{
-  width:75px;height:75px;
+  width:65px;
+  height:65px;
   background:linear-gradient(135deg,var(--teal),var(--green));
   color:#06251D;
   display:grid;
   place-items:center;
   border-radius:50%;
-  font-size:30px;
-  margin-bottom:15px;
+  font-size:27px;
+  margin-bottom:12px;
 }
 
-.profile-name{font-size:19px;margin-bottom:5px}
-.profile-sub{font-size:12px;color:var(--muted)}
+.profile-name{
+  font-size:17px;
+  margin-bottom:5px;
+}
 
-.empty-state{
-  text-align:center;
-  padding:35px 15px;
+.profile-sub{
+  font-size:12px;
   color:var(--muted);
 }
 
-.empty-state div{font-size:35px;margin-bottom:12px}
-.empty-state p{font-size:13px;line-height:1.7}
+.empty-state{
+  text-align:center;
+  padding:30px 12px;
+  color:var(--muted);
+}
+
+.empty-state div{
+  font-size:32px;
+  margin-bottom:10px;
+}
+
+.empty-state p{
+  font-size:12px;
+  line-height:1.7;
+}
 
 .notice{
   color:var(--muted);
   font-size:10px;
   text-align:center;
-  margin-top:25px;
+  margin-top:24px;
 }
+
+/* BOTTOM NAVIGATION */
 
 .bottom-nav{
   position:fixed;
@@ -317,30 +434,40 @@ button{font-family:inherit;cursor:pointer}
   left:0;
   width:100%;
   z-index:20;
-  background:rgba(14,27,44,.97);
-  backdrop-filter:blur(15px);
+  background:rgba(7,25,40,.97);
+  backdrop-filter:blur(14px);
   border-top:1px solid var(--border);
   display:flex;
   justify-content:space-around;
-  padding:10px 3px calc(10px + env(safe-area-inset-bottom));
+  padding:7px 4px calc(7px + env(safe-area-inset-bottom));
 }
 
 .nav-item{
   border:0;
   background:none;
   color:var(--muted);
-  font-size:10px;
-  min-width:55px;
-  padding:4px;
+  flex:1;
+  font-size:11px;
+  padding:3px 2px;
+  min-width:0;
 }
 
-.nav-item span{
+.nav-item span:first-child{
   display:block;
   font-size:21px;
-  margin-bottom:5px;
+  margin-bottom:3px;
 }
 
-.nav-item.active{color:var(--teal)}
+.nav-item span:last-child{
+  display:block;
+  font-size:11px;
+}
+
+.nav-item.active{
+  color:var(--teal);
+}
+
+/* POPUP */
 
 .popup{
   display:none;
@@ -350,238 +477,161 @@ button{font-family:inherit;cursor:pointer}
   background:rgba(0,0,0,.75);
   align-items:center;
   justify-content:center;
-  padding:22px;
+  padding:20px;
 }
 
-.popup.show{display:flex}
+.popup.show{
+  display:flex;
+}
 
 .popup-box{
   width:100%;
-  max-width:330px;
+  max-width:320px;
   background:var(--panel);
   border:1px solid var(--border);
-  border-radius:23px;
-  padding:27px 20px;
+  border-radius:20px;
+  padding:24px 18px;
   text-align:center;
 }
 
-.popup-icon{font-size:45px;margin-bottom:13px}
-.popup-box h2{font-size:20px;margin-bottom:10px}
-.popup-box p{font-size:13px;color:var(--muted);line-height:1.7}
-.popup-box button{margin-top:17px}
+.popup-icon{
+  font-size:40px;
+  margin-bottom:12px;
+}
 
-</style>
-</head>
+.popup-box h2{
+  font-size:18px;
+  margin-bottom:9px;
+}
 
-<body>
+.popup-box p{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.7;
+}
 
-<div class="container">
+.popup-box button{
+  margin-top:15px;
+}
 
-<header class="header">
-  <div class="logo">✦ Earn<span>Nova</span></div>
-  <div class="header-actions">
+@media(max-width:360px){
+  .container{padding-left:13px;padding-right:13px}
+  .balance{font-size:29px}
+  .wallet-icon{font-size:33px}
+  .quick-card{min-height:120px}
+  .quick-card h3{font-size:14px}
+  .invite-text h3{font-size:15px}
+}
+</style></head><body><div class="container"><header class="header">
+  <div class="logo">
+    <span class="logo-icon">◆</span>
+    <div>Earn<span>Nova</span></div>
+  </div>  <div class="header-actions">
     <button class="lang-btn" id="languageButton" onclick="toggleLanguage()">🇧🇩 বাংলা</button>
-    <button class="profile-btn" onclick="openPage('profile')">👤 <span id="profileName">User</span></button>
+    <button class="notification-btn" type="button" onclick="openPage('history')">🔔</button>
   </div>
-</header>
-
-<main id="homePage">
-
-<section class="welcome">
-  <h2 id="welcomeText">Welcome to EarnNova!</h2>
-  <p data-i18n="welcomeSub">Your journey to rewards starts here.</p>
-</section>
-
-<section class="balance-card">
-  <div class="balance-label" data-i18n="totalBalance">YOUR TOTAL BALANCE</div>
+</header><!-- HOME PAGE --><main id="homePage"><section class="balance-card">  <div class="balance-main">
+    <div class="wallet-icon">👛</div><div>
+  <div class="balance-label" data-i18n="totalBalance">Total Balance</div>
   <div class="balance" id="homeBalance">৳0.00</div>
-  <div class="balance-bottom">
-    <span>🇧🇩 BDT</span>
-    <span data-i18n="secureBalance">Your rewards</span>
-  </div>
-</section>
-
-<h3 class="section-title" data-i18n="overview">Your Overview</h3>
-
-<div class="stats-grid">
-  <div class="stat-card">
-    <div class="stat-icon">📺</div>
-    <div class="stat-number" id="homeAds">--</div>
-    <div class="stat-label" data-i18n="adsWatched">Ads watched today</div>
-  </div>
-
-  <div class="stat-card">
-    <div class="stat-icon">💰</div>
-    <div class="stat-number" id="homeEarnings">৳0.00</div>
-    <div class="stat-label" data-i18n="todayEarnings">Today's earnings</div>
-  </div>
 </div>
 
-<section class="ad-progress-card">
-  <h3 class="section-title" style="margin:0 0 17px" data-i18n="dailyProgress">Daily Ad Progress</h3>
+<div class="growth-icon">↗</div>
 
-  <div class="progress-layout">
-    <div class="progress-circle" id="progressCircle">
-      <div class="progress-content">
-        <strong id="progressNumber">0</strong>
-        <small data-i18n="completed">COMPLETED</small>
-      </div>
-    </div>
-
-    <div class="progress-info">
-      <h3 data-i18n="keepGoing">Keep Going!</h3>
-      <p data-i18n="progressInfo">Complete rewarded ads to grow your balance.</p>
-      <p class="green-text" style="margin-top:8px" data-i18n="rewardInfo">৳0.05 per valued ad</p>
-    </div>
-  </div>
-</section>
-
-<section class="action-card">
-  <h3 data-i18n="startEarning">🚀 Start Earning</h3>
-  <p data-i18n="startEarningSub">Watch rewarded advertisements and earn rewards after server verification.</p>
-  <button class="primary-btn" onclick="openPage('ads')" data-i18n="watchNow">▶ Watch Ads Now</button>
-</section>
-
-<h3 class="section-title" data-i18n="explore">Explore EarnNova</h3>
-
-<div class="feature-grid">
-  <div class="feature" onclick="openPage('tasks')">
-    <div class="feature-icon">📋</div>
-    <h3 data-i18n="tasks">Daily Tasks</h3>
-    <p data-i18n="tasksSub">Explore available tasks.</p>
-  </div>
-
-  <div class="feature" onclick="openPage('referral')">
-    <div class="feature-icon">👥</div>
+  </div>  <div class="today-earned">
+    <span>⭐</span>
+    <span data-i18n="todayEarned">Today Earned:</span>
+    <strong id="homeEarnings">৳0.00</strong>
+  </div></section><h3 class="section-title" data-i18n="quickAccess">Quick Access</h3><div class="quick-grid">  <div class="quick-card" onclick="openPage('ads')">
+    <div class="quick-icon">📺</div>
+    <h3 data-i18n="watchAds">Watch Ads</h3>
+    <p class="highlight">Earn ৳0.05</p>
+  </div>  <div class="quick-card" onclick="openPage('tasks')">
+    <div class="quick-icon">📋</div>
+    <h3 data-i18n="tasks">Tasks</h3>
+    <p data-i18n="earnMore">Earn More</p>
+  </div>  <div class="quick-card" onclick="openPage('referral')">
+    <div class="quick-icon">👥</div>
     <h3 data-i18n="referral">Referral</h3>
-    <p data-i18n="referralSub">Invite friends and earn.</p>
-  </div>
-
-  <div class="feature" onclick="openPage('history')">
-    <div class="feature-icon">📊</div>
+    <p data-i18n="inviteEarn">Invite & Earn</p>
+  </div>  <div class="quick-card" onclick="openPage('history')">
+    <div class="quick-icon">🕒</div>
     <h3 data-i18n="history">History</h3>
-    <p data-i18n="historySub">View your transactions.</p>
-  </div>
-
-  <div class="feature" onclick="openPage('profile')">
-    <div class="feature-icon">⚙️</div>
-    <h3 data-i18n="profile">My Profile</h3>
-    <p data-i18n="profileSub">Your account details.</p>
-  </div>
-</div>
-
-</main>
-
-<section class="page" id="tasks">
-  <h2 class="page-heading" data-i18n="tasks">📋 Daily Tasks</h2>
-  <p class="page-description" data-i18n="tasksDescription">Complete available activities to earn rewards.</p>
-  <div class="panel">
+    <p data-i18n="viewDetails">View Details</p>
+  </div></div><button class="invite-card" type="button" onclick="openPage('referral')">
+  <div class="invite-icon">🎁</div>  <div class="invite-text">
+    <h3 data-i18n="inviteFriends">Invite Friends</h3>
+    <p>
+      <strong>Get ৳1.00 Bonus</strong><br>
+      <span data-i18n="successfulSignup">per successful signup!</span>
+    </p>
+  </div>  <div class="invite-arrow">❯</div>
+</button></main><!-- TASKS PAGE --><section class="page" id="tasks">
+  <h2 class="page-heading" data-i18n="tasksHeading">📋 Daily Tasks</h2>
+  <p class="page-description" data-i18n="tasksDescription">Complete available activities to earn rewards.</p>  <div class="panel">
     <div class="empty-state">
       <div>📋</div>
       <p data-i18n="tasksPending">Daily tasks will appear here after backend integration.</p>
     </div>
   </div>
-</section>
-
-<section class="page" id="ads">
-  <h2 class="page-heading" data-i18n="watchAds">📺 Watch Ads</h2>
-  <p class="page-description" data-i18n="adsDescription">Watch a rewarded advertisement and earn after server verification.</p>
-
-  <div class="ad-box">
+</section><!-- ADS PAGE --><section class="page" id="ads">
+  <h2 class="page-heading" data-i18n="adsHeading">📺 Watch Ads</h2>
+  <p class="page-description" data-i18n="adsDescription">Watch a rewarded advertisement and earn after server verification.</p>  <div class="ad-box">
     <div class="ad-icon">🎬</div>
     <h3 data-i18n="rewardedAd">Rewarded Advertisement</h3>
-    <p data-i18n="rewardPerAd">Reward per valued ad: ৳0.05</p>
+    <p data-i18n="rewardPerAd">Reward per valued ad: ৳0.05</p><button class="primary-btn" id="watchAdButton" type="button" data-i18n="watchEarn">
+  ▶ Watch Ad & Earn ৳0.05
+</button>
 
-    <button class="primary-btn" id="watchAdButton" type="button" data-i18n="watchEarn">
-      ▶ Watch Ad & Earn ৳0.05
-    </button>
+<p id="adStatus" aria-live="polite" data-i18n="pressWatch">
+  Press the button to start an advertisement.
+</p>
 
-    <p id="adStatus" aria-live="polite" data-i18n="pressWatch">
-      Press the button to start an advertisement.
-    </p>
   </div>
-</section>
-
-<section class="page" id="referral">
-  <h2 class="page-heading" data-i18n="referralTitle">👥 Referral Program</h2>
-  <p class="page-description" data-i18n="referralDescription">Invite your friends to EarnNova.</p>
-
-  <div class="panel">
+</section><!-- REFERRAL PAGE --><section class="page" id="referral">
+  <h2 class="page-heading" data-i18n="referralHeading">👥 Referral Program</h2>
+  <p class="page-description" data-i18n="referralDescription">Invite your friends to EarnNova.</p>  <div class="panel">
     <h3 data-i18n="yourReferral">🎁 Your Referral Link</h3>
     <p data-i18n="referralPending">Your personal referral link will appear here after backend integration.</p>
     <input class="input-box" id="referralLink" readonly placeholder="Referral link not available yet">
     <button class="primary-btn" type="button" disabled data-i18n="copyLink">Copy Referral Link</button>
-  </div>
-
-  <div class="panel">
+  </div>  <div class="panel">
     <h3 data-i18n="referralStats">Referral Statistics</h3>
     <p data-i18n="referralStatsPending">Referral count and earnings will appear after backend integration.</p>
   </div>
-</section>
-
-<section class="page" id="history">
-  <h2 class="page-heading" data-i18n="historyTitle">📊 Transaction History</h2>
-  <p class="page-description" data-i18n="historyDescription">Track your rewards and transactions.</p>
-  <div class="panel">
-    <div class="empty-state">
-      <div>📑</div>
-      <p data-i18n="historyPending">Your transaction history will appear here after backend integration.</p>
-    </div>
-  </div>
-</section>
-
-<section class="page" id="profile">
-  <h2 class="page-heading" data-i18n="profileTitle">👤 My Profile</h2>
-  <div class="panel">
+</section><!-- PROFILE PAGE --><section class="page" id="profile">
+  <h2 class="page-heading" data-i18n="profileHeading">👤 My Profile</h2>  <div class="panel">
     <div class="profile-avatar">👤</div>
     <div class="profile-name" id="profileFullName">User</div>
     <div class="profile-sub" id="telegramUsername">Telegram User</div>
-  </div>
-
-  <div class="panel">
+  </div>  <div class="panel">
     <h3 data-i18n="accountInfo">Account Information</h3>
     <p id="userDetails">Telegram profile information will appear here.</p>
-  </div>
-
-  <div class="panel">
+  </div>  <div class="panel">
     <h3 data-i18n="settings">⚙️ Settings</h3>
     <p data-i18n="languageSetting">Choose your preferred language.</p>
     <button class="primary-btn" onclick="toggleLanguage()" id="profileLanguageButton">🇧🇩 বাংলা</button>
   </div>
-</section>
-
-<p class="notice">EarnNova • Your Journey, Your Rewards</p>
-
-</div>
-
-<nav class="bottom-nav">
-  <button class="nav-item active" onclick="showHome()" data-page="home">
-    <span>🏠</span><span data-i18n="home">Home</span>
-  </button>
-  <button class="nav-item" onclick="openPage('tasks')" data-page="tasks">
-    <span>📋</span><span data-i18n="tasksShort">Tasks</span>
-  </button>
-  <button class="nav-item" onclick="openPage('ads')" data-page="ads">
-    <span>📺</span><span data-i18n="adsShort">Ads</span>
-  </button>
-  <button class="nav-item" onclick="openPage('referral')" data-page="referral">
-    <span>👥</span><span data-i18n="referralShort">Invite</span>
-  </button>
-  <button class="nav-item" onclick="openPage('profile')" data-page="profile">
-    <span>👤</span><span data-i18n="profileShort">Profile</span>
-  </button>
-</nav>
-
-<div class="popup" id="rewardPopup">
+</section><p class="notice">EarnNova • Your Journey, Your Rewards</p></div><!-- BOTTOM NAV --><nav class="bottom-nav">  <button class="nav-item active" onclick="showHome()" data-page="home">
+    <span>🏠</span>
+    <span data-i18n="home">Home</span>
+  </button>  <button class="nav-item" onclick="openPage('tasks')" data-page="tasks">
+    <span>📋</span>
+    <span data-i18n="tasksShort">Tasks</span>
+  </button>  <button class="nav-item" onclick="openPage('referral')" data-page="referral">
+    <span>👥</span>
+    <span data-i18n="referralShort">Referral</span>
+  </button>  <button class="nav-item" onclick="openPage('profile')" data-page="profile">
+    <span>👤</span>
+    <span data-i18n="profileShort">Profile</span>
+  </button></nav><!-- REWARD POPUP --><div class="popup" id="rewardPopup">
   <div class="popup-box">
     <div class="popup-icon">⏳</div>
     <h2 id="popupTitle">Ad completed!</h2>
     <p id="popupMessage">Your reward is awaiting server verification.</p>
     <button class="primary-btn" onclick="closePopup()" data-i18n="continue">Continue</button>
   </div>
-</div>
-
-<script>
+</div><script>
 const tg = window.Telegram?.WebApp;
 
 const BACKEND_URL = "https://earnnova-peg0.onrender.com";
@@ -590,269 +640,243 @@ let currentLanguage = "en";
 
 const translations = {
 en:{
-welcomeSub:"Your journey to rewards starts here.",
-totalBalance:"YOUR TOTAL BALANCE",
-secureBalance:"Your rewards",
-overview:"Your Overview",
-adsWatched:"Ads watched today",
-todayEarnings:"Today's earnings",
-dailyProgress:"Daily Ad Progress",
-completed:"COMPLETED",
-keepGoing:"Keep Going!",
-progressInfo:"Complete rewarded ads to grow your balance.",
-rewardInfo:"৳0.05 per valued ad",
-startEarning:"🚀 Start Earning",
-startEarningSub:"Watch rewarded advertisements and earn rewards after server verification.",
-watchNow:"▶ Watch Ads Now",
-explore:"Explore EarnNova",
-tasks:"Daily Tasks",
-tasksSub:"Explore available tasks.",
+totalBalance:"Total Balance",
+todayEarned:"Today Earned:",
+quickAccess:"Quick Access",
+watchAds:"Watch Ads",
+tasks:"Tasks",
+earnMore:"Earn More",
 referral:"Referral",
-referralSub:"Invite friends and earn.",
+inviteEarn:"Invite & Earn",
 history:"History",
-historySub:"View your transactions.",
-profile:"My Profile",
-profileSub:"Your account details.",
+viewDetails:"View Details",
+inviteFriends:"Invite Friends",
+successfulSignup:"per successful signup!",
+tasksHeading:"📋 Daily Tasks",
 tasksDescription:"Complete available activities to earn rewards.",
 tasksPending:"Daily tasks will appear here after backend integration.",
-watchAds:"📺 Watch Ads",
+adsHeading:"📺 Watch Ads",
 adsDescription:"Watch a rewarded advertisement and earn after server verification.",
 rewardedAd:"Rewarded Advertisement",
 rewardPerAd:"Reward per valued ad: ৳0.05",
 watchEarn:"▶ Watch Ad & Earn ৳0.05",
 pressWatch:"Press the button to start an advertisement.",
-referralTitle:"👥 Referral Program",
+referralHeading:"👥 Referral Program",
 referralDescription:"Invite your friends to EarnNova.",
 yourReferral:"🎁 Your Referral Link",
 referralPending:"Your personal referral link will appear here after backend integration.",
 copyLink:"Copy Referral Link",
 referralStats:"Referral Statistics",
 referralStatsPending:"Referral count and earnings will appear after backend integration.",
-historyTitle:"📊 Transaction History",
-historyDescription:"Track your rewards and transactions.",
-historyPending:"Your transaction history will appear here after backend integration.",
-profileTitle:"👤 My Profile",
+profileHeading:"👤 My Profile",
 accountInfo:"Account Information",
 settings:"⚙️ Settings",
 languageSetting:"Choose your preferred language.",
 home:"Home",
 tasksShort:"Tasks",
-adsShort:"Ads",
-referralShort:"Invite",
+referralShort:"Referral",
 profileShort:"Profile",
 continue:"Continue"
 },
 bn:{
-welcomeSub:"আপনার আয়ের যাত্রা শুরু হোক এখান থেকেই।",
-totalBalance:"আপনার মোট ব্যালেন্স",
-secureBalance:"আপনার পুরস্কার",
-overview:"আপনার হিসাব",
-adsWatched:"আজকের বিজ্ঞাপন",
-todayEarnings:"আজকের আয়",
-dailyProgress:"দৈনিক বিজ্ঞাপনের অগ্রগতি",
-completed:"সম্পন্ন",
-keepGoing:"এগিয়ে যান!",
-progressInfo:"বিজ্ঞাপন সম্পূর্ণ করে আপনার ব্যালেন্স বাড়ান।",
-rewardInfo:"প্রতিটি Valued বিজ্ঞাপনে ৳০.০৫",
-startEarning:"🚀 আয় শুরু করুন",
-startEarningSub:"বিজ্ঞাপন দেখুন এবং সার্ভার যাচাইয়ের পর পুরস্কার পান।",
-watchNow:"▶ এখনই বিজ্ঞাপন দেখুন",
-explore:"EarnNova ঘুরে দেখুন",
-tasks:"দৈনিক কাজ",
-tasksSub:"উপলব্ধ কাজ দেখুন।",
+totalBalance:"মোট ব্যালেন্স",
+todayEarned:"আজকের আয়:",
+quickAccess:"দ্রুত প্রবেশ",
+watchAds:"বিজ্ঞাপন দেখুন",
+tasks:"কাজ",
+earnMore:"আরও আয় করুন",
 referral:"রেফারেল",
-referralSub:"বন্ধুদের আমন্ত্রণ জানান।",
+inviteEarn:"বন্ধু আনুন ও আয় করুন",
 history:"হিস্ট্রি",
-historySub:"লেনদেনের হিসাব দেখুন।",
-profile:"আমার প্রোফাইল",
-profileSub:"আপনার অ্যাকাউন্টের তথ্য।",
+viewDetails:"বিস্তারিত দেখুন",
+inviteFriends:"বন্ধুদের আমন্ত্রণ জানান",
+successfulSignup:"প্রতিটি সফল সাইনআপে!",
+tasksHeading:"📋 দৈনিক কাজ",
 tasksDescription:"পুরস্কার পেতে উপলব্ধ কাজ সম্পন্ন করুন।",
 tasksPending:"Backend যুক্ত হলে দৈনিক কাজ এখানে দেখা যাবে।",
-watchAds:"📺 বিজ্ঞাপন দেখুন",
+adsHeading:"📺 বিজ্ঞাপন দেখুন",
 adsDescription:"বিজ্ঞাপন সম্পূর্ণ করে সার্ভার যাচাইয়ের পর পুরস্কার পান।",
 rewardedAd:"পুরস্কারযুক্ত বিজ্ঞাপন",
 rewardPerAd:"প্রতিটি Valued বিজ্ঞাপনে ৳০.০৫",
 watchEarn:"▶ বিজ্ঞাপন দেখুন ও ৳০.০৫ পান",
 pressWatch:"বিজ্ঞাপন শুরু করতে বাটনে চাপ দিন।",
-referralTitle:"👥 রেফারেল প্রোগ্রাম",
+referralHeading:"👥 রেফারেল প্রোগ্রাম",
 referralDescription:"বন্ধুদের EarnNova-তে আমন্ত্রণ জানান।",
 yourReferral:"🎁 আপনার রেফারেল লিংক",
 referralPending:"Backend যুক্ত হলে আপনার ব্যক্তিগত রেফারেল লিংক দেখা যাবে।",
 copyLink:"রেফারেল লিংক কপি",
 referralStats:"রেফারেল পরিসংখ্যান",
 referralStatsPending:"রেফারেল সংখ্যা ও আয়ের হিসাব Backend যুক্ত হলে দেখা যাবে।",
-historyTitle:"📊 লেনদেনের ইতিহাস",
-historyDescription:"আপনার পুরস্কার ও লেনদেনের হিসাব দেখুন।",
-historyPending:"Backend যুক্ত হলে আপনার লেনদেনের ইতিহাস দেখা যাবে।",
-profileTitle:"👤 আমার প্রোফাইল",
+profileHeading:"👤 আমার প্রোফাইল",
 accountInfo:"অ্যাকাউন্টের তথ্য",
 settings:"⚙️ সেটিংস",
 languageSetting:"আপনার পছন্দের ভাষা নির্বাচন করুন।",
 home:"হোম",
 tasksShort:"কাজ",
-adsShort:"বিজ্ঞাপন",
-referralShort:"আমন্ত্রণ",
+referralShort:"রেফারেল",
 profileShort:"প্রোফাইল",
 continue:"চালিয়ে যান"
 }
 };
 
 function setLanguage(lang){
-currentLanguage=lang;
-document.documentElement.lang=lang;
+  currentLanguage=lang;
+  document.documentElement.lang=lang;
 
-document.querySelectorAll("[data-i18n]").forEach(el=>{
-const key=el.dataset.i18n;
-if(translations[lang][key]) el.textContent=translations[lang][key];
-});
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key=el.dataset.i18n;
+    if(translations[lang][key]){
+      el.textContent=translations[lang][key];
+    }
+  });
 
-const label=lang==="en"?"🇧🇩 বাংলা":"🇬🇧 English";
-document.getElementById("languageButton").textContent=label;
-document.getElementById("profileLanguageButton").textContent=label;
+  const label=lang==="en"?"🇧🇩 বাংলা":"🇬🇧 English";
+  document.getElementById("languageButton").textContent=label;
+  document.getElementById("profileLanguageButton").textContent=label;
 
-if(tg) tg.HapticFeedback?.selectionChanged();
+  if(tg) tg.HapticFeedback?.selectionChanged();
 }
 
 function toggleLanguage(){
-setLanguage(currentLanguage==="en"?"bn":"en");
+  setLanguage(currentLanguage==="en"?"bn":"en");
 }
 
 if(tg){
-tg.ready();
-tg.expand();
+  tg.ready();
+  tg.expand();
 
-const user=tg.initDataUnsafe?.user;
+  const user=tg.initDataUnsafe?.user;
 
-if(user){
-const name=user.first_name||"User";
+  if(user){
+    const name=user.first_name||"User";
 
-document.getElementById("profileName").textContent=name;
-document.getElementById("welcomeText").textContent="Welcome, "+name+"!";
-document.getElementById("profileFullName").textContent=name;
-document.getElementById("telegramUsername").textContent=user.username?"@"+user.username:"Telegram User";
+    document.getElementById("profileFullName").textContent=name;
+    document.getElementById("telegramUsername").textContent=
+      user.username?"@"+user.username:"Telegram User";
 
-document.getElementById("userDetails").textContent=
-"Name: "+name+
-" | Telegram ID: "+user.id+
-(user.username?" | Username: @"+user.username:"");
-}
+    document.getElementById("userDetails").textContent=
+      "Name: "+name+
+      " | Telegram ID: "+user.id+
+      (user.username?" | Username: @"+user.username:"");
+  }
 }
 
 function hideAllPages(){
-document.getElementById("homePage").style.display="none";
+  document.getElementById("homePage").style.display="none";
 
-document.querySelectorAll(".page").forEach(page=>{
-page.classList.remove("active");
-});
+  document.querySelectorAll(".page").forEach(page=>{
+    page.classList.remove("active");
+  });
 
-document.querySelectorAll(".nav-item").forEach(item=>{
-item.classList.remove("active");
-});
+  document.querySelectorAll(".nav-item").forEach(item=>{
+    item.classList.remove("active");
+  });
 }
 
 function showHome(){
-hideAllPages();
-document.getElementById("homePage").style.display="block";
-document.querySelector('[data-page="home"]').classList.add("active");
-if(tg) tg.HapticFeedback?.selectionChanged();
+  hideAllPages();
+  document.getElementById("homePage").style.display="block";
+  document.querySelector('[data-page="home"]').classList.add("active");
+
+  if(tg) tg.HapticFeedback?.selectionChanged();
 }
 
 function openPage(pageId){
-hideAllPages();
+  hideAllPages();
 
-const page=document.getElementById(pageId);
-if(page) page.classList.add("active");
+  const page=document.getElementById(pageId);
+  if(page) page.classList.add("active");
 
-const nav=document.querySelector('[data-page="'+pageId+'"]');
-if(nav) nav.classList.add("active");
+  const nav=document.querySelector('[data-page="'+pageId+'"]');
+  if(nav) nav.classList.add("active");
 
-if(tg) tg.HapticFeedback?.selectionChanged();
+  if(tg) tg.HapticFeedback?.selectionChanged();
 }
 
 function closePopup(){
-document.getElementById("rewardPopup").classList.remove("show");
+  document.getElementById("rewardPopup").classList.remove("show");
 }
 
 function showVerificationPopup(){
-document.getElementById("popupTitle").textContent=
-currentLanguage==="bn"?"বিজ্ঞাপন সম্পন্ন হয়েছে!":"Ad completed!";
+  document.getElementById("popupTitle").textContent=
+    currentLanguage==="bn"?"বিজ্ঞাপন সম্পন্ন হয়েছে!":"Ad completed!";
 
-document.getElementById("popupMessage").textContent=
-currentLanguage==="bn"?
-"তোমার ৳০.০৫ পুরস্কার সার্ভার যাচাইয়ের অপেক্ষায় আছে। যাচাই সম্পন্ন না হওয়া পর্যন্ত ব্যালেন্সে যোগ হয়েছে বলে দেখানো হবে না।":
-"Your ৳0.05 reward is awaiting server verification. It will not be shown as credited until verification is complete.";
+  document.getElementById("popupMessage").textContent=
+    currentLanguage==="bn"?
+    "তোমার ৳০.০৫ পুরস্কার সার্ভার যাচাইয়ের অপেক্ষায় আছে। যাচাই সম্পন্ন না হওয়া পর্যন্ত ব্যালেন্সে যোগ হয়েছে বলে দেখানো হবে না।":
+    "Your ৳0.05 reward is awaiting server verification. It will not be shown as credited until verification is complete.";
 
-document.getElementById("rewardPopup").classList.add("show");
+  document.getElementById("rewardPopup").classList.add("show");
 }
 
 const watchAdButton=document.getElementById("watchAdButton");
 const adStatus=document.getElementById("adStatus");
 
 watchAdButton.addEventListener("click",async()=>{
-if(!tg||!tg.initData){
-adStatus.textContent=currentLanguage==="bn"?
-"দয়া করে Telegram Bot থেকে EarnNova খুলুন।":
-"Please open EarnNova from the Telegram bot.";
-return;
-}
 
-if(typeof window.show_12287336!=="function"){
-adStatus.textContent=currentLanguage==="bn"?
-"বিজ্ঞাপন SDK প্রস্তুত নয়। কিছুক্ষণ পর আবার চেষ্টা করুন।":
-"Advertisement SDK is not ready. Please try again later.";
-return;
-}
+  if(!tg||!tg.initData){
+    adStatus.textContent=currentLanguage==="bn"?
+      "দয়া করে Telegram Bot থেকে EarnNova খুলুন।":
+      "Please open EarnNova from the Telegram bot.";
+    return;
+  }
 
-watchAdButton.disabled=true;
-adStatus.textContent=currentLanguage==="bn"?
-"বিজ্ঞাপন প্রস্তুত করা হচ্ছে...":
-"Preparing your advertisement...";
+  if(typeof window.show_12287336!=="function"){
+    adStatus.textContent=currentLanguage==="bn"?
+      "বিজ্ঞাপন SDK প্রস্তুত নয়। কিছুক্ষণ পর আবার চেষ্টা করুন।":
+      "Advertisement SDK is not ready. Please try again later.";
+    return;
+  }
 
-try{
-const response=await fetch(BACKEND_URL+"/ad/start",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({initData:tg.initData})
-});
+  watchAdButton.disabled=true;
 
-const data=await response.json();
+  adStatus.textContent=currentLanguage==="bn"?
+    "বিজ্ঞাপন প্রস্তুত করা হচ্ছে...":
+    "Preparing your advertisement...";
 
-if(!response.ok||!data.success||!data.ymid){
-throw new Error(data.error||"Could not start advertisement.");
-}
+  try{
+    const response=await fetch(BACKEND_URL+"/ad/start",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({initData:tg.initData})
+    });
 
-adStatus.textContent=currentLanguage==="bn"?
-"বিজ্ঞাপন শুরু হচ্ছে। সম্পূর্ণ দেখুন।":
-"Advertisement is starting. Please watch it completely.";
+    const data=await response.json();
 
-const result=await window.show_12287336({
-ymid:data.ymid
-});
+    if(!response.ok||!data.success||!data.ymid){
+      throw new Error(data.error||"Could not start advertisement.");
+    }
 
-if(result?.reward_event_type==="valued"){
-adStatus.textContent=currentLanguage==="bn"?
-"বিজ্ঞাপন সম্পন্ন! সার্ভার যাচাই চলছে।":
-"Ad completed! Server verification is pending.";
+    adStatus.textContent=currentLanguage==="bn"?
+      "বিজ্ঞাপন শুরু হচ্ছে। সম্পূর্ণ দেখুন।":
+      "Advertisement is starting. Please watch it completely.";
 
-showVerificationPopup();
+    const result=await window.show_12287336({
+      ymid:data.ymid
+    });
 
-}else{
-adStatus.textContent=currentLanguage==="bn"?
-"বিজ্ঞাপন শেষ হয়েছে, কিন্তু Valued Completion নিশ্চিত হয়নি। কোনো পুরস্কার যোগ করা হয়নি।":
-"Advertisement ended, but no valued completion was confirmed. No reward has been added.";
-}
+    if(result?.reward_event_type==="valued"){
+      adStatus.textContent=currentLanguage==="bn"?
+        "বিজ্ঞাপন সম্পন্ন! সার্ভার যাচাই চলছে।":
+        "Ad completed! Server verification is pending.";
 
-}catch(error){
-console.error("Rewarded ad error:",error);
-adStatus.textContent="Error: "+(error.message||String(error));
+      showVerificationPopup();
 
-}finally{
-watchAdButton.disabled=false;
-}
+    }else{
+      adStatus.textContent=currentLanguage==="bn"?
+        "বিজ্ঞাপন শেষ হয়েছে, কিন্তু Valued Completion নিশ্চিত হয়নি। কোনো পুরস্কার যোগ করা হয়নি।":
+        "Advertisement ended, but no valued completion was confirmed. No reward has been added.";
+    }
+
+  }catch(error){
+    console.error("Rewarded ad error:",error);
+    adStatus.textContent="Error: "+(error.message||String(error));
+
+  }finally{
+    watchAdButton.disabled=false;
+  }
 });
 
 setLanguage("en");
-</script>
-
-</body>
+</script></body>
 </html>
