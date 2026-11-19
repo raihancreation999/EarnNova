@@ -271,6 +271,7 @@ async function startRewardedAd(req, res) {
 }
 
 
+
 // MONETAG POSTBACK
 
 function secretsMatch(received, expected) {
@@ -298,7 +299,19 @@ async function handleMonetagPostback(url, res) {
     const ymid = url.searchParams.get('ymid');
     const telegramId = url.searchParams.get('telegram_id');
     const rewardEventType = url.searchParams.get('reward_event_type');
+    const eventType = url.searchParams.get('event_type');
     const zoneId = url.searchParams.get('zone_id');
+    const estimatedPrice = url.searchParams.get('estimated_price');
+
+    // Log Monetag event and estimated earnings
+    console.log('MONETAG POSTBACK DETAILS:', {
+        ymid,
+        telegram_id: telegramId,
+        event_type: eventType,
+        reward_event_type: rewardEventType,
+        zone_id: zoneId,
+        estimated_price_usd: estimatedPrice
+    });
 
     if (!ymid) {
         return sendText(res, 400, 'Missing ymid');
@@ -311,7 +324,8 @@ async function handleMonetagPostback(url, res) {
     if (rewardEventType !== 'valued') {
         console.log('Non-valued Monetag event ignored:', {
             ymid,
-            rewardEventType
+            rewardEventType,
+            estimatedPrice
         });
 
         return sendText(res, 200, 'Event ignored');
@@ -370,12 +384,12 @@ async function handleMonetagPostback(url, res) {
     console.log('Monetag reward successfully credited:', {
         telegram_id: adRecord.telegram_id,
         ymid,
-        reward: AD_REWARD
+        reward: AD_REWARD,
+        estimated_price_usd: estimatedPrice
     });
 
     return sendText(res, 200, 'Reward credited');
 }
-
 
 // HTTP SERVER
 
