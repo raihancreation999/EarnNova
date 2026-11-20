@@ -218,6 +218,30 @@ historyHeading:"🕒 হিস্ট্রি",historyDescription:"আপনা�
 }
 };
 
+function getActiveTelegramUser(){
+ return tg?.initDataUnsafe?.user || null;
+}
+
+function getLangStorageKey(){
+ const uid = getActiveTelegramUser()?.id;
+ return uid ? `earnnova_lang_${uid}` : "earnnova_lang_guest";
+}
+
+function loadSavedLanguage(){
+ try{
+  const saved = localStorage.getItem(getLangStorageKey());
+  return saved === "bn" || saved === "en" ? saved : "en";
+ }catch(e){
+  return "en";
+ }
+}
+
+function saveLanguage(lang){
+ try{
+  localStorage.setItem(getLangStorageKey(), lang);
+ }catch(e){}
+}
+
 function renderHistory(transactions){
  latestTransactions = Array.isArray(transactions) ? transactions : [];
  const container = document.getElementById("historyContainer");
@@ -244,19 +268,23 @@ function renderHistory(transactions){
  }).join("");
 }
 
-function setLanguage(lang){
- currentLanguage=lang;document.documentElement.lang=lang;
- document.querySelectorAll("[data-i18n]").forEach(el=>{const key=el.dataset.i18n;if(translations[lang][key])el.textContent=translations[lang][key]});
- const label=lang==="en"?"🇧🇩 বাংলা":"🇬🇧 English";
- const profileButton=document.getElementById("profileLanguageButton");
- if(profileButton)profileButton.textContent=label;
+function setLanguage(lang, shouldSave = true){
+ currentLanguage = lang === "bn" ? "bn" : "en";
+ document.documentElement.lang = currentLanguage;
+ document.querySelectorAll("[data-i18n]").forEach(el=>{
+  const key = el.dataset.i18n;
+  if(translations[currentLanguage][key]) el.textContent = translations[currentLanguage][key];
+ });
+ const label = currentLanguage === "en" ? "🇧🇩 বাংলা" : "🇬🇧 English";
+ const profileButton = document.getElementById("profileLanguageButton");
+ if(profileButton) profileButton.textContent = label;
+ if(shouldSave) saveLanguage(currentLanguage);
  renderHistory(latestTransactions);
- if(tg)tg.HapticFeedback?.selectionChanged();
+ if(tg) tg.HapticFeedback?.selectionChanged();
 }
-function toggleLanguage(){setLanguage(currentLanguage==="en"?"bn":"en")}
 
-function getActiveTelegramUser(){
- return tg?.initDataUnsafe?.user || null;
+function toggleLanguage(){
+ setLanguage(currentLanguage === "en" ? "bn" : "en", true);
 }
 
 if(tg){
@@ -270,6 +298,8 @@ if(tg){
  document.getElementById("userDetails").textContent="Name: "+name+" | Telegram ID: "+user.id+(user.username?" | Username: @"+user.username:"");
  }
 }
+
+setLanguage(loadSavedLanguage(), false);
 
 async function loadUserDashboard(){
  const user = getActiveTelegramUser();
