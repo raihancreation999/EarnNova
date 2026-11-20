@@ -234,7 +234,122 @@ function resolveTelegramUser(bodyOrParams, fallbackUserObj) {
 }
 
 
-// USER DASHBOARD (BALANCE, TODAY EARNED, HISTORY)
+// REFERRAL QUALIFICATION & BONUS (1 TASK OR 1 VERIFIED AD)
+
+async function processReferralQualificationIfEligible(referredUserId, triggerSource = 'activity') {
+    const referredId = Number(referredUserId);
+    if (!Number.isSafeInteger(referredId) || referredId <= 0) {
+        return { awarded: false, bonus: 0, referrerId: null };
+    }
+
+    const { data: referral, error: referralLookupError } = await supabase
+        .from('referrals')
+        .select('id, referrer_telegram_id, reward_amount, reward_paid')
+        .eq('referred_telegram_id', referredId)
+        .eq('reward_paid', false)
+        .maybeSingle();
+
+    if (referralLookupError) {
+        console.error('Referral qualification lookup error:', referralLookupError.message);
+        return { awarded: false, bonus: 0, referrerId: null };
+    }
+
+    if (!referral) {
+        return { awarded: false, bonus: 0, referrerId: null };
+    }
+
+    const bonusAmount = Number(referral.reward_amount || REFERRAL_BONUS);
+    const referrerId = Number(referral.referrer_telegram_id);
+
+    // Try existing RPC first if available
+    const { data: rpcBonus, error: rpcError } = await supabase.rpc(
+        'award_referral_bonus',
+        {
+            p_referred_telegram_id: referredId
+        }
+    );
+
+    if (!rpcError && Number(rpcBonus) > 0) {
+        await supabase
+            .from('referrals')
+            .update({ reward_paid: true })
+            .eq('id', referral.id)
+            .eq('reward_paid', false);
+
+        return { awarded: true, bonus: Number(rpcBonus), referrerId };
+    }
+
+    // Fallback safe update when RPC is not defined or returns 0
+    const { data: updatedRef, error: markPaidError } = await supabase
+        .from('referrals')
+        .update({ reward_paid: true })
+        .eq('id', referral.id)
+        .eq('reward_paid', false)
+        .select('id')
+        .maybeSingle();
+
+    if (markPaidError || !updatedRef) {
+        if (markPaidError) {
+            console.error('Referral mark paid error:', markPaidError.message);
+        }
+        return { awarded: false, bonus: 0, referrerId: null };
+    }
+
+    const { data: referrerUser, error: referrerFetchError } = await supabase
+        .from('users')
+        .select('balance')
+        .eq('telegram_id', referrerId)
+        .maybeSingle();
+
+    if (referrerFetchError || !referrerUser) {
+        console.error('Referrer balance fetch error:', referrerFetchError?.message);
+        return { awarded: false, bonus: 0, referrerId: null };
+    }
+
+    const newBalance = Number(referrerUser.balance || 0) + bonusAmount;
+
+    const { error: balanceUpdateError } = await supabase
+        .from('users')
+        .update({ balance: newBalance })
+        .eq('telegram_id', referrerId);
+
+    if (balanceUpdateError) {
+        console.error('Referrer balance update error:', balanceUpdateError.message);
+        return { awarded: false, bonus: 0, referrerId: null };
+    }
+
+    const { error: txInsertError } = await supabase
+        .from('transactions')
+        .insert({
+            telegram_id: referrerId,
+            transaction_type: 'referral_bonus',
+            direction: 'credit',
+            amount: bonusAmount,
+            status: 'completed',
+            description: `Referral bonus (${triggerSource} by #${referredId})`
+        });
+
+    if (txInsertError) {
+        console.error('Referral transaction log error:', txInsertError.message);
+    }
+
+    return { awarded: true, bonus: bonusAmount, referrerId };
+}
+
+async function notifyReferrerAboutBonus(referrerId, bonusAmount) {
+    if (!referrerId || !(Number(bonusAmount) > 0)) return;
+    try {
+        await bot.sendMessage(
+            referrerId,
+            `🎉 অভিনন্দন!\n\nআপনার আমন্ত্রণে যুক্ত হওয়া বন্ধু একটি Task অথবা বিজ্ঞাপন সম্পন্ন করেছে।\n💰 Referral Bonus: ৳${Number(bonusAmount).toFixed(2)}`
+        );
+    } catch (notifyError) {
+        console.error('Referrer notification error:', notifyError.message);
+    }
+}
+
+
+// USER DASHBOARD (BALANCE, TODAY EARNED, HISTORY, REFERRAL STATS)
 
 async function handleGetDashboard(req, res, url) {
     const initData = url.searchParams.get('initData') || '';
@@ -305,6 +420,30 @@ async function handleGetDashboard(req, res, url) {
         }
     }
 
+    const { data: refRows, error: refError } = await supabase
+        .from('referrals')
+        .select('reward_amount, reward_paid')
+        .eq('referrer_telegram_id', telegramId);
+
+    let totalReferrals = 0;
+    let validReferrals = 0;
+    let pendingReferrals = 0;
+    let referralEarnings = 0;
+
+    if (!refError && Array.isArray(refRows)) {
+        totalReferrals = refRows.length;
+        for (const r of refRows) {
+            if (r.reward_paid === true) {
+                validReferrals += 1;
+                referralEarnings += Number(r.reward_amount || REFERRAL_BONUS);
+            } else {
+                pendingReferrals += 1;
+            }
+        }
+    } else if (refError) {
+        console.error('Dashboard referral stats query error:', refError.message);
+    }
+
     const balance = Number(userRow?.balance || 0);
 
     return sendJson(req, res, 200, {
@@ -313,6 +452,12 @@ async function handleGetDashboard(req, res, url) {
         balance,
         todayEarned,
         referralCode: userRow?.referral_code || null,
+        referralStats: {
+            totalReferrals,
+            validReferrals,
+            pendingReferrals,
+            referralEarnings
+        },
         transactions: txRows
     });
 }
@@ -499,6 +644,12 @@ async function handleMonetagPostback(url, res) {
         reward: AD_REWARD,
         estimated_price_usd: estimatedPrice
     });
+
+    // Qualify referral if this user was invited and completed 1 verified ad
+    const refOutcome = await processReferralQualificationIfEligible(adRecord.telegram_id, 'ad');
+    if (refOutcome.awarded) {
+        await notifyReferrerAboutBonus(refOutcome.referrerId, refOutcome.bonus);
+    }
 
     return sendText(res, 200, 'Reward credited');
 }
@@ -985,38 +1136,11 @@ bot.on('message', async (msg) => {
         }
 
         let referralMessage = '';
+        const refOutcome = await processReferralQualificationIfEligible(userId, 'task');
 
-        const { data: referral, error: referralLookupError } = await supabase
-            .from('referrals')
-            .select('referrer_telegram_id')
-            .eq('referred_telegram_id', userId)
-            .eq('reward_paid', false)
-            .maybeSingle();
-
-        if (referralLookupError) {
-            console.error('Referral lookup error:', referralLookupError.message);
-        } else if (referral) {
-            const { data: bonus, error: bonusError } = await supabase.rpc(
-                'award_referral_bonus',
-                {
-                    p_referred_telegram_id: userId
-                }
-            );
-
-            if (bonusError) {
-                console.error('Referral bonus error:', bonusError.message);
-            } else if (Number(bonus) > 0) {
-                referralMessage = '\n\n👥 আপনার আমন্ত্রণে একজন বন্ধু প্রথম Task সম্পন্ন করেছে। রেফারকারীকে ১ টাকা বোনাস দেওয়া হয়েছে।';
-
-                try {
-                    await bot.sendMessage(
-                        referral.referrer_telegram_id,
-                        `🎉 অভিনন্দন!\n\nআপনার আমন্ত্রণে একজন বন্ধু প্রথম Task সম্পন্ন করেছে।\n💰 Referral Bonus: ৳${Number(bonus).toFixed(2)}`
-                    );
-                } catch (notifyError) {
-                    console.error('Referrer notification error:', notifyError.message);
-                }
-            }
+        if (refOutcome.awarded && Number(refOutcome.bonus) > 0) {
+            referralMessage = `\n\n👥 আপনার আমন্ত্রণে যুক্ত হওয়া বন্ধু প্রথম Task/Ad সম্পন্ন করেছে। রেফারকারীকে ৳${Number(refOutcome.bonus).toFixed(2)} বোনাস দেওয়া হয়েছে।`;
+            await notifyReferrerAboutBonus(refOutcome.referrerId, refOutcome.bonus);
         }
 
         return bot.sendMessage(
@@ -1096,7 +1220,7 @@ bot.on('message', async (msg) => {
 
 ${referralLink}
 
-🎁 আপনার লিংক দিয়ে বন্ধু যোগ দিয়ে প্রথম Task সম্পন্ন করলে আপনি পাবেন ৳1.00।
+🎁 আপনার লিংক দিয়ে বন্ধু যোগ দিয়ে ১টি Task অথবা ১টি বিজ্ঞাপন সম্পন্ন করলে আপনি পাবেন ৳1.00।
 
 👤 মোট আমন্ত্রিত বন্ধু: ${totalCount || 0}
 
@@ -1110,7 +1234,7 @@ ${referralLink}
                 inline_keyboard: [[
                     {
                         text: '📤 Referral Link শেয়ার করুন',
-                        url: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent('EarnNova-তে যোগ দিন এবং Task সম্পন্ন করে Reward অর্জন করুন!')}`
+                        url: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent('EarnNova-তে যোগ দিন এবং Task বা বিজ্ঞাপন দেখে Reward অর্জন করুন!')}`
                     }
                 ]]
             }
