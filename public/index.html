@@ -221,6 +221,7 @@ function setLanguage(lang){
 function toggleLanguage(){setLanguage(currentLanguage==="en"?"bn":"en")}
 if(tg){
  tg.ready();tg.expand();
+ tg.requestFullscreen?.();
  const user=tg.initDataUnsafe?.user;
  if(user){
  const name=user.first_name||"User";
@@ -233,6 +234,7 @@ function hideAllPages(){
  document.getElementById("homePage").style.display="none";
  document.querySelectorAll(".page").forEach(page=>page.classList.remove("active"));
  document.querySelectorAll(".nav-item").forEach(item=>item.classList.remove("active"));
+ window.scrollTo(0,0);
 }
 function showHome(){
  hideAllPages();document.getElementById("homePage").style.display="block";
@@ -253,23 +255,45 @@ function showVerificationPopup(){
 const watchAdButton=document.getElementById("watchAdButton");
 const adStatus=document.getElementById("adStatus");
 watchAdButton.addEventListener("click",async()=>{
- if(!tg||!tg.initData){adStatus.textContent=currentLanguage==="bn"?"দয়া করে Telegram Bot থেকে EarnNova খুলুন।":"Please open EarnNova from the Telegram bot.";return}
- if(typeof window.show_12287336!=="function"){adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন SDK প্রস্তুত নয়। কিছুক্ষণ পর আবার চেষ্টা করুন।":"Advertisement SDK is not ready. Please try again later.";return}
+ if(!tg){adStatus.textContent=currentLanguage==="bn"?"দয়া করে Telegram থেকে EarnNova খুলুন।":"Please open EarnNova from Telegram.";return}
+ const unsafeUser=tg.initDataUnsafe?.user||null;
+ if(!tg.initData && !unsafeUser){
+  adStatus.textContent=currentLanguage==="bn"?"Telegram ইউজার তথ্য পাওয়া যায়নি। বট থেকে পুনরায় খুলুন।":"Telegram user data not found. Please reopen from the bot.";
+  return;
+ }
+ if(typeof window.show_12287336!=="function"){
+  adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন SDK প্রস্তুত নয়। কিছুক্ষণ পর আবার চেষ্টা করুন।":"Advertisement SDK is not ready. Please try again later.";
+  return;
+ }
  watchAdButton.disabled=true;
  adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন প্রস্তুত করা হচ্ছে...":"Preparing your advertisement...";
  try{
- const response=await fetch(BACKEND_URL+"/ad/start",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg.initData})});
+ const payload={
+  initData: tg.initData || "",
+  user: unsafeUser,
+  source: tg.initData ? "bot_webview" : "chat_list_open"
+ };
+ const response=await fetch(BACKEND_URL+"/ad/start",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify(payload)
+ });
  const data=await response.json();
  if(!response.ok||!data.success||!data.ymid)throw new Error(data.error||"Could not start advertisement.");
  adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন শুরু হচ্ছে। সম্পূর্ণ দেখুন।":"Advertisement is starting. Please watch it completely.";
  const result=await window.show_12287336({ymid:data.ymid});
  if(result?.reward_event_type==="valued"){
- adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন সম্পন্ন! সার্ভার যাচাই চলছে।":"Ad completed! Server verification is pending.";showVerificationPopup();
+  adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন সম্পন্ন! সার্ভার যাচাই চলছে।":"Ad completed! Server verification is pending.";
+  showVerificationPopup();
  }else{
- adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন শেষ হয়েছে, কিন্তু Valued Completion নিশ্চিত হয়নি। কোনো পুরস্কার যোগ করা হয়নি।":"Advertisement ended, but no valued completion was confirmed. No reward has been added.";
+  adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন শেষ হয়েছে, কিন্তু Valued Completion নিশ্চিত হয়নি। কোনো পুরস্কার যোগ করা হয়নি।":"Advertisement ended, but no valued completion was confirmed. No reward has been added.";
  }
- }catch(error){console.error("Rewarded ad error:",error);adStatus.textContent="Error: "+(error.message||String(error))}
- finally{watchAdButton.disabled=false}
+ }catch(error){
+ console.error("Rewarded ad error:",error);
+ adStatus.textContent="Error: "+(error.message||String(error));
+ }finally{
+ watchAdButton.disabled=false;
+ }
 });
 </script>
 </body>
