@@ -211,6 +211,113 @@ function verifyTelegramInitData(initData) {
     }
 }
 
+function resolveTelegramUser(bodyOrParams, fallbackUserObj) {
+    const initData = bodyOrParams?.initData;
+    let telegramUser = verifyTelegramInitData(initData);
+
+    const candidateUser = fallbackUserObj || bodyOrParams?.user;
+    if (!telegramUser && candidateUser && Number.isSafeInteger(Number(candidateUser.id))) {
+        telegramUser = {
+            id: Number(candidateUser.id),
+            username: candidateUser.username || null,
+            first_name: candidateUser.first_name || null
+        };
+    }
+
+    if (!telegramUser && bodyOrParams?.telegram_id && Number.isSafeInteger(Number(bodyOrParams.telegram_id))) {
+        telegramUser = {
+            id: Number(bodyOrParams.telegram_id)
+        };
+    }
+
+    return telegramUser;
+}
+
+
+// USER DASHBOARD (BALANCE, TODAY EARNED, HISTORY)
+
+async function handleGetDashboard(req, res, url) {
+    const initData = url.searchParams.get('initData') || '';
+    const rawUser = url.searchParams.get('user');
+    const rawTelegramId = url.searchParams.get('telegram_id');
+
+    let parsedUser = null;
+    if (rawUser) {
+        try {
+            parsedUser = JSON.parse(rawUser);
+        } catch (e) {
+            parsedUser = null;
+        }
+    }
+
+    const telegramUser = resolveTelegramUser(
+        { initData, telegram_id: rawTelegramId },
+        parsedUser
+    );
+
+    if (!telegramUser) {
+        return sendJson(req, res, 401, {
+            success: false,
+            error: 'Telegram user could not be identified'
+        });
+    }
+
+    const telegramId = Number(telegramUser.id);
+
+    const { data: userRow, error: userError } = await supabase
+        .from('users')
+        .select('balance, referral_code')
+        .eq('telegram_id', telegramId)
+        .maybeSingle();
+
+    if (userError) {
+        console.error('Dashboard user query error:', userError.message);
+        return sendJson(req, res, 500, {
+            success: false,
+            error: 'Failed to load user balance'
+        });
+    }
+
+    const { data: txRows, error: txError } = await supabase
+        .from('transactions')
+        .select('transaction_type, direction, amount, status, description, created_at')
+        .eq('telegram_id', telegramId)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+    if (txError) {
+        console.error('Dashboard transactions query error:', txError.message);
+        return sendJson(req, res, 500, {
+            success: false,
+            error: 'Failed to load transactions'
+        });
+    }
+
+    const now = new Date();
+    const startOfTodayUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+
+    let todayEarned = 0;
+    for (const tx of (txRows || [])) {
+        if (tx.direction === 'credit' && tx.status !== 'failed' && tx.created_at) {
+            const txDate = new Date(tx.created_at);
+            if (txDate >= startOfTodayUtc) {
+                todayEarned += Number(tx.amount || 0);
+            }
+        }
+    }
+
+    const balance = Number(userRow?.balance || 0);
+
+    return sendJson(req, res, 200, {
+        success: true,
+        telegram_id: telegramId,
+        balance,
+        todayEarned,
+        referralCode: userRow?.referral_code || null,
+        transactions: txRows || []
+    });
+}
+
 
 // CREATE PENDING AD RECORD
 
@@ -230,17 +337,7 @@ async function startRewardedAd(req, res) {
         });
     }
 
-    let telegramUser = verifyTelegramInitData(body.initData);
-
-    // Fallback for direct Chat List "Open" button when initData is empty
-    if (!telegramUser && body.user && Number.isSafeInteger(Number(body.user.id))) {
-        console.log('Using fallback user from chat_list_open:', body.user.id);
-        telegramUser = {
-            id: Number(body.user.id),
-            username: body.user.username || null,
-            first_name: body.user.first_name || null
-        };
-    }
+    const telegramUser = resolveTelegramUser(body, body.user);
 
     if (!telegramUser) {
         console.error('Telegram verification failed and no valid fallback user found');
@@ -427,6 +524,18 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === 'GET' && url.pathname === '/') {
         return sendText(res, 200, 'EarnNova Bot is running!');
+    }
+
+    if (req.method === 'GET' && url.pathname === '/user/dashboard') {
+        try {
+            return await handleGetDashboard(req, res, url);
+        } catch (error) {
+            console.error('Dashboard error:', error.message);
+            return sendJson(req, res, 500, {
+                success: false,
+                error: 'Server error'
+            });
+        }
     }
 
     if (req.method === 'POST' && url.pathname === '/ad/start') {
