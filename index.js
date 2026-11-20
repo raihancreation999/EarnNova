@@ -41,7 +41,10 @@ const MONETAG_ZONE_ID = '12287336';
 const MONETAG_AD_ID = 1;
 const AD_REWARD = 0.05;
 
-const MINI_APP_ORIGIN = 'https://earnnova-1.onrender.com';
+const ALLOWED_ORIGINS = [
+    'https://raihancreation999.github.io',
+    'https://earnnova-1.onrender.com'
+];
 
 const adminStates = new Map();
 const userStates = new Map();
@@ -51,15 +54,20 @@ const PORT = process.env.PORT || 3000;
 
 // HTTP HELPERS
 
-function setCorsHeaders(res) {
-    res.setHeader('Access-Control-Allow-Origin', MINI_APP_ORIGIN);
+function setCorsHeaders(req, res) {
+    const origin = req?.headers?.origin;
+    if (origin && ALLOWED_ORIGINS.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    } else {
+        res.setHeader('Access-Control-Allow-Origin', 'https://raihancreation999.github.io');
+    }
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('Vary', 'Origin');
 }
 
-function sendJson(res, status, data) {
-    setCorsHeaders(res);
+function sendJson(req, res, status, data) {
+    setCorsHeaders(req, res);
     res.writeHead(status, {
         'Content-Type': 'application/json'
     });
@@ -156,16 +164,15 @@ function verifyTelegramInitData(initData) {
             .join('\n');
 
         // Telegram official HMAC validation
+        const secretKey = crypto
+            .createHmac('sha256', 'WebAppData')
+            .update(token)
+            .digest();
 
-const secretKey = crypto
-    .createHmac('sha256', 'WebAppData')
-    .update(token)
-    .digest();
-
-const calculatedHash = crypto
-    .createHmac('sha256', secretKey)
-    .update(dataCheckString)
-    .digest();
+        const calculatedHash = crypto
+            .createHmac('sha256', secretKey)
+            .update(dataCheckString)
+            .digest();
 
         const receivedBuffer = Buffer.from(receivedHash, 'hex');
 
@@ -217,20 +224,30 @@ async function startRewardedAd(req, res) {
     } catch (error) {
         console.error('Request body error:', error.message);
 
-        return sendJson(res, 400, {
+        return sendJson(req, res, 400, {
             success: false,
-            message: 'Invalid request body'
+            error: 'Invalid request body'
         });
     }
 
-    const telegramUser = verifyTelegramInitData(body.initData);
+    let telegramUser = verifyTelegramInitData(body.initData);
+
+    // Fallback for direct Chat List "Open" button when initData is empty
+    if (!telegramUser && body.user && Number.isSafeInteger(Number(body.user.id))) {
+        console.log('Using fallback user from chat_list_open:', body.user.id);
+        telegramUser = {
+            id: Number(body.user.id),
+            username: body.user.username || null,
+            first_name: body.user.first_name || null
+        };
+    }
 
     if (!telegramUser) {
-        console.error('Telegram verification failed');
+        console.error('Telegram verification failed and no valid fallback user found');
 
-        return sendJson(res, 401, {
+        return sendJson(req, res, 401, {
             success: false,
-            message: 'Telegram verification failed'
+            error: 'Telegram verification failed'
         });
     }
 
@@ -251,9 +268,9 @@ async function startRewardedAd(req, res) {
     if (error || !data) {
         console.error('Ad start database error:', error?.message);
 
-        return sendJson(res, 500, {
+        return sendJson(req, res, 500, {
             success: false,
-            message: 'Could not start advertisement'
+            error: 'Could not start advertisement'
         });
     }
 
@@ -262,7 +279,7 @@ async function startRewardedAd(req, res) {
         verification_id: verificationId
     });
 
-    return sendJson(res, 200, {
+    return sendJson(req, res, 200, {
         success: true,
         ymid: data.verification_id,
         zone_id: MONETAG_ZONE_ID,
@@ -303,7 +320,6 @@ async function handleMonetagPostback(url, res) {
     const zoneId = url.searchParams.get('zone_id');
     const estimatedPrice = url.searchParams.get('estimated_price');
 
-    // Log Monetag event and estimated earnings
     console.log('MONETAG POSTBACK DETAILS:', {
         ymid,
         telegram_id: telegramId,
@@ -404,7 +420,7 @@ const server = http.createServer(async (req, res) => {
     });
 
     if (req.method === 'OPTIONS') {
-        setCorsHeaders(res);
+        setCorsHeaders(req, res);
         res.writeHead(204);
         return res.end();
     }
@@ -419,9 +435,9 @@ const server = http.createServer(async (req, res) => {
         } catch (error) {
             console.error('Ad start error:', error.message);
 
-            return sendJson(res, 500, {
+            return sendJson(req, res, 500, {
                 success: false,
-                message: 'Server error'
+                error: 'Server error'
             });
         }
     }
@@ -440,7 +456,7 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
     console.log(`EarnNova server running on port ${PORT}`);
-    console.log('Mini App allowed origin:', MINI_APP_ORIGIN);
+    console.log('Mini App allowed origins:', ALLOWED_ORIGINS);
 });
 
 
