@@ -278,7 +278,8 @@ async function handleGetDashboard(req, res, url) {
         });
     }
 
-    const { data: txRows, error: txError } = await supabase
+    let txRows = [];
+    const { data: queriedTx, error: txError } = await supabase
         .from('transactions')
         .select('transaction_type, direction, amount, status, description, created_at')
         .eq('telegram_id', telegramId)
@@ -287,17 +288,15 @@ async function handleGetDashboard(req, res, url) {
 
     if (txError) {
         console.error('Dashboard transactions query error:', txError.message);
-        return sendJson(req, res, 500, {
-            success: false,
-            error: 'Failed to load transactions'
-        });
+    } else {
+        txRows = queriedTx || [];
     }
 
     const now = new Date();
     const startOfTodayUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
     let todayEarned = 0;
-    for (const tx of (txRows || [])) {
+    for (const tx of txRows) {
         if (tx.direction === 'credit' && tx.status !== 'failed' && tx.created_at) {
             const txDate = new Date(tx.created_at);
             if (txDate >= startOfTodayUtc) {
@@ -314,7 +313,7 @@ async function handleGetDashboard(req, res, url) {
         balance,
         todayEarned,
         referralCode: userRow?.referral_code || null,
-        transactions: txRows || []
+        transactions: txRows
     });
 }
 
