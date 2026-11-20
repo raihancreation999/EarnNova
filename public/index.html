@@ -70,7 +70,7 @@ button{font-family:inherit;cursor:pointer}
 .page{display:none;animation:fade .18s ease}
 .page.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.page-heading{font-size:22px;margin:8px 0 7px}
+.page-heading{font-size:22px;margin:8px 0 7px;font-weight:800}
 .page-description{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px}
 .panel{background:linear-gradient(145deg,#102B3D,#0C2334);border:1px solid var(--border);border-radius:19px;padding:18px;margin-bottom:14px}
 .panel h3{font-size:16px;margin-bottom:9px}
@@ -78,11 +78,32 @@ button{font-family:inherit;cursor:pointer}
 .input-box{width:100%;padding:12px;background:#071B29;border:1px solid var(--border);color:var(--text);border-radius:11px;margin-top:11px;outline:none;font-size:12px}
 .primary-btn{border:0;background:linear-gradient(135deg,var(--teal),var(--green));color:#06251D;font-weight:800;padding:12px 14px;border-radius:12px;margin-top:14px;width:100%;font-size:13px}
 .primary-btn:disabled{opacity:.5;cursor:not-allowed}
-.ad-box{text-align:center;background:linear-gradient(145deg,#102B3D,#0C2334);border:1px solid var(--border);border-radius:21px;padding:26px 17px}
-.ad-icon{font-size:43px;margin-bottom:13px}
-.ad-box h3{font-size:19px;margin-bottom:8px}
-.ad-box p{color:var(--muted);font-size:13px;line-height:1.7}
-#adStatus{margin-top:14px;color:var(--teal);font-size:12px;overflow-wrap:anywhere;line-height:1.6}
+
+/* Upgraded Ads UI */
+.ads-card{position:relative;overflow:hidden;background:linear-gradient(160deg,#0C2236,#071B2B);border:1px solid #173B50;border-radius:25px;padding:19px 15px 20px;box-shadow:0 12px 28px rgba(0,0,0,.18)}
+.ads-card:before{content:"";position:absolute;width:230px;height:230px;border-radius:50%;background:#00D7A0;opacity:.04;filter:blur(32px);top:-90px;right:-70px}
+.ring-wrap{display:flex;justify-content:center;margin:4px auto 18px}
+.ring{width:210px;height:210px;position:relative;display:grid;place-items:center}
+.ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.track{fill:none;stroke:#18374B;stroke-width:12}
+.progress{fill:none;stroke:url(#adRingGrad);stroke-width:12;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440;transition:stroke-dashoffset .6s}
+.ring-center{text-align:center;position:relative;z-index:1}
+.play{font-size:36px;color:#68D8E9;margin-bottom:7px}
+.count{font-size:32px;font-weight:800;letter-spacing:-.7px}
+.count .total{color:#71899D}
+.count-label{color:#A7BBCB;font-size:14px;margin-top:5px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:17px 0 22px}
+.stat{min-height:103px;border-radius:19px;background:linear-gradient(145deg,#132C42,#102638);border:1px solid #1C4054;padding:13px 10px;display:flex;align-items:center;gap:10px}
+.stat-icon{font-size:29px;flex-shrink:0}
+.stat-label{color:#A8BDCE;font-size:12px;margin-bottom:6px}
+.stat-value{font-size:21px;font-weight:800;color:#69AFFF;white-space:nowrap}
+.stat-value.gold{color:#FFE05B}
+.watch{width:100%;min-height:64px;border:none;border-radius:36px;color:#03271D;background:linear-gradient(110deg,#00C98D,#16E3A3);font-size:17px;font-weight:800;box-shadow:0 8px 24px rgba(0,215,154,.16);cursor:pointer;transition:transform .15s;padding:12px 16px}
+.watch:active{transform:scale(.97)}
+.watch:disabled{opacity:.6;cursor:not-allowed}
+#adStatus{text-align:center;margin-top:15px;min-height:40px;font-size:12px;line-height:1.7;color:#7DE6C4;overflow-wrap:anywhere}
+.ads-info{text-align:center;margin-top:12px;font-size:11px;line-height:1.7;color:#7F99AE}
+
 .profile-avatar{width:65px;height:65px;background:linear-gradient(135deg,var(--teal),var(--green));color:#06251D;display:grid;place-items:center;border-radius:50%;font-size:27px;margin-bottom:12px}
 .profile-name{font-size:17px;margin-bottom:5px}
 .profile-sub{font-size:12px;color:var(--muted)}
@@ -108,17 +129,18 @@ button{font-family:inherit;cursor:pointer}
 /* popup */
 .popup{display:none;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.75);align-items:center;justify-content:center;padding:20px}
 .popup.show{display:flex}
-.popup-box{width:100%;max-width:320px;background:var(--panel);border:1px solid var(--border);border-radius:21px;padding:24px 18px;text-align:center}
-.popup-icon{font-size:40px;margin-bottom:12px}
-.popup-box h2{font-size:18px;margin-bottom:9px}
-.popup-box p{font-size:12px;color:var(--muted);line-height:1.7}
-.popup-box button{margin-top:15px}
+.popup-box{width:100%;max-width:340px;background:linear-gradient(160deg,#F8FCFF,#E9F3FA);color:#0A2032;border:1px solid rgba(255,255,255,.7);border-radius:27px;padding:26px 20px 22px;text-align:center;position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.55)}
+.popup-icon{font-size:42px;margin-bottom:10px}
+.popup-box h2{font-size:19px;margin-bottom:9px;color:#0A2032}
+.popup-box p{font-size:12px;color:#3E586C;line-height:1.7}
+.popup-box .primary-btn{margin-top:16px}
 @media(max-width:360px){
  .container{padding-left:13px;padding-right:13px}
  .balance{font-size:31px}.wallet-icon{font-size:39px}
  .quick-card{min-height:137px}.quick-card h3{font-size:16px}
  .invite-text h3{font-size:18px}.invite-text strong{font-size:18px}
  .logo{font-size:24px}.logo-mark{width:34px;height:34px}
+ .stat-value{font-size:18px}
 }
 </style>
 </head>
@@ -157,10 +179,50 @@ button{font-family:inherit;cursor:pointer}
 </section>
 
 <section class="page" id="ads">
-<h2 class="page-heading" data-i18n="adsHeading">📺 Watch Ads</h2><p class="page-description" data-i18n="adsDescription">Watch a rewarded advertisement and earn after server verification.</p>
-<div class="ad-box"><div class="ad-icon">🎬</div><h3 data-i18n="rewardedAd">Rewarded Advertisement</h3><p data-i18n="rewardPerAd">Reward per valued ad: ৳0.05</p>
-<button class="primary-btn" id="watchAdButton" type="button" data-i18n="watchEarn">▶ Watch Ad & Earn ৳0.05</button>
-<p id="adStatus" aria-live="polite" data-i18n="pressWatch">Press the button to start an advertisement.</p></div>
+<h2 class="page-heading" data-i18n="adsHeading">📺 Watch Ads</h2>
+<p class="page-description" data-i18n="adsDescription">Watch a rewarded advertisement and earn after server verification.</p>
+<div class="ads-card">
+ <div class="ring-wrap">
+  <div class="ring">
+   <svg viewBox="0 0 160 160" aria-hidden="true">
+    <defs>
+     <linearGradient id="adRingGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00D7A0"/>
+      <stop offset="100%" stop-color="#35E7A8"/>
+     </linearGradient>
+    </defs>
+    <circle class="track" cx="80" cy="80" r="70"/>
+    <circle class="progress" id="adProgressRing" cx="80" cy="80" r="70"/>
+   </svg>
+   <div class="ring-center">
+    <div class="play">▶</div>
+    <div class="count"><span id="adCountValue">0</span><span class="total">/20</span></div>
+    <div class="count-label" data-i18n="todaysAds">Today's Ads</div>
+   </div>
+  </div>
+ </div>
+
+ <div class="stats">
+  <div class="stat">
+   <div class="stat-icon">🛡️</div>
+   <div>
+    <div class="stat-label" data-i18n="dailyLimit">Daily Limit</div>
+    <div class="stat-value">20 Ads</div>
+   </div>
+  </div>
+  <div class="stat">
+   <div class="stat-icon">💰</div>
+   <div>
+    <div class="stat-label" data-i18n="todayEarnedShort">Today Earned</div>
+    <div class="stat-value gold" id="adsTabEarnings">৳0.00</div>
+   </div>
+  </div>
+ </div>
+
+ <button class="watch" id="watchAdButton" type="button" data-i18n="watchEarn">▶ Watch Ad & Earn ৳0.05</button>
+ <p id="adStatus" aria-live="polite" data-i18n="pressWatch">Press the button to start an advertisement.</p>
+ <p class="ads-info" data-i18n="rewardPerAd">Reward per valued ad: ৳0.05</p>
+</div>
 </section>
 
 <section class="page" id="referral">
@@ -190,18 +252,24 @@ button{font-family:inherit;cursor:pointer}
 <button class="nav-item" onclick="openPage('profile')" data-page="profile"><span><svg class="icon-svg nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2z"/></svg></span><span data-i18n="profileShort">Profile</span></button>
 </nav>
 
-<div class="popup" id="rewardPopup"><div class="popup-box"><div class="popup-icon">⏳</div><h2 id="popupTitle">Ad completed!</h2><p id="popupMessage">Your reward is awaiting server verification.</p><button class="primary-btn" onclick="closePopup()" data-i18n="continue">Continue</button></div></div>
+<div class="popup" id="rewardPopup"><div class="popup-box"><div class="popup-icon">🎉</div><h2 id="popupTitle">Ad completed!</h2><p id="popupMessage">Your reward is awaiting server verification.</p><button class="primary-btn" onclick="closePopup()" data-i18n="continue">Continue</button></div></div>
 
 <script>
 const tg = window.Telegram?.WebApp;
 const BACKEND_URL = "https://earnnova-peg0.onrender.com";
 const BOT_USERNAME = "EarnNova_BD_bot";
+const DAILY_AD_LIMIT = 20;
+const AD_REWARD_AMOUNT = 0.05;
+const RING_CIRCUMFERENCE = 440;
+
 let currentLanguage = "en";
 let latestTransactions = [];
+let currentTodayEarned = 0;
+let currentTodayAdsCount = 0;
 
 const translations = {
 en:{
-totalBalance:"Total Balance",todayEarned:"Today Earned:",quickAccess:"Quick Access",watchAds:"Watch Ads",tasks:"Tasks",earnMore:"Earn More",referral:"Referral",inviteEarn:"Invite & Earn",history:"History",viewDetails:"View Details",inviteFriends:"Invite Friends",successfulSignup:"per successful signup!",
+totalBalance:"Total Balance",todayEarned:"Today Earned:",todayEarnedShort:"Today Earned",dailyLimit:"Daily Limit",todaysAds:"Today's Ads",quickAccess:"Quick Access",watchAds:"Watch Ads",tasks:"Tasks",earnMore:"Earn More",referral:"Referral",inviteEarn:"Invite & Earn",history:"History",viewDetails:"View Details",inviteFriends:"Invite Friends",successfulSignup:"per successful signup!",
 tasksHeading:"📋 Daily Tasks",tasksDescription:"Complete available activities to earn rewards.",tasksPending:"Daily tasks will appear here after backend integration.",
 adsHeading:"📺 Watch Ads",adsDescription:"Watch a rewarded advertisement and earn after server verification.",rewardedAd:"Rewarded Advertisement",rewardPerAd:"Reward per valued ad: ৳0.05",watchEarn:"▶ Watch Ad & Earn ৳0.05",pressWatch:"Press the button to start an advertisement.",
 referralHeading:"👥 Referral Program",referralDescription:"Invite your friends to EarnNova.",yourReferral:"🎁 Your Referral Link",referralPending:"Your personal referral link will appear here after backend integration.",copyLink:"Copy Referral Link",referralStats:"Referral Statistics",referralStatsPending:"Referral count and earnings will appear after backend integration.",
@@ -209,7 +277,7 @@ profileHeading:"👤 My Profile",accountInfo:"Account Information",settings:"⚙
 historyHeading:"🕒 History",historyDescription:"Your earning activity will appear here.",historyPending:"Transaction history is not available yet."
 },
 bn:{
-totalBalance:"মোট ব্যালেন্স",todayEarned:"আজকের আয়:",quickAccess:"দ্রুত প্রবেশ",watchAds:"বিজ্ঞাপন দেখুন",tasks:"কাজ",earnMore:"আরও আয় করুন",referral:"রেফারেল",inviteEarn:"বন্ধু আনুন ও আয় করুন",history:"হিস্ট্রি",viewDetails:"বিস্তারিত দেখুন",inviteFriends:"বন্ধুদের আমন্ত্রণ জানান",successfulSignup:"প্রতিটি সফল সাইনআপে!",
+totalBalance:"মোট ব্যালেন্স",todayEarned:"আজকের আয়:",todayEarnedShort:"আজকের আয়",dailyLimit:"দৈনিক সীমা",todaysAds:"আজকের বিজ্ঞাপন",quickAccess:"দ্রুত প্রবেশ",watchAds:"বিজ্ঞাপন দেখুন",tasks:"কাজ",earnMore:"আরও আয় করুন",referral:"রেফারেল",inviteEarn:"বন্ধু আনুন ও আয় করুন",history:"হিস্ট্রি",viewDetails:"বিস্তারিত দেখুন",inviteFriends:"বন্ধুদের আমন্ত্রণ জানান",successfulSignup:"প্রতিটি সফল সাইনআপে!",
 tasksHeading:"📋 দৈনিক কাজ",tasksDescription:"পুরস্কার পেতে উপলব্ধ কাজ সম্পন্ন করুন।",tasksPending:"Backend যুক্ত হলে দৈনিক কাজ এখানে দেখা যাবে।",
 adsHeading:"📺 বিজ্ঞাপন দেখুন",adsDescription:"বিজ্ঞাপন সম্পূর্ণ করে সার্ভার যাচাইয়ের পর পুরস্কার পান।",rewardedAd:"পুরস্কারযুক্ত বিজ্ঞাপন",rewardPerAd:"প্রতিটি Valued বিজ্ঞাপনে ৳০.০৫",watchEarn:"▶ বিজ্ঞাপন দেখুন ও ৳০.০৫ পান",pressWatch:"বিজ্ঞাপন শুরু করতে বাটনে চাপ দিন।",
 referralHeading:"👥 রেফারেল প্রোগ্রাম",referralDescription:"বন্ধুদের EarnNova-তে আমন্ত্রণ জানান।",yourReferral:"🎁 আপনার রেফারেল লিংক",referralPending:"Backend যুক্ত হলে আপনার ব্যক্তিগত রেফারেল লিংক দেখা যাবে।",copyLink:"রেফারেল লিংক কপি",referralStats:"রেফারেল পরিসংখ্যান",referralStatsPending:"রেফারেল সংখ্যা ও আয়ের হিসাব Backend যুক্ত হলে দেখা যাবে।",
@@ -240,6 +308,45 @@ function saveLanguage(lang){
  try{
   localStorage.setItem(getLangStorageKey(), lang);
  }catch(e){}
+}
+
+function updateAdsUI(todayEarned, transactions){
+ currentTodayEarned = Number(todayEarned || 0);
+ const adsTabEarnings = document.getElementById("adsTabEarnings");
+ if(adsTabEarnings){
+  adsTabEarnings.textContent = "৳" + currentTodayEarned.toFixed(2);
+ }
+
+ const now = new Date();
+ const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+ let todayAdsCount = 0;
+
+ if(Array.isArray(transactions)){
+  for(const tx of transactions){
+   if(tx.direction === "credit" && tx.status !== "failed" && tx.created_at){
+    const txDate = new Date(tx.created_at);
+    if(txDate >= startOfToday){
+     const desc = String(tx.description || tx.transaction_type || "").toLowerCase();
+     if(desc.includes("ad") || Number(tx.amount) === AD_REWARD_AMOUNT){
+      todayAdsCount += 1;
+     }
+    }
+   }
+  }
+ }
+
+ if(todayAdsCount === 0 && currentTodayEarned > 0){
+  todayAdsCount = Math.min(DAILY_AD_LIMIT, Math.round(currentTodayEarned / AD_REWARD_AMOUNT));
+ }
+
+ currentTodayAdsCount = Math.min(DAILY_AD_LIMIT, todayAdsCount);
+ const countEl = document.getElementById("adCountValue");
+ const ringEl = document.getElementById("adProgressRing");
+ if(countEl) countEl.textContent = String(currentTodayAdsCount);
+ if(ringEl){
+  const ratio = Math.min(1, currentTodayAdsCount / DAILY_AD_LIMIT);
+  ringEl.style.strokeDashoffset = String(RING_CIRCUMFERENCE * (1 - ratio));
+ }
 }
 
 function renderHistory(transactions){
@@ -280,6 +387,7 @@ function setLanguage(lang, shouldSave = true){
  if(profileButton) profileButton.textContent = label;
  if(shouldSave) saveLanguage(currentLanguage);
  renderHistory(latestTransactions);
+ updateAdsUI(currentTodayEarned, latestTransactions);
  if(tg) tg.HapticFeedback?.selectionChanged();
 }
 
@@ -328,6 +436,7 @@ async function loadUserDashboard(){
   }
 
   renderHistory(data.transactions || []);
+  updateAdsUI(data.todayEarned || 0, data.transactions || []);
  }catch(err){
   console.error("Dashboard load error:", err);
  }
@@ -355,7 +464,7 @@ function showHome(){
 function openPage(pageId){
  hideAllPages();const page=document.getElementById(pageId);if(page)page.classList.add("active");
  const nav=document.querySelector('[data-page="'+pageId+'"]');if(nav)nav.classList.add("active");
- if(pageId==="history" || pageId==="referral") loadUserDashboard();
+ if(pageId==="history" || pageId==="referral" || pageId==="ads") loadUserDashboard();
  if(tg)tg.HapticFeedback?.selectionChanged();
 }
 function closePopup(){
