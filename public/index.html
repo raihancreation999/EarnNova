@@ -89,6 +89,12 @@ button{font-family:inherit;cursor:pointer}
 .empty-state{text-align:center;padding:30px 12px;color:var(--muted)}
 .empty-state div{font-size:32px;margin-bottom:10px}
 .empty-state p{font-size:12px;line-height:1.7}
+.tx-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(18,68,81,.65)}
+.tx-item:last-child{border-bottom:0;padding-bottom:0}
+.tx-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+.tx-sub{font-size:11px;color:var(--muted)}
+.tx-amount-credit{font-size:14px;font-weight:800;color:#18D88D;text-align:right}
+.tx-amount-debit{font-size:14px;font-weight:800;color:#F04455;text-align:right}
 .notice{color:var(--muted);font-size:10px;text-align:center;margin-top:24px}
 
 /* bottom navigation */
@@ -159,13 +165,13 @@ button{font-family:inherit;cursor:pointer}
 
 <section class="page" id="referral">
 <h2 class="page-heading" data-i18n="referralHeading">👥 Referral Program</h2><p class="page-description" data-i18n="referralDescription">Invite your friends to EarnNova.</p>
-<div class="panel"><h3 data-i18n="yourReferral">🎁 Your Referral Link</h3><p data-i18n="referralPending">Your personal referral link will appear here after backend integration.</p><input class="input-box" id="referralLink" readonly placeholder="Referral link not available yet"><button class="primary-btn" type="button" disabled data-i18n="copyLink">Copy Referral Link</button></div>
+<div class="panel"><h3 data-i18n="yourReferral">🎁 Your Referral Link</h3><p data-i18n="referralPending">Your personal referral link will appear here after backend integration.</p><input class="input-box" id="referralLink" readonly placeholder="Referral link not available yet"><button class="primary-btn" id="copyReferralBtn" type="button" disabled data-i18n="copyLink" onclick="copyReferral()">Copy Referral Link</button></div>
 <div class="panel"><h3 data-i18n="referralStats">Referral Statistics</h3><p data-i18n="referralStatsPending">Referral count and earnings will appear after backend integration.</p></div>
 </section>
 
 <section class="page" id="history">
 <h2 class="page-heading" data-i18n="historyHeading">🕒 History</h2><p class="page-description" data-i18n="historyDescription">Your earning activity will appear here.</p>
-<div class="panel"><div class="empty-state"><div>🕒</div><p data-i18n="historyPending">Transaction history is not available yet.</p></div></div>
+<div class="panel" id="historyContainer"><div class="empty-state"><div>🕒</div><p data-i18n="historyPending">Transaction history is not available yet.</p></div></div>
 </section>
 
 <section class="page" id="profile">
@@ -189,7 +195,9 @@ button{font-family:inherit;cursor:pointer}
 <script>
 const tg = window.Telegram?.WebApp;
 const BACKEND_URL = "https://earnnova-peg0.onrender.com";
+const BOT_USERNAME = "EarnNova_BD_bot";
 let currentLanguage = "en";
+let latestTransactions = [];
 
 const translations = {
 en:{
@@ -210,19 +218,51 @@ historyHeading:"🕒 হিস্ট্রি",historyDescription:"আপনা�
 }
 };
 
+function renderHistory(transactions){
+ latestTransactions = Array.isArray(transactions) ? transactions : [];
+ const container = document.getElementById("historyContainer");
+ if(!container) return;
+ if(!latestTransactions.length){
+  container.innerHTML = `<div class="empty-state"><div>🕒</div><p>${translations[currentLanguage].historyPending}</p></div>`;
+  return;
+ }
+ container.innerHTML = latestTransactions.map(item => {
+  const isCredit = item.direction === "credit";
+  const sign = isCredit ? "+" : "-";
+  const title = item.description || item.transaction_type || "Activity";
+  const status = item.status || "completed";
+  const dateStr = item.created_at ? new Date(item.created_at).toLocaleString() : "";
+  return `
+   <div class="tx-item">
+    <div>
+     <div class="tx-title">${title}</div>
+     <div class="tx-sub">${status}${dateStr ? " • " + dateStr : ""}</div>
+    </div>
+    <div class="${isCredit ? "tx-amount-credit" : "tx-amount-debit"}">${sign}৳${Number(item.amount || 0).toFixed(2)}</div>
+   </div>
+  `;
+ }).join("");
+}
+
 function setLanguage(lang){
  currentLanguage=lang;document.documentElement.lang=lang;
  document.querySelectorAll("[data-i18n]").forEach(el=>{const key=el.dataset.i18n;if(translations[lang][key])el.textContent=translations[lang][key]});
  const label=lang==="en"?"🇧🇩 বাংলা":"🇬🇧 English";
  const profileButton=document.getElementById("profileLanguageButton");
  if(profileButton)profileButton.textContent=label;
+ renderHistory(latestTransactions);
  if(tg)tg.HapticFeedback?.selectionChanged();
 }
 function toggleLanguage(){setLanguage(currentLanguage==="en"?"bn":"en")}
+
+function getActiveTelegramUser(){
+ return tg?.initDataUnsafe?.user || null;
+}
+
 if(tg){
  tg.ready();tg.expand();
  tg.requestFullscreen?.();
- const user=tg.initDataUnsafe?.user;
+ const user=getActiveTelegramUser();
  if(user){
  const name=user.first_name||"User";
  document.getElementById("profileFullName").textContent=name;
@@ -230,6 +270,46 @@ if(tg){
  document.getElementById("userDetails").textContent="Name: "+name+" | Telegram ID: "+user.id+(user.username?" | Username: @"+user.username:"");
  }
 }
+
+async function loadUserDashboard(){
+ const user = getActiveTelegramUser();
+ const initData = tg?.initData || "";
+ if(!initData && !user?.id) return;
+
+ try{
+  const params = new URLSearchParams();
+  if(initData) params.set("initData", initData);
+  if(user) params.set("user", JSON.stringify(user));
+
+  const res = await fetch(`${BACKEND_URL}/user/dashboard?${params.toString()}`);
+  const data = await res.json();
+  if(!res.ok || !data.success) return;
+
+  const balanceEl = document.getElementById("homeBalance");
+  const earningsEl = document.getElementById("homeEarnings");
+  if(balanceEl) balanceEl.textContent = "৳" + Number(data.balance || 0).toFixed(2);
+  if(earningsEl) earningsEl.textContent = "৳" + Number(data.todayEarned || 0).toFixed(2);
+
+  if(data.referralCode){
+   const refInput = document.getElementById("referralLink");
+   const copyBtn = document.getElementById("copyReferralBtn");
+   if(refInput) refInput.value = `https://t.me/${BOT_USERNAME}?start=ref_${data.referralCode}`;
+   if(copyBtn) copyBtn.disabled = false;
+  }
+
+  renderHistory(data.transactions || []);
+ }catch(err){
+  console.error("Dashboard load error:", err);
+ }
+}
+
+function copyReferral(){
+ const input = document.getElementById("referralLink");
+ if(!input || !input.value) return;
+ navigator.clipboard?.writeText(input.value);
+ if(tg)tg.HapticFeedback?.notificationOccurred("success");
+}
+
 function hideAllPages(){
  document.getElementById("homePage").style.display="none";
  document.querySelectorAll(".page").forEach(page=>page.classList.remove("active"));
@@ -239,24 +319,31 @@ function hideAllPages(){
 function showHome(){
  hideAllPages();document.getElementById("homePage").style.display="block";
  document.querySelector('[data-page="home"]').classList.add("active");
+ loadUserDashboard();
  if(tg)tg.HapticFeedback?.selectionChanged();
 }
 function openPage(pageId){
  hideAllPages();const page=document.getElementById(pageId);if(page)page.classList.add("active");
  const nav=document.querySelector('[data-page="'+pageId+'"]');if(nav)nav.classList.add("active");
+ if(pageId==="history" || pageId==="referral") loadUserDashboard();
  if(tg)tg.HapticFeedback?.selectionChanged();
 }
-function closePopup(){document.getElementById("rewardPopup").classList.remove("show")}
+function closePopup(){
+ document.getElementById("rewardPopup").classList.remove("show");
+ loadUserDashboard();
+}
 function showVerificationPopup(){
  document.getElementById("popupTitle").textContent=currentLanguage==="bn"?"বিজ্ঞাপন সম্পন্ন হয়েছে!":"Ad completed!";
  document.getElementById("popupMessage").textContent=currentLanguage==="bn"?"তোমার ৳০.০৫ পুরস্কার সার্ভার যাচাইয়ের অপেক্ষায় আছে। যাচাই সম্পন্ন না হওয়া পর্যন্ত ব্যালেন্সে যোগ হয়েছে বলে দেখানো হবে না।":"Your ৳0.05 reward is awaiting server verification. It will not be shown as credited until verification is complete.";
  document.getElementById("rewardPopup").classList.add("show");
+ setTimeout(loadUserDashboard, 2000);
 }
+
 const watchAdButton=document.getElementById("watchAdButton");
 const adStatus=document.getElementById("adStatus");
 watchAdButton.addEventListener("click",async()=>{
  if(!tg){adStatus.textContent=currentLanguage==="bn"?"দয়া করে Telegram থেকে EarnNova খুলুন।":"Please open EarnNova from Telegram.";return}
- const unsafeUser=tg.initDataUnsafe?.user||null;
+ const unsafeUser=getActiveTelegramUser();
  if(!tg.initData && !unsafeUser){
   adStatus.textContent=currentLanguage==="bn"?"Telegram ইউজার তথ্য পাওয়া যায়নি। বট থেকে পুনরায় খুলুন।":"Telegram user data not found. Please reopen from the bot.";
   return;
@@ -295,6 +382,8 @@ watchAdButton.addEventListener("click",async()=>{
  watchAdButton.disabled=false;
  }
 });
+
+loadUserDashboard();
 </script>
 </body>
 </html>
