@@ -88,20 +88,23 @@ button{font-family:inherit;cursor:pointer}
 .track{fill:none;stroke:#18374B;stroke-width:12}
 .progress{fill:none;stroke:url(#adRingGrad);stroke-width:12;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440;transition:stroke-dashoffset .6s}
 .ring-center{text-align:center;position:relative;z-index:1}
-.play{font-size:36px;color:#68D8E9;margin-bottom:7px}
-.count{font-size:32px;font-weight:800;letter-spacing:-.7px}
-.count .total{color:#71899D}
-.count-label{color:#A7BBCB;font-size:14px;margin-top:5px}
+.play{font-size:34px;color:#68D8E9;margin-bottom:6px}
+.count{font-size:27px;font-weight:800;letter-spacing:-.7px}
+.count .total{color:#71899D;font-size:18px}
+.count-label{color:#A7BBCB;font-size:13px;margin-top:5px}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:17px 0 22px}
 .stat{min-height:103px;border-radius:19px;background:linear-gradient(145deg,#132C42,#102638);border:1px solid #1C4054;padding:13px 10px;display:flex;align-items:center;gap:10px}
 .stat-icon{font-size:29px;flex-shrink:0}
 .stat-label{color:#A8BDCE;font-size:12px;margin-bottom:6px}
-.stat-value{font-size:21px;font-weight:800;color:#69AFFF;white-space:nowrap}
+.stat-value{font-size:19px;font-weight:800;color:#69AFFF;white-space:nowrap}
 .stat-value.gold{color:#FFE05B}
 .watch{width:100%;min-height:64px;border:none;border-radius:36px;color:#03271D;background:linear-gradient(110deg,#00C98D,#16E3A3);font-size:17px;font-weight:800;box-shadow:0 8px 24px rgba(0,215,154,.16);cursor:pointer;transition:transform .15s;padding:12px 16px}
-.watch:active{transform:scale(.97)}
-.watch:disabled{opacity:.6;cursor:not-allowed}
+.watch:active:not(:disabled){transform:scale(.97)}
+.watch:disabled{opacity:.45;cursor:not-allowed;background:linear-gradient(110deg,#264658,#1C3442);color:#9AB2C4;box-shadow:none}
 #adStatus{text-align:center;margin-top:15px;min-height:40px;font-size:12px;line-height:1.7;color:#7DE6C4;overflow-wrap:anywhere}
+.limit-timer-box{display:none;margin-top:12px;padding:12px 14px;border-radius:16px;background:rgba(255,224,91,.08);border:1px solid rgba(255,224,91,.28);text-align:center}
+.limit-timer-box.show{display:block}
+.limit-timer-text{font-size:13px;font-weight:700;color:var(--gold);line-height:1.6}
 .ads-info{text-align:center;margin-top:12px;font-size:11px;line-height:1.7;color:#7F99AE}
 
 .profile-avatar{width:65px;height:65px;background:linear-gradient(135deg,var(--teal),var(--green));color:#06251D;display:grid;place-items:center;border-radius:50%;font-size:27px;margin-bottom:12px}
@@ -140,7 +143,7 @@ button{font-family:inherit;cursor:pointer}
  .quick-card{min-height:137px}.quick-card h3{font-size:16px}
  .invite-text h3{font-size:18px}.invite-text strong{font-size:18px}
  .logo{font-size:24px}.logo-mark{width:34px;height:34px}
- .stat-value{font-size:18px}
+ .stat-value{font-size:17px}
 }
 </style>
 </head>
@@ -196,7 +199,7 @@ button{font-family:inherit;cursor:pointer}
    </svg>
    <div class="ring-center">
     <div class="play">▶</div>
-    <div class="count"><span id="adCountValue">0</span><span class="total">/20</span></div>
+    <div class="count"><span id="adCountValue">0</span><span class="total">/1000</span></div>
     <div class="count-label" data-i18n="todaysAds">Today's Ads</div>
    </div>
   </div>
@@ -207,7 +210,7 @@ button{font-family:inherit;cursor:pointer}
    <div class="stat-icon">🛡️</div>
    <div>
     <div class="stat-label" data-i18n="dailyLimit">Daily Limit</div>
-    <div class="stat-value">20 Ads</div>
+    <div class="stat-value" id="dailyLimitStat">1000 Ads</div>
    </div>
   </div>
   <div class="stat">
@@ -220,6 +223,9 @@ button{font-family:inherit;cursor:pointer}
  </div>
 
  <button class="watch" id="watchAdButton" type="button" data-i18n="watchEarn">▶ Watch Ad & Earn ৳0.05</button>
+ <div class="limit-timer-box" id="limitTimerBox">
+  <div class="limit-timer-text" id="limitTimerText"></div>
+ </div>
  <p id="adStatus" aria-live="polite" data-i18n="pressWatch">Press the button to start an advertisement.</p>
  <p class="ads-info" data-i18n="rewardPerAd">Reward per valued ad: ৳0.05</p>
 </div>
@@ -258,7 +264,7 @@ button{font-family:inherit;cursor:pointer}
 const tg = window.Telegram?.WebApp;
 const BACKEND_URL = "https://earnnova-peg0.onrender.com";
 const BOT_USERNAME = "EarnNova_BD_bot";
-const DAILY_AD_LIMIT = 20;
+const DAILY_AD_LIMIT = 1000;
 const AD_REWARD_AMOUNT = 0.05;
 const RING_CIRCUMFERENCE = 440;
 
@@ -266,20 +272,21 @@ let currentLanguage = "en";
 let latestTransactions = [];
 let currentTodayEarned = 0;
 let currentTodayAdsCount = 0;
+let isAdRunning = false;
 
 const translations = {
 en:{
-totalBalance:"Total Balance",todayEarned:"Today Earned:",todayEarnedShort:"Today Earned",dailyLimit:"Daily Limit",todaysAds:"Today's Ads",quickAccess:"Quick Access",watchAds:"Watch Ads",tasks:"Tasks",earnMore:"Earn More",referral:"Referral",inviteEarn:"Invite & Earn",history:"History",viewDetails:"View Details",inviteFriends:"Invite Friends",successfulSignup:"per successful signup!",
+totalBalance:"Total Balance",todayEarned:"Today Earned:",todayEarnedShort:"Today Earned",dailyLimit:"Daily Limit",dailyLimitValue:"1000 Ads",todaysAds:"Today's Ads",quickAccess:"Quick Access",watchAds:"Watch Ads",tasks:"Tasks",earnMore:"Earn More",referral:"Referral",inviteEarn:"Invite & Earn",history:"History",viewDetails:"View Details",inviteFriends:"Invite Friends",successfulSignup:"per successful signup!",
 tasksHeading:"📋 Daily Tasks",tasksDescription:"Complete available activities to earn rewards.",tasksPending:"Daily tasks will appear here after backend integration.",
-adsHeading:"📺 Watch Ads",adsDescription:"Watch a rewarded advertisement and earn after server verification.",rewardedAd:"Rewarded Advertisement",rewardPerAd:"Reward per valued ad: ৳0.05",watchEarn:"▶ Watch Ad & Earn ৳0.05",pressWatch:"Press the button to start an advertisement.",
+adsHeading:"📺 Watch Ads",adsDescription:"Watch a rewarded advertisement and earn after server verification.",rewardedAd:"Rewarded Advertisement",rewardPerAd:"Reward per valued ad: ৳0.05",watchEarn:"▶ Watch Ad & Earn ৳0.05",limitReachedBtn:"🔒 Daily Limit Reached",pressWatch:"Press the button to start an advertisement.",limitReachedStatus:"Today's 1000 ad limit is completed.",
 referralHeading:"👥 Referral Program",referralDescription:"Invite your friends to EarnNova.",yourReferral:"🎁 Your Referral Link",referralPending:"Your personal referral link will appear here after backend integration.",copyLink:"Copy Referral Link",referralStats:"Referral Statistics",referralStatsPending:"Referral count and earnings will appear after backend integration.",
 profileHeading:"👤 My Profile",accountInfo:"Account Information",settings:"⚙️ Settings",languageSetting:"Choose your preferred language.",home:"Home",tasksShort:"Tasks",referralShort:"Referral",profileShort:"Profile",continue:"Continue",
 historyHeading:"🕒 History",historyDescription:"Your earning activity will appear here.",historyPending:"Transaction history is not available yet."
 },
 bn:{
-totalBalance:"মোট ব্যালেন্স",todayEarned:"আজকের আয়:",todayEarnedShort:"আজকের আয়",dailyLimit:"দৈনিক সীমা",todaysAds:"আজকের বিজ্ঞাপন",quickAccess:"দ্রুত প্রবেশ",watchAds:"বিজ্ঞাপন দেখুন",tasks:"কাজ",earnMore:"আরও আয় করুন",referral:"রেফারেল",inviteEarn:"বন্ধু আনুন ও আয় করুন",history:"হিস্ট্রি",viewDetails:"বিস্তারিত দেখুন",inviteFriends:"বন্ধুদের আমন্ত্রণ জানান",successfulSignup:"প্রতিটি সফল সাইনআপে!",
+totalBalance:"মোট ব্যালেন্স",todayEarned:"আজকের আয়:",todayEarnedShort:"আজকের আয়",dailyLimit:"দৈনিক সীমা",dailyLimitValue:"১০০০ অ্যাড",todaysAds:"আজকের বিজ্ঞাপন",quickAccess:"দ্রুত প্রবেশ",watchAds:"বিজ্ঞাপন দেখুন",tasks:"কাজ",earnMore:"আরও আয় করুন",referral:"রেফারেল",inviteEarn:"বন্ধু আনুন ও আয় করুন",history:"হিস্ট্রি",viewDetails:"বিস্তারিত দেখুন",inviteFriends:"বন্ধুদের আমন্ত্রণ জানান",successfulSignup:"প্রতিটি সফল সাইনআপে!",
 tasksHeading:"📋 দৈনিক কাজ",tasksDescription:"পুরস্কার পেতে উপলব্ধ কাজ সম্পন্ন করুন।",tasksPending:"Backend যুক্ত হলে দৈনিক কাজ এখানে দেখা যাবে।",
-adsHeading:"📺 বিজ্ঞাপন দেখুন",adsDescription:"বিজ্ঞাপন সম্পূর্ণ করে সার্ভার যাচাইয়ের পর পুরস্কার পান।",rewardedAd:"পুরস্কারযুক্ত বিজ্ঞাপন",rewardPerAd:"প্রতিটি Valued বিজ্ঞাপনে ৳০.০৫",watchEarn:"▶ বিজ্ঞাপন দেখুন ও ৳০.০৫ পান",pressWatch:"বিজ্ঞাপন শুরু করতে বাটনে চাপ দিন।",
+adsHeading:"📺 বিজ্ঞাপন দেখুন",adsDescription:"বিজ্ঞাপন সম্পূর্ণ করে সার্ভার যাচাইয়ের পর পুরস্কার পান।",rewardedAd:"পুরস্কারযুক্ত বিজ্ঞাপন",rewardPerAd:"প্রতিটি Valued বিজ্ঞাপনে ৳০.০৫",watchEarn:"▶ বিজ্ঞাপন দেখুন ও ৳০.০৫ পান",limitReachedBtn:"🔒 আজকের লিমিট শেষ",pressWatch:"বিজ্ঞাপন শুরু করতে বাটনে চাপ দিন।",limitReachedStatus:"আজকের ১০০০টি বিজ্ঞাপনের লিমিট পূর্ণ হয়েছে।",
 referralHeading:"👥 রেফারেল প্রোগ্রাম",referralDescription:"বন্ধুদের EarnNova-তে আমন্ত্রণ জানান।",yourReferral:"🎁 আপনার রেফারেল লিংক",referralPending:"Backend যুক্ত হলে আপনার ব্যক্তিগত রেফারেল লিংক দেখা যাবে।",copyLink:"রেফারেল লিংক কপি",referralStats:"রেফারেল পরিসংখ্যান",referralStatsPending:"রেফারেল সংখ্যা ও আয়ের হিসাব Backend যুক্ত হলে দেখা যাবে।",
 profileHeading:"👤 আমার প্রোফাইল",accountInfo:"অ্যাকাউন্টের তথ্য",settings:"⚙️ সেটিংস",languageSetting:"আপনার পছন্দের ভাষা নির্বাচন করুন।",home:"হোম",tasksShort:"কাজ",referralShort:"রেফারেল",profileShort:"প্রোফাইল",continue:"চালিয়ে যান",
 historyHeading:"🕒 হিস্ট্রি",historyDescription:"আপনার আয়ের কার্যক্রম এখানে দেখা যাবে।",historyPending:"লেনদেনের হিস্ট্রি এখনো উপলব্ধ নয়।"
@@ -308,6 +315,52 @@ function saveLanguage(lang){
  try{
   localStorage.setItem(getLangStorageKey(), lang);
  }catch(e){}
+}
+
+function getTimeUntilMidnight(){
+ const now = new Date();
+ const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
+ const diffMs = Math.max(0, nextMidnight.getTime() - now.getTime());
+ const totalSeconds = Math.floor(diffMs / 1000);
+ const hours = Math.floor(totalSeconds / 3600);
+ const minutes = Math.floor((totalSeconds % 3600) / 60);
+ const seconds = totalSeconds % 60;
+ return { hours, minutes, seconds };
+}
+
+function updateLimitCountdown(){
+ const box = document.getElementById("limitTimerBox");
+ const textEl = document.getElementById("limitTimerText");
+ const watchBtn = document.getElementById("watchAdButton");
+ const statusEl = document.getElementById("adStatus");
+ const reached = currentTodayAdsCount >= DAILY_AD_LIMIT;
+
+ if(!reached){
+  if(box) box.classList.remove("show");
+  if(watchBtn && !isAdRunning){
+   watchBtn.disabled = false;
+   watchBtn.textContent = translations[currentLanguage].watchEarn;
+  }
+  return;
+ }
+
+ if(watchBtn){
+  watchBtn.disabled = true;
+  watchBtn.textContent = translations[currentLanguage].limitReachedBtn;
+ }
+
+ const { hours, minutes, seconds } = getTimeUntilMidnight();
+ if(box) box.classList.add("show");
+ if(textEl){
+  if(currentLanguage === "bn"){
+   textEl.textContent = `⏳ রাত ১২:০০ টা থেকে আবার শুরু হবে — আর ${hours} ঘণ্টা ${minutes} মিনিট ${seconds} সেকেন্ড বাকি আছে।`;
+  }else{
+   textEl.textContent = `⏳ Resets at 12:00 AM — ${hours}h ${minutes}m ${seconds}s remaining.`;
+  }
+ }
+ if(statusEl && !isAdRunning){
+  statusEl.textContent = translations[currentLanguage].limitReachedStatus;
+ }
 }
 
 function updateAdsUI(todayEarned, transactions){
@@ -347,6 +400,8 @@ function updateAdsUI(todayEarned, transactions){
   const ratio = Math.min(1, currentTodayAdsCount / DAILY_AD_LIMIT);
   ringEl.style.strokeDashoffset = String(RING_CIRCUMFERENCE * (1 - ratio));
  }
+
+ updateLimitCountdown();
 }
 
 function renderHistory(transactions){
@@ -382,6 +437,8 @@ function setLanguage(lang, shouldSave = true){
   const key = el.dataset.i18n;
   if(translations[currentLanguage][key]) el.textContent = translations[currentLanguage][key];
  });
+ const dailyLimitStat = document.getElementById("dailyLimitStat");
+ if(dailyLimitStat) dailyLimitStat.textContent = translations[currentLanguage].dailyLimitValue;
  const label = currentLanguage === "en" ? "🇧🇩 বাংলা" : "🇬🇧 English";
  const profileButton = document.getElementById("profileLanguageButton");
  if(profileButton) profileButton.textContent = label;
@@ -481,6 +538,10 @@ function showVerificationPopup(){
 const watchAdButton=document.getElementById("watchAdButton");
 const adStatus=document.getElementById("adStatus");
 watchAdButton.addEventListener("click",async()=>{
+ if(currentTodayAdsCount >= DAILY_AD_LIMIT){
+  updateLimitCountdown();
+  return;
+ }
  if(!tg){adStatus.textContent=currentLanguage==="bn"?"দয়া করে Telegram থেকে EarnNova খুলুন।":"Please open EarnNova from Telegram.";return}
  const unsafeUser=getActiveTelegramUser();
  if(!tg.initData && !unsafeUser){
@@ -491,6 +552,7 @@ watchAdButton.addEventListener("click",async()=>{
   adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন SDK প্রস্তুত নয়। কিছুক্ষণ পর আবার চেষ্টা করুন।":"Advertisement SDK is not ready. Please try again later.";
   return;
  }
+ isAdRunning = true;
  watchAdButton.disabled=true;
  adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন প্রস্তুত করা হচ্ছে...":"Preparing your advertisement...";
  try{
@@ -518,10 +580,15 @@ watchAdButton.addEventListener("click",async()=>{
  console.error("Rewarded ad error:",error);
  adStatus.textContent="Error: "+(error.message||String(error));
  }finally{
- watchAdButton.disabled=false;
+ isAdRunning = false;
+ updateLimitCountdown();
+ if(currentTodayAdsCount < DAILY_AD_LIMIT){
+  watchAdButton.disabled=false;
+ }
  }
 });
 
+setInterval(updateLimitCountdown, 1000);
 loadUserDashboard();
 </script>
 </body>
