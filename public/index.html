@@ -17,7 +17,7 @@ body{
  background:radial-gradient(ellipse at 50% 0%,#1B295A 0%,var(--bg) 62%);
  color:var(--text);
  min-height:100vh;
- padding-top:calc(46px + env(safe-area-inset-top));
+ padding-top:calc(52px + env(safe-area-inset-top));
  padding-bottom:calc(84px + env(safe-area-inset-bottom));
 }
 button{font-family:inherit;cursor:pointer}
@@ -29,16 +29,16 @@ button{font-family:inherit;cursor:pointer}
  grid-template-columns:44px 1fr 44px;
  align-items:center;
  gap:8px;
- background:linear-gradient(145deg,#1A2857,#121C40);
- border:1px solid rgba(130,165,255,.28);
+ background:linear-gradient(145deg,#1D2C61,#131D42);
+ border:1.5px solid rgba(53,231,120,.45);
  border-radius:20px;
- padding:7px 9px;
+ padding:7px 10px;
  margin-bottom:14px;
- box-shadow:0 8px 22px rgba(4,8,26,.35);
+ box-shadow:0 8px 22px rgba(4,8,26,.4);
 }
 .header-menu,.notification-btn{
  background:rgba(255,255,255,.08);
- border:1px solid rgba(255,255,255,.12);
+ border:1px solid rgba(255,255,255,.14);
  color:#fff;
  border-radius:13px;
  display:grid;
@@ -64,12 +64,12 @@ button{font-family:inherit;cursor:pointer}
  height:34px;
  border-radius:50%;
  object-fit:cover;
- border:2px solid #FFD54F;
- box-shadow:0 0 12px rgba(255,213,79,.35);
+ border:2px solid #2BE86C;
+ box-shadow:0 0 12px rgba(43,232,108,.45);
  flex-shrink:0;
- background:#070B14;
+ background:#07140B;
 }
-.logo span{color:#FFD54F}
+.logo span{color:#2BE86C}
 .header-actions{display:flex;justify-content:flex-end}
 .icon-svg{width:1em;height:1em;display:block;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .notification-btn .icon-svg{width:22px;height:22px}
@@ -100,7 +100,7 @@ button{font-family:inherit;cursor:pointer}
  border:1px solid rgba(130,170,255,.32);
  border-radius:24px;
  padding:16px 16px 14px;
- margin-bottom:16px;
+ margin-bottom:15px;
  background:linear-gradient(125deg,#3B5BDB 0%,#6347D1 52%,#8E44AD 100%);
  box-shadow:0 10px 26px rgba(68,75,210,.26);
 }
@@ -115,7 +115,7 @@ button{font-family:inherit;cursor:pointer}
  align-items:center;
  justify-content:center;
  gap:6px;
- margin:12px auto 0;
+ margin:11px auto 0;
  padding:6px 15px;
  width:fit-content;
  max-width:100%;
@@ -129,10 +129,10 @@ button{font-family:inherit;cursor:pointer}
 .today-earned strong{color:var(--gold);font-size:15px}
 
 /* Quick Access Grid */
-.section-title{font-size:17px;font-weight:800;margin:0 0 11px}
+.section-title{font-size:17px;font-weight:800;margin:0 0 10px}
 .quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .quick-card{
- min-height:118px;
+ min-height:114px;
  display:flex;
  flex-direction:column;
  align-items:center;
@@ -141,25 +141,25 @@ button{font-family:inherit;cursor:pointer}
  background:linear-gradient(155deg,#1D2B5B,#131D42);
  border:1px solid #2D4080;
  border-radius:20px;
- padding:12px 9px;
+ padding:11px 9px;
  cursor:pointer;
  box-shadow:0 6px 18px rgba(6,10,30,.26);
  transition:transform .14s,border-color .14s;
 }
 .quick-card:active{transform:scale(.97);border-color:#21D4FD}
-.quick-icon{margin-bottom:7px}
-.quick-card h3{font-size:15.5px;margin-bottom:3px;font-weight:750}
+.quick-icon{margin-bottom:6px}
+.quick-card h3{font-size:15.5px;margin-bottom:2px;font-weight:750}
 .quick-card p{font-size:12.5px;color:var(--muted);line-height:1.35}
 .quick-card .highlight{color:var(--gold);font-weight:750;font-size:14px}
 
 /* Invite Banner */
 .invite-card{
- margin-top:13px;
+ margin-top:12px;
  width:100%;
  display:flex;
  align-items:center;
  gap:12px;
- padding:13px 14px;
+ padding:12px 14px;
  border-radius:21px;
  border:1px solid rgba(135,165,255,.32);
  background:linear-gradient(120deg,#324EC8,#5D44C8 55%,#7E3FB5);
@@ -168,11 +168,11 @@ button{font-family:inherit;cursor:pointer}
  text-align:left;
  color:white;
 }
-.invite-icon{font-size:38px;flex-shrink:0}
+.invite-icon{font-size:36px;flex-shrink:0}
 .invite-text{flex:1;min-width:0}
-.invite-text h3{font-size:16.5px;margin-bottom:2px}
+.invite-text h3{font-size:16px;margin-bottom:2px}
 .invite-text p{font-size:12.5px;line-height:1.35;color:#E5ECFF}
-.invite-text strong{color:var(--gold);font-size:15px}
+.invite-text strong{color:var(--gold);font-size:14.5px}
 .invite-arrow{
  font-size:20px;
  flex-shrink:0;
@@ -328,8 +328,7 @@ button{font-family:inherit;cursor:pointer}
 <header class="header-box">
  <button class="header-menu" type="button" aria-label="Open profile" onclick="openPage('profile')">☰</button>
  <div class="logo">
-  <!-- Replace src below with your EarnNova logo URL or file path (e.g. earnnova-logo.png) -->
-  <img id="headerLogoImg" class="logo-img" src="earnnova-logo.png" alt="EarnNova Logo" onerror="this.style.display='none'">
+  <img id="headerLogoImg" class="logo-img" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='45%25' r='55%25'%3E%3Cstop offset='0%25' stop-color='%2323a338'/%3E%3Cstop offset='75%25' stop-color='%230b3d16'/%3E%3Cstop offset='100%25' stop-color='%23051608'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='60' cy='60' r='56' fill='url(%23g)' stroke='%234dff77' stroke-width='6'/%3E%3Cpolygon points='60,24 69,48 94,48 74,63 82,88 60,73 38,88 46,63 26,48 51,48' fill='%23ffd426' stroke='%23fff08a' stroke-width='2'/%3E%3C/svg%3E" alt="EarnNova Logo">
   <div>Earn<span>Nova</span></div>
  </div>
  <div class="header-actions">
