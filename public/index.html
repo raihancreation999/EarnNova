@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0B112B">
 <title>EarnNova</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -13,176 +13,180 @@
  --cyan:#21D4FD; --purple:#9353F3; --text:#F5F8FF; --muted:#9EB0D8; --gold:#FFD54F;
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body{background:radial-gradient(ellipse at 50% 0%,#1B295A 0%,var(--bg) 60%);color:var(--text);min-height:100vh;padding-bottom:94px}
+body{
+ background:radial-gradient(ellipse at 50% 0%,#1B295A 0%,var(--bg) 62%);
+ color:var(--text);
+ min-height:100vh;
+ padding-top:calc(52px + env(safe-area-inset-top));
+ padding-bottom:calc(74px + env(safe-area-inset-bottom));
+}
 button{font-family:inherit;cursor:pointer}
-.container{width:100%;max-width:480px;margin:auto;padding:17px 16px 24px}
+.container{width:100%;max-width:480px;margin:auto;padding:6px 14px 12px}
 
-/* Header */
-.header{display:grid;grid-template-columns:42px 1fr 42px;align-items:center;margin-bottom:22px;min-height:48px}
-.header-menu,.notification-btn{background:transparent;color:white;border:0;display:grid;place-items:center;position:relative}
-.header-menu{font-size:26px;width:40px;height:42px}
-.logo{display:flex;justify-content:center;align-items:center;gap:9px;font-size:26px;font-weight:800;letter-spacing:-0.8px}
-.logo-mark{width:34px;height:34px;display:inline-block;transform:rotate(45deg);border:4px solid #21D4FD;border-radius:5px;position:relative;box-shadow:0 0 14px rgba(33,212,253,.4)}
-.logo-mark:before{content:"";position:absolute;inset:4px;border:2.5px solid #21D4FD;border-radius:2px}
+/* Compact Header (Visible below Telegram top bar) */
+.header{display:grid;grid-template-columns:38px 1fr 38px;align-items:center;margin-bottom:12px;min-height:38px}
+.header-menu,.notification-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:11px;display:grid;place-items:center;position:relative;width:36px;height:36px}
+.header-menu{font-size:18px}
+.logo{display:flex;justify-content:center;align-items:center;gap:8px;font-size:22px;font-weight:800;letter-spacing:-0.6px}
+.logo-mark{width:26px;height:26px;display:inline-block;transform:rotate(45deg);border:3.5px solid #21D4FD;border-radius:4px;position:relative;box-shadow:0 0 12px rgba(33,212,253,.35)}
+.logo-mark:before{content:"";position:absolute;inset:3px;border:2px solid #21D4FD;border-radius:2px}
 .logo span{color:#21D4FD}
 .header-actions{display:flex;justify-content:flex-end}
-.notification-btn{font-size:25px;width:40px;height:42px}
+.notification-btn{font-size:18px}
 .icon-svg{width:1em;height:1em;display:block;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.wallet-svg{width:60px;height:60px;filter:drop-shadow(0 6px 10px rgba(30,20,80,.35))}
-.growth-svg{width:46px;height:46px;stroke:#47E5FF;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.quick-icon svg{width:44px;height:44px}
-.nav-item .nav-svg{width:26px;height:26px;margin:0 auto 4px}
-.notification-btn .icon-svg{width:28px;height:28px}
-.notification-dot{position:absolute;top:2px;right:1px;background:#FF4B6E;color:#fff;font-size:11px;font-weight:bold;width:18px;height:18px;border-radius:50%;display:grid;place-items:center}
+.wallet-svg{width:46px;height:46px;filter:drop-shadow(0 4px 8px rgba(20,15,60,.3))}
+.growth-svg{width:34px;height:34px;stroke:#47E5FF;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.quick-icon svg{width:32px;height:32px}
+.nav-item .nav-svg{width:22px;height:22px;margin:0 auto 2px}
+.notification-btn .icon-svg{width:20px;height:20px}
+.notification-dot{position:absolute;top:-4px;right:-4px;background:#FF4B6E;color:#fff;font-size:10px;font-weight:bold;width:16px;height:16px;border-radius:50%;display:grid;place-items:center}
 
-/* Balance Card (Blue-Purple Gradient from reference) */
-.balance-card{position:relative;overflow:hidden;border:1px solid rgba(130,170,255,.32);border-radius:26px;padding:22px 19px 16px;margin-bottom:26px;background:linear-gradient(125deg,#3B5BDB 0%,#6347D1 52%,#8E44AD 100%);box-shadow:0 12px 30px rgba(68,75,210,.28),inset 0 0 24px rgba(255,255,255,.12)}
-.balance-card:before{content:"";position:absolute;width:210px;height:210px;border:28px solid rgba(255,255,255,.07);border-radius:50%;right:-65px;top:-75px}
-.balance-card:after{content:"";position:absolute;width:280px;height:90px;background:rgba(15,18,55,.16);border-radius:50%;right:-50px;bottom:-45px;transform:rotate(-18deg)}
-.balance-main{position:relative;z-index:1;display:grid;grid-template-columns:64px 1fr 45px;align-items:center;gap:12px}
-.balance-label{font-size:16px;color:#E2EAFF;margin-bottom:5px;font-weight:600}
-.balance{font-size:38px;font-weight:800;letter-spacing:-1px;white-space:nowrap}
-.today-earned{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:7px;margin:16px auto 0;padding:8px 16px;width:fit-content;max-width:100%;background:rgba(16,22,64,.42);border:1px solid rgba(255,255,255,.14);border-radius:32px;font-size:14px;color:#F0F4FF;white-space:nowrap}
-.today-earned strong{color:var(--gold);font-size:16px}
+/* Compact Balance Card */
+.balance-card{position:relative;overflow:hidden;border:1px solid rgba(130,170,255,.32);border-radius:22px;padding:14px 15px 12px;margin-bottom:14px;background:linear-gradient(125deg,#3B5BDB 0%,#6347D1 52%,#8E44AD 100%);box-shadow:0 10px 24px rgba(68,75,210,.24)}
+.balance-card:before{content:"";position:absolute;width:170px;height:170px;border:24px solid rgba(255,255,255,.06);border-radius:50%;right:-55px;top:-65px}
+.balance-main{position:relative;z-index:1;display:grid;grid-template-columns:50px 1fr 38px;align-items:center;gap:10px}
+.balance-label{font-size:13px;color:#E2EAFF;margin-bottom:2px;font-weight:600}
+.balance{font-size:30px;font-weight:800;letter-spacing:-0.8px;white-space:nowrap}
+.today-earned{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:6px;margin:10px auto 0;padding:5px 13px;width:fit-content;max-width:100%;background:rgba(16,22,64,.42);border:1px solid rgba(255,255,255,.14);border-radius:24px;font-size:12.5px;color:#F0F4FF;white-space:nowrap}
+.today-earned strong{color:var(--gold);font-size:14px}
 
-/* Quick Access */
-.section-title{font-size:20px;font-weight:800;margin:22px 0 15px}
-.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.quick-card{min-height:148px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(155deg,#1D2B5B,#131D42);border:1px solid #2D4080;border-radius:22px;padding:15px 10px;cursor:pointer;box-shadow:0 8px 20px rgba(6,10,30,.28);transition:transform .15s,border-color .15s}
+/* Compact Quick Access (Fits in 1 screen without scrolling) */
+.section-title{font-size:16px;font-weight:800;margin:0 0 10px}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quick-card{min-height:106px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(155deg,#1D2B5B,#131D42);border:1px solid #2D4080;border-radius:18px;padding:10px 8px;cursor:pointer;box-shadow:0 6px 16px rgba(6,10,30,.24);transition:transform .14s,border-color .14s}
 .quick-card:active{transform:scale(.97);border-color:#21D4FD}
-.quick-icon{margin-bottom:10px}
-.quick-card h3{font-size:17px;margin-bottom:4px;font-weight:750}
-.quick-card p{font-size:14px;color:var(--muted);line-height:1.4}
-.quick-card .highlight{color:var(--gold);font-weight:750;font-size:16px}
+.quick-icon{margin-bottom:6px}
+.quick-card h3{font-size:14.5px;margin-bottom:2px;font-weight:750}
+.quick-card p{font-size:12px;color:var(--muted);line-height:1.3}
+.quick-card .highlight{color:var(--gold);font-weight:750;font-size:13px}
 
-/* Invite Banner */
-.invite-card{margin-top:20px;width:100%;display:flex;align-items:center;gap:14px;padding:18px 16px;border-radius:23px;border:1px solid rgba(135,165,255,.32);background:linear-gradient(120deg,#324EC8,#5D44C8 55%,#7E3FB5);box-shadow:0 9px 24px rgba(55,65,190,.22);cursor:pointer;text-align:left;color:white}
-.invite-icon{font-size:48px;flex-shrink:0}
+/* Compact Invite Banner */
+.invite-card{margin-top:11px;width:100%;display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:19px;border:1px solid rgba(135,165,255,.32);background:linear-gradient(120deg,#324EC8,#5D44C8 55%,#7E3FB5);box-shadow:0 7px 18px rgba(55,65,190,.2);cursor:pointer;text-align:left;color:white}
+.invite-icon{font-size:34px;flex-shrink:0}
 .invite-text{flex:1;min-width:0}
-.invite-text h3{font-size:19px;margin-bottom:5px}
-.invite-text p{font-size:14px;line-height:1.4;color:#E5ECFF}
-.invite-text strong{color:var(--gold);font-size:18px}
-.invite-arrow{font-size:22px;flex-shrink:0;background:#21D4FD;color:#0A1538;font-weight:800;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;box-shadow:0 3px 12px rgba(33,212,253,.35)}
+.invite-text h3{font-size:15.5px;margin-bottom:2px}
+.invite-text p{font-size:12px;line-height:1.35;color:#E5ECFF}
+.invite-text strong{color:var(--gold);font-size:14px}
+.invite-arrow{font-size:18px;flex-shrink:0;background:#21D4FD;color:#0A1538;font-weight:800;width:30px;height:30px;border-radius:50%;display:grid;place-items:center}
 
-/* Sub-page Top Navigation Bar (Back + Title + Action) */
-.sub-header{display:grid;grid-template-columns:38px 1fr 38px;align-items:center;margin-bottom:18px;min-height:42px}
-.back-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#fff;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-size:18px}
-.sub-title{text-align:center;font-size:20px;font-weight:800}
-.sub-action{background:transparent;border:0;color:#C4D2F5;width:36px;height:36px;display:grid;place-items:center;font-size:19px}
+/* Sub-page Top Bar */
+.sub-header{display:grid;grid-template-columns:36px 1fr 36px;align-items:center;margin-bottom:14px;min-height:38px}
+.back-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:16px}
+.sub-title{text-align:center;font-size:18px;font-weight:800}
+.sub-action{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#D5E1FF;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:15px}
 
 /* Pages and Common Cards */
-.page{display:none;animation:fade .18s ease}
+.page{display:none;animation:fade .16s ease}
 .page.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.page-description{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;text-align:center}
-.panel{background:linear-gradient(155deg,#1A2754,#131D42);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 6px 18px rgba(5,9,28,.22)}
-.panel h3{font-size:16px;margin-bottom:8px}
-.panel p{font-size:12.5px;color:var(--muted);line-height:1.65}
-.input-box{width:100%;padding:12px;background:#0D1536;border:1px solid var(--border);color:var(--text);border-radius:12px;margin-top:10px;outline:none;font-size:12.5px}
-.primary-btn{border:0;background:linear-gradient(110deg,#21D4FD,#4EA8FF);color:#061333;font-weight:800;padding:13px 16px;border-radius:14px;margin-top:14px;width:100%;font-size:14px;box-shadow:0 6px 18px rgba(33,212,253,.22)}
+.page-description{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:14px;text-align:center}
+.panel{background:linear-gradient(155deg,#1A2754,#131D42);border:1px solid var(--border);border-radius:18px;padding:15px;margin-bottom:12px;box-shadow:0 6px 16px rgba(5,9,28,.2)}
+.panel h3{font-size:15px;margin-bottom:6px}
+.panel p{font-size:12px;color:var(--muted);line-height:1.55}
+.input-box{width:100%;padding:10px 12px;background:#0D1536;border:1px solid var(--border);color:var(--text);border-radius:11px;outline:none;font-size:12px}
+.primary-btn{border:0;background:linear-gradient(110deg,#21D4FD,#4EA8FF);color:#061333;font-weight:800;padding:11px 14px;border-radius:12px;margin-top:11px;width:100%;font-size:13.5px;box-shadow:0 6px 16px rgba(33,212,253,.2)}
 .primary-btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
 
 /* Watch Ads UI */
-.ads-card{position:relative;overflow:hidden;background:linear-gradient(160deg,#18244E,#10193B);border:1px solid #2C3F7A;border-radius:25px;padding:20px 15px 22px;box-shadow:0 12px 28px rgba(4,8,25,.3)}
-.ring-wrap{display:flex;justify-content:center;margin:4px auto 18px}
-.ring{width:205px;height:205px;position:relative;display:grid;place-items:center}
+.ads-card{position:relative;overflow:hidden;background:linear-gradient(160deg,#18244E,#10193B);border:1px solid #2C3F7A;border-radius:22px;padding:16px 14px 18px;box-shadow:0 10px 24px rgba(4,8,25,.28)}
+.ring-wrap{display:flex;justify-content:center;margin:2px auto 14px}
+.ring{width:180px;height:180px;position:relative;display:grid;place-items:center}
 .ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
-.track{fill:none;stroke:#233368;stroke-width:13}
-.progress{fill:none;stroke:url(#adRingGrad);stroke-width:13;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440;transition:stroke-dashoffset .6s}
+.track{fill:none;stroke:#233368;stroke-width:12}
+.progress{fill:none;stroke:url(#adRingGrad);stroke-width:12;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440;transition:stroke-dashoffset .6s}
 .ring-center{text-align:center;position:relative;z-index:1}
-.play{font-size:32px;color:#47E5FF;margin-bottom:5px}
-.count{font-size:26px;font-weight:800;letter-spacing:-.7px}
-.count .total{color:#8A9EC9;font-size:17px}
-.count-label{color:#A8B9DF;font-size:13px;margin-top:4px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:16px 0 20px}
-.stat{min-height:94px;border-radius:18px;background:linear-gradient(145deg,#1F2E63,#17234E);border:1px solid #2E4280;padding:12px 11px;display:flex;align-items:center;gap:10px}
-.stat-icon{font-size:28px;flex-shrink:0}
-.stat-label{color:#A8B9DF;font-size:12px;margin-bottom:5px}
-.stat-value{font-size:18px;font-weight:800;color:#62B5FF;white-space:nowrap}
+.play{font-size:28px;color:#47E5FF;margin-bottom:3px}
+.count{font-size:23px;font-weight:800;letter-spacing:-.6px}
+.count .total{color:#8A9EC9;font-size:15px}
+.count-label{color:#A8B9DF;font-size:12px;margin-top:3px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 16px}
+.stat{min-height:80px;border-radius:16px;background:linear-gradient(145deg,#1F2E63,#17234E);border:1px solid #2E4280;padding:10px;display:flex;align-items:center;gap:9px}
+.stat-icon{font-size:24px;flex-shrink:0}
+.stat-label{color:#A8B9DF;font-size:11.5px;margin-bottom:3px}
+.stat-value{font-size:16px;font-weight:800;color:#62B5FF;white-space:nowrap}
 .stat-value.gold{color:#FFD54F}
-.watch{width:100%;min-height:58px;border:none;border-radius:32px;color:#051333;background:linear-gradient(110deg,#21D4FD,#569EFF);font-size:16px;font-weight:800;box-shadow:0 8px 24px rgba(33,212,253,.24);cursor:pointer;transition:transform .15s;padding:12px 16px}
+.watch{width:100%;min-height:52px;border:none;border-radius:28px;color:#051333;background:linear-gradient(110deg,#21D4FD,#569EFF);font-size:15px;font-weight:800;box-shadow:0 7px 20px rgba(33,212,253,.22);cursor:pointer;transition:transform .14s;padding:10px 14px}
 .watch:active:not(:disabled){transform:scale(.97)}
 .watch:disabled{opacity:.45;cursor:not-allowed;background:#263566;color:#9AB2D4;box-shadow:none}
-#adStatus{text-align:center;margin-top:14px;min-height:36px;font-size:12.5px;line-height:1.6;color:#7EE7FF;overflow-wrap:anywhere}
-.limit-timer-box{display:none;margin-top:12px;padding:12px 14px;border-radius:16px;background:rgba(255,213,79,.1);border:1px solid rgba(255,213,79,.3);text-align:center}
+#adStatus{text-align:center;margin-top:12px;min-height:30px;font-size:12px;line-height:1.5;color:#7EE7FF;overflow-wrap:anywhere}
+.limit-timer-box{display:none;margin-top:10px;padding:10px 12px;border-radius:14px;background:rgba(255,213,79,.1);border:1px solid rgba(255,213,79,.3);text-align:center}
 .limit-timer-box.show{display:block}
-.limit-timer-text{font-size:13px;font-weight:700;color:var(--gold);line-height:1.6}
-.ads-info{text-align:center;margin-top:10px;font-size:11.5px;line-height:1.6;color:#8CA0C9}
+.limit-timer-text{font-size:12px;font-weight:700;color:var(--gold);line-height:1.5}
+.ads-info{text-align:center;margin-top:8px;font-size:11px;line-height:1.5;color:#8CA0C9}
 
 /* Referral Hero & Stats */
-.ref-hero{display:flex;align-items:center;gap:14px;padding:18px;border-radius:22px;background:linear-gradient(130deg,#2A43A8,#5A3EC0 60%,#7D37AC);border:1px solid rgba(145,175,255,.3);margin-bottom:14px}
-.ref-hero-icon{font-size:52px;flex-shrink:0}
-.ref-hero h3{font-size:18px;margin-bottom:6px;line-height:1.35}
-.ref-hero p{font-size:12.5px;color:#E1E9FF;line-height:1.45}
-.ref-link-row{display:flex;gap:8px;margin-top:10px;align-items:center}
-.ref-link-row .input-box{margin-top:0;flex:1}
-.copy-icon-btn{background:#24356E;border:1px solid #3B529E;color:#fff;width:44px;height:42px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}
-.ref-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.ref-stat-box{background:#121B3E;border:1px solid #293B75;border-radius:15px;padding:13px;text-align:center}
-.ref-stat-label{font-size:11.5px;color:var(--muted);margin-bottom:5px}
-.ref-stat-val{font-size:19px;font-weight:800;color:#47E5FF}
+.ref-hero{display:flex;align-items:center;gap:12px;padding:14px;border-radius:18px;background:linear-gradient(130deg,#2A43A8,#5A3EC0 60%,#7D37AC);border:1px solid rgba(145,175,255,.3);margin-bottom:12px}
+.ref-hero-icon{font-size:40px;flex-shrink:0}
+.ref-hero h3{font-size:16px;margin-bottom:4px;line-height:1.3}
+.ref-hero p{font-size:12px;color:#E1E9FF;line-height:1.4}
+.ref-link-row{display:flex;gap:8px;margin-top:8px;align-items:center}
+.ref-link-row .input-box{flex:1}
+.copy-icon-btn{background:#24356E;border:1px solid #3B529E;color:#fff;width:42px;height:38px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;font-size:16px}
+.ref-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.ref-stat-box{background:#121B3E;border:1px solid #293B75;border-radius:14px;padding:11px;text-align:center}
+.ref-stat-label{font-size:11px;color:var(--muted);margin-bottom:4px}
+.ref-stat-val{font-size:17px;font-weight:800;color:#47E5FF}
 .ref-stat-val.gold{color:var(--gold)}
 
 /* History Filter Tabs & Items */
-.filter-tabs{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto}
-.filter-tab{flex:1;padding:9px 10px;border-radius:20px;border:1px solid #2A3D78;background:#152047;color:#A6B7DE;font-size:12.5px;font-weight:700;text-align:center}
+.filter-tabs{display:flex;gap:7px;margin-bottom:12px}
+.filter-tab{flex:1;padding:8px 8px;border-radius:18px;border:1px solid #2A3D78;background:#152047;color:#A6B7DE;font-size:12px;font-weight:700;text-align:center}
 .filter-tab.active{background:linear-gradient(110deg,#21D4FD,#4EA8FF);color:#061333;border-color:transparent}
-.empty-state{text-align:center;padding:30px 12px;color:var(--muted)}
-.empty-state div{font-size:32px;margin-bottom:10px}
-.empty-state p{font-size:12.5px;line-height:1.7}
-.tx-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 14px;background:#16224A;border:1px solid #273972;border-radius:16px;margin-bottom:10px}
+.empty-state{text-align:center;padding:24px 10px;color:var(--muted)}
+.empty-state div{font-size:28px;margin-bottom:8px}
+.empty-state p{font-size:12px;line-height:1.6}
+.tx-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 12px;background:#16224A;border:1px solid #273972;border-radius:14px;margin-bottom:8px}
 .tx-item:last-child{margin-bottom:0}
-.tx-left{display:flex;align-items:center;gap:11px;min-width:0}
-.tx-badge{width:38px;height:38px;border-radius:12px;background:#23346D;display:grid;place-items:center;font-size:18px;flex-shrink:0}
-.tx-title{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:3px}
-.tx-sub{font-size:11px;color:var(--muted)}
-.tx-amount-credit{font-size:14.5px;font-weight:800;color:#3CE8FF;text-align:right;white-space:nowrap}
-.tx-amount-debit{font-size:14.5px;font-weight:800;color:#FF5A79;text-align:right;white-space:nowrap}
+.tx-left{display:flex;align-items:center;gap:10px;min-width:0}
+.tx-badge{width:34px;height:34px;border-radius:10px;background:#23346D;display:grid;place-items:center;font-size:15px;flex-shrink:0}
+.tx-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+.tx-sub{font-size:10.5px;color:var(--muted)}
+.tx-amount-credit{font-size:13.5px;font-weight:800;color:#3CE8FF;text-align:right;white-space:nowrap}
+.tx-amount-debit{font-size:13.5px;font-weight:800;color:#FF5A79;text-align:right;white-space:nowrap}
 
 /* Profile UI */
-.profile-header-card{display:flex;align-items:center;gap:14px}
-.profile-avatar{width:64px;height:64px;background:linear-gradient(135deg,#21D4FD,#7E3FB5);color:#fff;display:grid;place-items:center;border-radius:50%;font-size:28px;border:2.5px solid #47E5FF;flex-shrink:0}
-.profile-name{font-size:18px;font-weight:800;margin-bottom:3px}
-.profile-sub{font-size:12.5px;color:var(--muted);margin-bottom:6px}
-.verified-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;background:rgba(33,212,253,.15);border:1px solid rgba(33,212,253,.35);color:#47E5FF;font-size:11px;font-weight:700}
-.profile-mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
-.p-mini-box{background:#16224A;border:1px solid #2A3C75;border-radius:16px;padding:12px 8px;text-align:center}
-.p-mini-val{font-size:16px;font-weight:800;color:#fff;margin-bottom:3px}
-.p-mini-lbl{font-size:11px;color:var(--muted)}
-.menu-list-item{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(43,62,120,.65);cursor:pointer}
+.profile-header-card{display:flex;align-items:center;gap:12px}
+.profile-avatar{width:54px;height:54px;background:linear-gradient(135deg,#21D4FD,#7E3FB5);color:#fff;display:grid;place-items:center;border-radius:50%;font-size:24px;border:2px solid #47E5FF;flex-shrink:0}
+.profile-name{font-size:16.5px;font-weight:800;margin-bottom:2px}
+.profile-sub{font-size:12px;color:var(--muted);margin-bottom:5px}
+.verified-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:16px;background:rgba(33,212,253,.15);border:1px solid rgba(33,212,253,.35);color:#47E5FF;font-size:10.5px;font-weight:700}
+.profile-mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.p-mini-box{background:#16224A;border:1px solid #2A3C75;border-radius:14px;padding:10px 6px;text-align:center}
+.p-mini-val{font-size:15px;font-weight:800;color:#fff;margin-bottom:2px}
+.p-mini-lbl{font-size:10.5px;color:var(--muted)}
+.menu-list-item{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(43,62,120,.65);cursor:pointer}
 .menu-list-item:last-child{border-bottom:0;padding-bottom:0}
 .menu-list-item:first-child{padding-top:0}
-.menu-left{display:flex;align-items:center;gap:11px}
-.menu-icon{width:34px;height:34px;border-radius:10px;background:#223269;display:grid;place-items:center;font-size:16px}
-.menu-title{font-size:13.5px;font-weight:700}
-.menu-sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+.menu-left{display:flex;align-items:center;gap:10px}
+.menu-icon{width:32px;height:32px;border-radius:9px;background:#223269;display:grid;place-items:center;font-size:15px}
+.menu-title{font-size:13px;font-weight:700}
+.menu-sub{font-size:11px;color:var(--muted);margin-top:1px}
 
-.notice{color:var(--muted);font-size:10.5px;text-align:center;margin-top:22px}
+.notice{color:var(--muted);font-size:10px;text-align:center;margin-top:10px}
 
 /* Bottom Navigation */
-.bottom-nav{position:fixed;bottom:0;left:0;width:100%;z-index:20;background:rgba(11,17,43,.95);backdrop-filter:blur(14px);border-top:1px solid #233368;display:flex;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
-.nav-item{border:0;background:none;color:#8E9EC6;flex:1;font-size:11px;padding:3px 2px;min-width:0}
-.nav-item span:first-child{display:block;margin-bottom:3px}
-.nav-item span:last-child{display:block;font-size:11.5px;font-weight:600}
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;z-index:20;background:rgba(11,17,43,.96);backdrop-filter:blur(14px);border-top:1px solid #233368;display:flex;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+.nav-item{border:0;background:none;color:#8E9EC6;flex:1;font-size:10.5px;padding:2px;min-width:0}
+.nav-item span:first-child{display:block;margin-bottom:2px}
+.nav-item span:last-child{display:block;font-size:11px;font-weight:600}
 .nav-item.active{color:#21D4FD}
 .nav-item.active span:first-child{filter:drop-shadow(0 0 7px rgba(33,212,253,.45))}
 
-/* Light Congratulation Popup (Matches reference white card popup) */
+/* Congratulation Popup */
 .popup{display:none;position:fixed;inset:0;z-index:50;background:rgba(6,10,28,.78);align-items:center;justify-content:center;padding:20px}
 .popup.show{display:flex}
-.popup-box{width:100%;max-width:340px;background:#F7FAFF;color:#111B3A;border-radius:26px;padding:26px 20px 22px;text-align:center;position:relative;box-shadow:0 22px 60px rgba(0,0,0,.6)}
-.popup-close{position:absolute;top:14px;right:16px;background:transparent;border:0;font-size:20px;color:#7A89A8}
-.popup-check{width:56px;height:56px;margin:0 auto 12px;border-radius:50%;background:linear-gradient(135deg,#21D4FD,#4EA8FF);color:#061333;display:grid;place-items:center;font-size:28px;font-weight:800;box-shadow:0 8px 20px rgba(33,212,253,.35)}
-.popup-box h2{font-size:21px;margin-bottom:8px;color:#101938;font-weight:800}
-.popup-box p{font-size:13px;color:#465578;line-height:1.6}
-.popup-box .primary-btn{margin-top:18px;border-radius:24px;font-size:15px}
+.popup-box{width:100%;max-width:330px;background:#F7FAFF;color:#111B3A;border-radius:24px;padding:24px 18px 20px;text-align:center;position:relative;box-shadow:0 22px 60px rgba(0,0,0,.6)}
+.popup-close{position:absolute;top:12px;right:14px;background:transparent;border:0;font-size:18px;color:#7A89A8}
+.popup-check{width:52px;height:52px;margin:0 auto 10px;border-radius:50%;background:linear-gradient(135deg,#21D4FD,#4EA8FF);color:#061333;display:grid;place-items:center;font-size:26px;font-weight:800;box-shadow:0 8px 20px rgba(33,212,253,.35)}
+.popup-box h2{font-size:19px;margin-bottom:6px;color:#101938;font-weight:800}
+.popup-box p{font-size:12.5px;color:#465578;line-height:1.55}
+.popup-box .primary-btn{margin-top:15px;border-radius:22px;font-size:14px}
 
-@media(max-width:360px){
- .container{padding-left:13px;padding-right:13px}
- .balance{font-size:32px}
- .quick-card{min-height:136px}.quick-card h3{font-size:16px}
- .logo{font-size:23px}.logo-mark{width:30px;height:30px}
- .stat-value{font-size:16px}
+@media(max-height:740px){
+ .balance-card{padding:11px 14px 10px;margin-bottom:10px}
+ .balance{font-size:27px}
+ .quick-card{min-height:94px}
+ .invite-card{margin-top:9px;padding:10px 12px}
 }
 </style>
 </head>
@@ -215,7 +219,7 @@ button{font-family:inherit;cursor:pointer}
 </div>
 
 <button class="invite-card" type="button" onclick="openPage('referral')">
- <div class="invite-icon">🎁</div><div class="invite-text"><h3 data-i18n="inviteFriends">Invite Friends</h3><p><strong data-i18n="bonusTitle">Get ৳1.00 Bonus</strong><br><span data-i18n="referralRuleShort">after 1 task or 1 ad!</span></p></div><div class="invite-arrow">›</div>
+ <div class="invite-icon">🎁</div><div class="invite-text"><h3 data-i18n="inviteFriends">Invite Friends</h3><p><strong data-i18n="bonusTitle">Get ৳1.00 Bonus</strong> • <span data-i18n="referralRuleShort">after 1 task or 1 ad!</span></p></div><div class="invite-arrow">›</div>
 </button>
 </main>
 
@@ -289,7 +293,7 @@ button{font-family:inherit;cursor:pointer}
 <div class="sub-header">
  <button class="back-btn" onclick="showHome()">←</button>
  <div class="sub-title" data-i18n="referralHeading">Referral Program</div>
- <button class="sub-action" onclick="copyReferral()">🔗</button>
+ <button class="sub-action" type="button" onclick="copyReferral()" title="Copy">📋</button>
 </div>
 
 <div class="ref-hero">
@@ -301,10 +305,10 @@ button{font-family:inherit;cursor:pointer}
 </div>
 
 <div class="panel">
- <h3 data-i18n="yourReferral">🔗 Your Referral Link</h3>
+ <h3 data-i18n="yourReferral">📌 Your Referral Link</h3>
  <div class="ref-link-row">
   <input class="input-box" id="referralLink" readonly placeholder="Loading referral link...">
-  <button class="copy-icon-btn" type="button" onclick="copyReferral()" title="Copy">📋</button>
+  <button class="copy-icon-btn" type="button" onclick="copyReferral()" title="Copy Link">📋</button>
  </div>
  <button class="primary-btn" id="copyReferralBtn" type="button" disabled data-i18n="copyLink" onclick="copyReferral()">Copy & Share Link</button>
 </div>
@@ -350,7 +354,7 @@ button{font-family:inherit;cursor:pointer}
 <div class="sub-header">
  <button class="back-btn" onclick="showHome()">←</button>
  <div class="sub-title" data-i18n="profileHeading">My Profile</div>
- <button class="sub-action" onclick="toggleLanguage()">🌐</button>
+ <button class="sub-action" type="button" onclick="toggleLanguage()">🌐</button>
 </div>
 
 <div class="panel">
@@ -460,7 +464,7 @@ en:{
 totalBalance:"Total Balance",todayEarned:"Today Earned:",todayEarnedShort:"Today Earned",dailyLimit:"Daily Limit",dailyLimitValue:"1000 Ads",todaysAds:"Today's Ads",quickAccess:"Quick Access",watchAds:"Watch Ads",tasks:"Tasks",earnMore:"Earn More",referral:"Referral",inviteEarn:"Invite & Earn",history:"History",viewDetails:"View Details",inviteFriends:"Invite Friends",bonusTitle:"Get ৳1.00 Bonus",referralRuleShort:"after 1 task or 1 ad!",
 tasksHeading:"Daily Tasks",tasksDescription:"Complete available activities to earn rewards.",tasksPending:"Daily tasks will appear here after backend integration.",
 adsHeading:"Watch Ads",rewardPerAd:"Reward per valued ad: ৳0.05",watchEarn:"Watch Next Ad ▶",limitReachedBtn:"🔒 Daily Limit Reached",pressWatch:"Press the button to start an advertisement.",limitReachedStatus:"Today's 1000 ad limit is completed.",
-referralHeading:"Referral Program",refHeroTitle:"Invite Friends & Earn ৳1.00 Bonus!",referralRuleDesc:"Earn ৳1.00 once your invited friend completes 1 task or watches 1 ad.",yourReferral:"🔗 Your Referral Link",copyLink:"Copy & Share Link",totalInvited:"Total Referrals",validReferrals:"Valid Referrals",pendingReferrals:"Pending Referrals",referralEarnings:"Total Earned",
+referralHeading:"Referral Program",refHeroTitle:"Invite Friends & Earn ৳1.00 Bonus!",referralRuleDesc:"Earn ৳1.00 once your invited friend completes 1 task or watches 1 ad.",yourReferral:"📌 Your Referral Link",copyLink:"Copy & Share Link",totalInvited:"Total Referrals",validReferrals:"Valid Referrals",pendingReferrals:"Pending Referrals",referralEarnings:"Total Earned",
 profileHeading:"My Profile",accountInfo:"Telegram Info",languageTitle:"Language",balanceShort:"Balance",earnedShort:"Earned",home:"Home",tasksShort:"Tasks",referralShort:"Referral",profileShort:"Profile",okBtn:"OK",
 historyHeading:"History",historyPending:"Transaction history is not available yet.",filterAll:"All",filterAds:"Ads",filterRef:"Referral",filterBonus:"Bonus"
 },
@@ -468,7 +472,7 @@ bn:{
 totalBalance:"মোট ব্যালেন্স",todayEarned:"আজকের আয়:",todayEarnedShort:"আজকের আয়",dailyLimit:"দৈনিক সীমা",dailyLimitValue:"১০০০ অ্যাড",todaysAds:"আজকের বিজ্ঞাপন",quickAccess:"দ্রুত প্রবেশ",watchAds:"বিজ্ঞাপন দেখুন",tasks:"কাজ",earnMore:"আরও আয় করুন",referral:"রেফারেল",inviteEarn:"বন্ধু আনুন ও আয় করুন",history:"হিস্ট্রি",viewDetails:"বিস্তারিত দেখুন",inviteFriends:"বন্ধুদের আমন্ত্রণ জানান",bonusTitle:"৳১.০০ বোনাস পান",referralRuleShort:"১টি কাজ বা ১টি বিজ্ঞাপনেই!",
 tasksHeading:"দৈনিক কাজ",tasksDescription:"পুরস্কার পেতে উপলব্ধ কাজ সম্পন্ন করুন।",tasksPending:"Backend যুক্ত হলে দৈনিক কাজ এখানে দেখা যাবে।",
 adsHeading:"বিজ্ঞাপন দেখুন",rewardPerAd:"প্রতিটি Valued বিজ্ঞাপনে ৳০.০৫",watchEarn:"পরবর্তী বিজ্ঞাপন দেখুন ▶",limitReachedBtn:"🔒 আজকের লিমিট শেষ",pressWatch:"বিজ্ঞাপন শুরু করতে বাটনে চাপ দিন।",limitReachedStatus:"আজকের ১০০০টি বিজ্ঞাপনের লিমিট পূর্ণ হয়েছে।",
-referralHeading:"রেফারেল প্রোগ্রাম",refHeroTitle:"বন্ধুদের আমন্ত্রণ জানান ও ৳১.০০ বোনাস পান!",referralRuleDesc:"বন্ধুকে আমন্ত্রণ জানান—১টি কাজ অথবা ১টি বিজ্ঞাপন দেখলেই আপনি পাবেন ৳১.০০।",yourReferral:"🔗 আপনার রেফারেল লিংক",copyLink:"লিংক কপি ও শেয়ার করুন",totalInvited:"মোট রেফারেল",validReferrals:"ভ্যালিড রেফারেল",pendingReferrals:"পেন্ডিং রেফারেল",referralEarnings:"মোট আয়",
+referralHeading:"রেফারেল প্রোগ্রাম",refHeroTitle:"বন্ধুদের আমন্ত্রণ জানান ও ৳১.০০ বোনাস পান!",referralRuleDesc:"বন্ধুকে আমন্ত্রণ জানান—১টি কাজ অথবা ১টি বিজ্ঞাপন দেখলেই আপনি পাবেন ৳১.০০।",yourReferral:"📌 আপনার রেফারেল লিংক",copyLink:"লিংক কপি ও শেয়ার করুন",totalInvited:"মোট রেফারেল",validReferrals:"ভ্যালিড রেফারেল",pendingReferrals:"পেন্ডিং রেফারেল",referralEarnings:"মোট আয়",
 profileHeading:"আমার প্রোফাইল",accountInfo:"টেলিগ্রাম তথ্য",languageTitle:"ভাষা (Language)",balanceShort:"ব্যালেন্স",earnedShort:"মোট আয়",home:"হোম",tasksShort:"কাজ",referralShort:"রেফারেল",profileShort:"প্রোফাইল",okBtn:"OK",
 historyHeading:"হিস্ট্রি",historyPending:"লেনদেনের হিস্ট্রি এখনো উপলব্ধ নয়।",filterAll:"সব",filterAds:"বিজ্ঞাপন",filterRef:"রেফারেল",filterBonus:"বোনাস"
 }
@@ -680,7 +684,6 @@ function toggleLanguage(){
 
 if(tg){
  tg.ready();tg.expand();
- tg.requestFullscreen?.();
  const user=getActiveTelegramUser();
  if(user){
  const name=user.first_name||"User";
