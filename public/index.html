@@ -17,51 +17,51 @@ body{
  background:radial-gradient(ellipse at 50% 0%,#1B295A 0%,var(--bg) 62%);
  color:var(--text);
  min-height:100vh;
- padding-top:calc(30px + env(safe-area-inset-top));
- padding-bottom:calc(84px + env(safe-area-inset-bottom));
+ padding-top:calc(8px + env(safe-area-inset-top));
+ padding-bottom:calc(82px + env(safe-area-inset-bottom));
 }
 button{font-family:inherit;cursor:pointer}
-.container{width:100%;max-width:480px;margin:auto;padding:2px 14px 12px}
+.container{width:100%;max-width:480px;margin:auto;padding:0 14px 10px}
 
 /* Top Separate Header Box (Menu + Custom Logo + Bell only) */
 .header-box{
  display:grid;
- grid-template-columns:44px 1fr 44px;
+ grid-template-columns:42px 1fr 42px;
  align-items:center;
  gap:8px;
  background:linear-gradient(145deg,#1D2C61,#131D42);
  border:1.5px solid rgba(53,231,120,.45);
- border-radius:20px;
- padding:6px 10px;
- margin-bottom:10px;
+ border-radius:19px;
+ padding:5px 9px;
+ margin-bottom:8px;
  box-shadow:0 8px 22px rgba(4,8,26,.4);
 }
 .header-menu,.notification-btn{
  background:rgba(255,255,255,.08);
  border:1px solid rgba(255,255,255,.14);
  color:#fff;
- border-radius:13px;
+ border-radius:12px;
  display:grid;
  place-items:center;
  position:relative;
- width:38px;
- height:38px;
+ width:36px;
+ height:36px;
 }
-.header-menu{font-size:19px}
-.notification-btn{font-size:19px}
+.header-menu{font-size:18px}
+.notification-btn{font-size:18px}
 .logo{
  display:flex;
  justify-content:center;
  align-items:center;
- gap:9px;
- font-size:21px;
+ gap:8px;
+ font-size:20px;
  font-weight:800;
  letter-spacing:-0.4px;
  min-width:0;
 }
 .logo-img{
- width:32px;
- height:32px;
+ width:30px;
+ height:30px;
  border-radius:50%;
  object-fit:cover;
  border:2px solid #2BE86C;
@@ -72,28 +72,28 @@ button{font-family:inherit;cursor:pointer}
 .logo span{color:#2BE86C}
 .header-actions{display:flex;justify-content:flex-end}
 .icon-svg{width:1em;height:1em;display:block;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.notification-btn .icon-svg{width:21px;height:21px}
+.notification-btn .icon-svg{width:20px;height:20px}
 
-.wallet-svg{width:50px;height:50px;filter:drop-shadow(0 5px 10px rgba(20,15,60,.32))}
-.growth-svg{width:36px;height:36px;stroke:#47E5FF;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.quick-icon svg{width:34px;height:34px}
-.nav-item .nav-svg{width:26px;height:26px;margin:0 auto 3px}
+.wallet-svg{width:48px;height:48px;filter:drop-shadow(0 5px 10px rgba(20,15,60,.32))}
+.growth-svg{width:34px;height:34px;stroke:#47E5FF;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.quick-icon svg{width:32px;height:32px}
+.nav-item .nav-svg{width:25px;height:25px;margin:0 auto 2px}
 
 /* Balance Card */
 .balance-card{
  position:relative;
  overflow:hidden;
  border:1px solid rgba(130,170,255,.32);
- border-radius:24px;
- padding:14px 16px 12px;
- margin-bottom:11px;
+ border-radius:22px;
+ padding:12px 15px 11px;
+ margin-bottom:9px;
  background:linear-gradient(125deg,#3B5BDB 0%,#6347D1 52%,#8E44AD 100%);
  box-shadow:0 10px 26px rgba(68,75,210,.26);
 }
 .balance-card:before{content:"";position:absolute;width:185px;height:185px;border:26px solid rgba(255,255,255,.06);border-radius:50%;right:-60px;top:-70px}
-.balance-main{position:relative;z-index:1;display:grid;grid-template-columns:54px 1fr 38px;align-items:center;gap:10px}
-.balance-label{font-size:13.5px;color:#E2EAFF;margin-bottom:2px;font-weight:600}
-.balance{font-size:32px;font-weight:800;letter-spacing:-0.8px;white-space:nowrap}
+.balance-main{position:relative;z-index:1;display:grid;grid-template-columns:52px 1fr 36px;align-items:center;gap:10px}
+.balance-label{font-size:13px;color:#E2EAFF;margin-bottom:2px;font-weight:600}
+.balance{font-size:30px;font-weight:800;letter-spacing:-0.8px;white-space:nowrap}
 .today-earned{
  position:relative;
  z-index:2;
@@ -101,24 +101,24 @@ button{font-family:inherit;cursor:pointer}
  align-items:center;
  justify-content:center;
  gap:6px;
- margin:9px auto 0;
- padding:5px 14px;
+ margin:8px auto 0;
+ padding:4px 13px;
  width:fit-content;
  max-width:100%;
  background:rgba(16,22,64,.44);
  border:1px solid rgba(255,255,255,.15);
- border-radius:26px;
- font-size:13px;
+ border-radius:24px;
+ font-size:12.5px;
  color:#F0F4FF;
  white-space:nowrap;
 }
-.today-earned strong{color:var(--gold);font-size:14.5px}
+.today-earned strong{color:var(--gold);font-size:14px}
 
 /* Quick Access Grid */
-.section-title{font-size:16.5px;font-weight:800;margin:0 0 8px}
-.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.section-title{font-size:16px;font-weight:800;margin:0 0 7px}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .quick-card{
- min-height:106px;
+ min-height:98px;
  display:flex;
  flex-direction:column;
  align-items:center;
@@ -126,27 +126,27 @@ button{font-family:inherit;cursor:pointer}
  text-align:center;
  background:linear-gradient(155deg,#1D2B5B,#131D42);
  border:1px solid #2D4080;
- border-radius:20px;
- padding:10px 8px;
+ border-radius:19px;
+ padding:8px 8px;
  cursor:pointer;
  box-shadow:0 6px 18px rgba(6,10,30,.26);
  transition:transform .14s,border-color .14s;
 }
 .quick-card:active{transform:scale(.97);border-color:#21D4FD}
-.quick-icon{margin-bottom:5px}
-.quick-card h3{font-size:15px;margin-bottom:2px;font-weight:750}
-.quick-card p{font-size:12px;color:var(--muted);line-height:1.3}
-.quick-card .highlight{color:var(--gold);font-weight:750;font-size:13.5px}
+.quick-icon{margin-bottom:4px}
+.quick-card h3{font-size:14.5px;margin-bottom:1px;font-weight:750}
+.quick-card p{font-size:11.5px;color:var(--muted);line-height:1.25}
+.quick-card .highlight{color:var(--gold);font-weight:750;font-size:13px}
 
 /* Invite Banner */
 .invite-card{
- margin-top:10px;
+ margin-top:9px;
  width:100%;
  display:flex;
  align-items:center;
- gap:12px;
- padding:11px 14px;
- border-radius:21px;
+ gap:11px;
+ padding:10px 13px;
+ border-radius:19px;
  border:1px solid rgba(135,165,255,.32);
  background:linear-gradient(120deg,#324EC8,#5D44C8 55%,#7E3FB5);
  box-shadow:0 8px 20px rgba(55,65,190,.22);
@@ -154,28 +154,28 @@ button{font-family:inherit;cursor:pointer}
  text-align:left;
  color:white;
 }
-.invite-icon{font-size:34px;flex-shrink:0}
+.invite-icon{font-size:32px;flex-shrink:0}
 .invite-text{flex:1;min-width:0}
-.invite-text h3{font-size:15.5px;margin-bottom:2px}
-.invite-text p{font-size:12px;line-height:1.35;color:#E5ECFF}
-.invite-text strong{color:var(--gold);font-size:14px}
+.invite-text h3{font-size:15px;margin-bottom:1px}
+.invite-text p{font-size:11.5px;line-height:1.3;color:#E5ECFF}
+.invite-text strong{color:var(--gold);font-size:13.5px}
 .invite-arrow{
- font-size:20px;
+ font-size:19px;
  flex-shrink:0;
  background:#21D4FD;
  color:#0A1538;
  font-weight:800;
- width:32px;
- height:32px;
+ width:30px;
+ height:30px;
  border-radius:50%;
  display:grid;
  place-items:center;
 }
 
 /* Sub-page Top Bar */
-.sub-header{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;margin-bottom:14px;min-height:40px}
+.sub-header{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;margin-bottom:12px;min-height:38px}
 .back-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:17px}
-.sub-title{text-align:center;font-size:18.5px;font-weight:800}
+.sub-title{text-align:center;font-size:18px;font-weight:800}
 .sub-action{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#D5E1FF;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:16px}
 
 /* Pages and Common Cards */
@@ -265,7 +265,7 @@ button{font-family:inherit;cursor:pointer}
 .menu-title{font-size:13px;font-weight:700}
 .menu-sub{font-size:11px;color:var(--muted);margin-top:1px}
 
-.notice{color:var(--muted);font-size:10px;text-align:center;margin-top:8px}
+.notice{color:var(--muted);font-size:10px;text-align:center;margin-top:6px}
 
 /* Bottom Navigation Bar */
 .bottom-nav{
