@@ -9,65 +9,64 @@
 <script src="//libtl.com/sdk.js" data-zone="12287336" data-sdk="show_12287336"></script>
 <style>
 :root{
- --bg:#0B112B; --panel:#162247; --card:#19264E; --border:#2B3E78;
- --cyan:#21D4FD; --purple:#9353F3; --text:#F5F8FF; --muted:#9EB0D8; --gold:#FFD54F;
+--bg:#0B112B; --panel:#162247; --card:#19264E; --border:#2B3E78;
+--cyan:#21D4FD; --purple:#9353F3; --text:#F5F8FF; --muted:#9EB0D8; --gold:#FFD54F;
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
 body{
- background:radial-gradient(ellipse at 50% 0%,#1B295A 0%,var(--bg) 62%);
- color:var(--text);
- min-height:100vh;
- padding-top:calc(16px + env(safe-area-inset-top));
- padding-bottom:calc(82px + env(safe-area-inset-bottom));
+background:radial-gradient(ellipse at 50% 0%,#1B295A 0%,var(--bg) 62%);
+color:var(--text);
+min-height:100vh;
+padding-top:calc(16px + env(safe-area-inset-top));
+padding-bottom:calc(82px + env(safe-area-inset-bottom));
 }
 button{font-family:inherit;cursor:pointer}
 .container{width:100%;max-width:480px;margin:auto;padding:2px 14px 12px}
 
 /* Top Separate Header Box (Menu + Custom Logo + Bell only) */
 .header-box{
- display:grid;
- grid-template-columns:42px 1fr 42px;
- align-items:center;
- gap:8px;
- background:linear-gradient(145deg,#1D2C61,#131D42);
- border:1.5px solid rgba(53,231,120,.45);
- border-radius:20px;
- padding:6px 10px;
- margin-bottom:13px;
- box-shadow:0 8px 22px rgba(4,8,26,.4);
+display:grid;
+grid-template-columns:42px 1fr 42px;
+align-items:center;
+gap:8px;
+background:linear-gradient(145deg,#1D2C61,#131D42);
+border:1.5px solid rgba(53,231,120,.45);
+border-radius:20px;
+padding:6px 10px;
+margin-bottom:13px;
+box-shadow:0 8px 22px rgba(4,8,26,.4);
 }
 .header-menu,.notification-btn{
- background:rgba(255,255,255,.08);
- border:1px solid rgba(255,255,255,.14);
- color:#fff;
- border-radius:12px;
- display:grid;
- place-items:center;
- position:relative;
- width:37px;
- height:37px;
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.14);
+color:#fff;
+border-radius:12px;
+display:grid;
+place-items:center;
+position:relative;
+width:37px;
+height:37px;
 }
 .header-menu{font-size:19px}
 .notification-btn{font-size:19px}
 .logo{
- display:flex;
- justify-content:center;
- align-items:center;
- gap:9px;
- font-size:20.5px;
- font-weight:800;
- letter-spacing:-0.4px;
- min-width:0;
+display:flex;
+justify-content:center;
+align-items:center;
+gap:9px;
+font-size:20.5px;
+font-weight:800;
+letter-spacing:-0.4px;
+min-width:0;
 }
 .logo-img{
- width:32px;
- height:32px;
- border-radius:50%;
- object-fit:cover;
- border:1.5px solid rgba(255,215,64,.65);
- box-shadow:0 0 10px rgba(255,215,64,.25);
- flex-shrink:0;
- background:#070B14;
+width:36px;
+height:36px;
+border-radius:50%;
+object-fit:cover;
+flex-shrink:0;
+background:transparent;
+filter:brightness(1.08) saturate(1.04);
 }
 .logo span{color:#2BE86C}
 .header-actions{display:flex;justify-content:flex-end}
@@ -81,36 +80,36 @@ button{font-family:inherit;cursor:pointer}
 
 /* Balance Card */
 .balance-card{
- position:relative;
- overflow:hidden;
- border:1px solid rgba(130,170,255,.32);
- border-radius:23px;
- padding:14px 16px 13px;
- margin-bottom:14px;
- background:linear-gradient(125deg,#3B5BDB 0%,#6347D1 52%,#8E44AD 100%);
- box-shadow:0 10px 26px rgba(68,75,210,.26);
+position:relative;
+overflow:hidden;
+border:1px solid rgba(130,170,255,.32);
+border-radius:23px;
+padding:14px 16px 13px;
+margin-bottom:14px;
+background:linear-gradient(125deg,#3B5BDB 0%,#6347D1 52%,#8E44AD 100%);
+box-shadow:0 10px 26px rgba(68,75,210,.26);
 }
 .balance-card:before{content:"";position:absolute;width:185px;height:185px;border:26px solid rgba(255,255,255,.06);border-radius:50%;right:-60px;top:-70px}
 .balance-main{position:relative;z-index:1;display:grid;grid-template-columns:54px 1fr 38px;align-items:center;gap:10px}
 .balance-label{font-size:13.5px;color:#E2EAFF;margin-bottom:2px;font-weight:600}
 .balance{font-size:31px;font-weight:800;letter-spacing:-0.8px;white-space:nowrap}
 .today-earned{
- position:relative;
- z-index:2;
- display:flex;
- align-items:center;
- justify-content:center;
- gap:6px;
- margin:10px auto 0;
- padding:5px 14px;
- width:fit-content;
- max-width:100%;
- background:rgba(16,22,64,.44);
- border:1px solid rgba(255,255,255,.15);
- border-radius:25px;
- font-size:13px;
- color:#F0F4FF;
- white-space:nowrap;
+position:relative;
+z-index:2;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:6px;
+margin:10px auto 0;
+padding:5px 14px;
+width:fit-content;
+max-width:100%;
+background:rgba(16,22,64,.44);
+border:1px solid rgba(255,255,255,.15);
+border-radius:25px;
+font-size:13px;
+color:#F0F4FF;
+white-space:nowrap;
 }
 .today-earned strong{color:var(--gold);font-size:14.5px}
 
@@ -118,19 +117,19 @@ button{font-family:inherit;cursor:pointer}
 .section-title{font-size:16.5px;font-weight:800;margin:0 0 10px}
 .quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .quick-card{
- min-height:112px;
- display:flex;
- flex-direction:column;
- align-items:center;
- justify-content:center;
- text-align:center;
- background:linear-gradient(155deg,#1D2B5B,#131D42);
- border:1px solid #2D4080;
- border-radius:20px;
- padding:11px 9px;
- cursor:pointer;
- box-shadow:0 6px 18px rgba(6,10,30,.26);
- transition:transform .14s,border-color .14s;
+min-height:112px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+background:linear-gradient(155deg,#1D2B5B,#131D42);
+border:1px solid #2D4080;
+border-radius:20px;
+padding:11px 9px;
+cursor:pointer;
+box-shadow:0 6px 18px rgba(6,10,30,.26);
+transition:transform .14s,border-color .14s;
 }
 .quick-card:active{transform:scale(.97);border-color:#21D4FD}
 .quick-icon{margin-bottom:5px}
@@ -140,19 +139,19 @@ button{font-family:inherit;cursor:pointer}
 
 /* Invite Banner */
 .invite-card{
- margin-top:14px;
- width:100%;
- display:flex;
- align-items:center;
- gap:12px;
- padding:13px 14px;
- border-radius:20px;
- border:1px solid rgba(135,165,255,.32);
- background:linear-gradient(120deg,#324EC8,#5D44C8 55%,#7E3FB5);
- box-shadow:0 8px 20px rgba(55,65,190,.22);
- cursor:pointer;
- text-align:left;
- color:white;
+margin-top:14px;
+width:100%;
+display:flex;
+align-items:center;
+gap:12px;
+padding:13px 14px;
+border-radius:20px;
+border:1px solid rgba(135,165,255,.32);
+background:linear-gradient(120deg,#324EC8,#5D44C8 55%,#7E3FB5);
+box-shadow:0 8px 20px rgba(55,65,190,.22);
+cursor:pointer;
+text-align:left;
+color:white;
 }
 .invite-icon{font-size:34px;flex-shrink:0}
 .invite-text{flex:1;min-width:0}
@@ -160,16 +159,16 @@ button{font-family:inherit;cursor:pointer}
 .invite-text p{font-size:12px;line-height:1.35;color:#E5ECFF}
 .invite-text strong{color:var(--gold);font-size:14px}
 .invite-arrow{
- font-size:19px;
- flex-shrink:0;
- background:#21D4FD;
- color:#0A1538;
- font-weight:800;
- width:32px;
- height:32px;
- border-radius:50%;
- display:grid;
- place-items:center;
+font-size:19px;
+flex-shrink:0;
+background:#21D4FD;
+color:#0A1538;
+font-weight:800;
+width:32px;
+height:32px;
+border-radius:50%;
+display:grid;
+place-items:center;
 }
 
 /* Sub-page Top Bar */
@@ -269,26 +268,26 @@ button{font-family:inherit;cursor:pointer}
 
 /* Bottom Navigation Bar */
 .bottom-nav{
- position:fixed;
- bottom:0;
- left:0;
- width:100%;
- z-index:20;
- background:rgba(11,17,43,.97);
- backdrop-filter:blur(14px);
- border-top:1px solid #263875;
- display:flex;
- justify-content:space-around;
- padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+z-index:20;
+background:rgba(11,17,43,.97);
+backdrop-filter:blur(14px);
+border-top:1px solid #263875;
+display:flex;
+justify-content:space-around;
+padding:8px 6px calc(8px + env(safe-area-inset-bottom));
 }
 .nav-item{
- border:0;
- background:none;
- color:#94A6D0;
- flex:1;
- font-size:12px;
- padding:4px 2px;
- min-width:0;
+border:0;
+background:none;
+color:#94A6D0;
+flex:1;
+font-size:12px;
+padding:4px 2px;
+min-width:0;
 }
 .nav-item span:first-child{display:block;margin-bottom:3px}
 .nav-item span:last-child{display:block;font-size:12.5px;font-weight:700}
@@ -312,46 +311,46 @@ button{font-family:inherit;cursor:pointer}
 <!-- HOME PAGE -->
 <main id="homePage">
 <header class="header-box">
- <button class="header-menu" type="button" aria-label="Open profile" onclick="openPage('profile')">☰</button>
- <div class="logo">
-  <img id="headerLogoImg" class="logo-img" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='60' fill='%23060a14'/%3E%3Cpolygon points='60,15 71,44 102,44 77,62 87,92 60,74 33,92 43,62 18,44 49,44' fill='%23ffd41f'/%3E%3Ctext x='60' y='88' text-anchor='middle' font-family='Arial,sans-serif' font-style='italic' font-weight='900' font-size='18' fill='%23ffffff' stroke='%23060a14' stroke-width='3' paint-order='stroke'%3EEarnNova%3C/text%3E%3Cpath d='M34 95 Q62 105 90 91' fill='none' stroke='%23ffca18' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" alt="EarnNova Logo">
-  <div>Earn<span>Nova</span></div>
- </div>
- <div class="header-actions">
-  <button class="notification-btn" type="button" aria-label="Notifications" onclick="openPage('history')">
-   <svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
-  </button>
- </div>
+<button class="header-menu" type="button" aria-label="Open profile" onclick="openPage('profile')">☰</button>
+<div class="logo">
+<img id="headerLogoImg" class="logo-img" src="data:image/png;base64,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" alt="EarnNova Logo">
+<div>Earn<span>Nova</span></div>
+</div>
+<div class="header-actions">
+<button class="notification-btn" type="button" aria-label="Notifications" onclick="openPage('history')">
+<svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+</button>
+</div>
 </header>
 
 <section class="balance-card">
- <div class="balance-main">
-  <div class="wallet-icon"><svg class="wallet-svg" viewBox="0 0 72 64" aria-label="Wallet"><path d="M10 10 49 3q8-1 9 7v8H12q-7 0-7 7v29q0 6 7 6h45q5 0 5-6V24q0-6-7-6H12" fill="#4B7BFF" stroke="#2D55CC" stroke-width="3" stroke-linejoin="round"/><path d="M10 14 47 7q6-1 8 6v6H11q-5 0-5 5V53q0 5 6 5h43q5 0 5-5V24q0-6-6-6H12" fill="#709BFF" stroke="#4776F5" stroke-width="2"/><path d="M45 25h20q5 0 5 5v14q0 5-5 5H45q-7 0-7-7V32q0-7 7-7" fill="#5D8BFF" stroke="#3A64DB" stroke-width="2.5"/><circle cx="52" cy="37" r="4" fill="#FFE05B" stroke="#FFF2A6" stroke-width="2"/></svg></div>
-  <div><div class="balance-label" data-i18n="totalBalance">Total Balance</div><div class="balance" id="homeBalance">৳0.00</div></div>
-  <div class="growth-icon"><svg class="growth-svg" viewBox="0 0 52 52"><path d="M7 42 22 27 31 34 45 15"/><path d="M33 15h12v12"/></svg></div>
- </div>
- <div class="today-earned"><span>⭐</span><span data-i18n="todayEarned">Today Earned:</span><strong id="homeEarnings">৳0.00</strong></div>
+<div class="balance-main">
+<div class="wallet-icon"><svg class="wallet-svg" viewBox="0 0 72 64" aria-label="Wallet"><path d="M10 10 49 3q8-1 9 7v8H12q-7 0-7 7v29q0 6 7 6h45q5 0 5-6V24q0-6-7-6H12" fill="#4B7BFF" stroke="#2D55CC" stroke-width="3" stroke-linejoin="round"/><path d="M10 14 47 7q6-1 8 6v6H11q-5 0-5 5V53q0 5 6 5h43q5 0 5-5V24q0-6-6-6H12" fill="#709BFF" stroke="#4776F5" stroke-width="2"/><path d="M45 25h20q5 0 5 5v14q0 5-5 5H45q-7 0-7-7V32q0-7 7-7" fill="#5D8BFF" stroke="#3A64DB" stroke-width="2.5"/><circle cx="52" cy="37" r="4" fill="#FFE05B" stroke="#FFF2A6" stroke-width="2"/></svg></div>
+<div><div class="balance-label" data-i18n="totalBalance">Total Balance</div><div class="balance" id="homeBalance">৳0.00</div></div>
+<div class="growth-icon"><svg class="growth-svg" viewBox="0 0 52 52"><path d="M7 42 22 27 31 34 45 15"/><path d="M33 15h12v12"/></svg></div>
+</div>
+<div class="today-earned"><span>⭐</span><span data-i18n="todayEarned">Today Earned:</span><strong id="homeEarnings">৳0.00</strong></div>
 </section>
 
 <h3 class="section-title" data-i18n="quickAccess">Quick Access</h3>
 <div class="quick-grid">
- <div class="quick-card" onclick="openPage('ads')"><div class="quick-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21" fill="#5D7BFF"/><path d="M19 15 33 24 19 33Z" fill="#FFFFFF"/></svg></div><h3 data-i18n="watchAds">Watch Ads</h3><p class="highlight">Earn ৳0.05</p></div>
- <div class="quick-card" onclick="openPage('tasks')"><div class="quick-icon"><svg class="icon-svg" viewBox="0 0 48 48" style="color:#8B6EFF"><rect x="9" y="9" width="30" height="35" rx="5" fill="#7A5CF5" stroke="none"/><path d="M17 5h14v8H17z" fill="#B5A4FF" stroke="none"/><path d="m16 26 5 5 11-12" stroke="#FFFFFF" stroke-width="3.5"/></svg></div><h3 data-i18n="tasks">Tasks</h3><p data-i18n="earnMore">Earn More</p></div>
- <div class="quick-card" onclick="openPage('referral')"><div class="quick-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="17" cy="15" r="7.5" fill="#4D8BFF"/><circle cx="32" cy="18" r="5.5" fill="#7DA8FF"/><path d="M4 39c0-7.5 5.5-12.5 13-12.5S30 31.5 30 39v3H4z" fill="#4D8BFF"/><path d="M28 29c6.5-1 13 3 15 10v3H31" fill="#7DA8FF"/></svg></div><h3 data-i18n="referral">Referral</h3><p data-i18n="inviteEarn">Invite & Earn</p></div>
- <div class="quick-card" onclick="openPage('history')"><div class="quick-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="#6F63F6"/><path d="M24 12v13l9 5" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/></svg></div><h3 data-i18n="history">History</h3><p data-i18n="viewDetails">View Details</p></div>
+<div class="quick-card" onclick="openPage('ads')"><div class="quick-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21" fill="#5D7BFF"/><path d="M19 15 33 24 19 33Z" fill="#FFFFFF"/></svg></div><h3 data-i18n="watchAds">Watch Ads</h3><p class="highlight">Earn ৳0.05</p></div>
+<div class="quick-card" onclick="openPage('tasks')"><div class="quick-icon"><svg class="icon-svg" viewBox="0 0 48 48" style="color:#8B6EFF"><rect x="9" y="9" width="30" height="35" rx="5" fill="#7A5CF5" stroke="none"/><path d="M17 5h14v8H17z" fill="#B5A4FF" stroke="none"/><path d="m16 26 5 5 11-12" stroke="#FFFFFF" stroke-width="3.5"/></svg></div><h3 data-i18n="tasks">Tasks</h3><p data-i18n="earnMore">Earn More</p></div>
+<div class="quick-card" onclick="openPage('referral')"><div class="quick-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="17" cy="15" r="7.5" fill="#4D8BFF"/><circle cx="32" cy="18" r="5.5" fill="#7DA8FF"/><path d="M4 39c0-7.5 5.5-12.5 13-12.5S30 31.5 30 39v3H4z" fill="#4D8BFF"/><path d="M28 29c6.5-1 13 3 15 10v3H31" fill="#7DA8FF"/></svg></div><h3 data-i18n="referral">Referral</h3><p data-i18n="inviteEarn">Invite & Earn</p></div>
+<div class="quick-card" onclick="openPage('history')"><div class="quick-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="#6F63F6"/><path d="M24 12v13l9 5" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/></svg></div><h3 data-i18n="history">History</h3><p data-i18n="viewDetails">View Details</p></div>
 </div>
 
 <button class="invite-card" type="button" onclick="openPage('referral')">
- <div class="invite-icon">🎁</div><div class="invite-text"><h3 data-i18n="inviteFriends">Invite Friends</h3><p><strong data-i18n="bonusTitle">Get ৳1.00 Bonus</strong> • <span data-i18n="referralRuleShort">after 1 task or 1 ad!</span></p></div><div class="invite-arrow">›</div>
+<div class="invite-icon">🎁</div><div class="invite-text"><h3 data-i18n="inviteFriends">Invite Friends</h3><p><strong data-i18n="bonusTitle">Get ৳1.00 Bonus</strong> • <span data-i18n="referralRuleShort">after 1 task or 1 ad!</span></p></div><div class="invite-arrow">›</div>
 </button>
 </main>
 
 <!-- TASKS PAGE -->
 <section class="page" id="tasks">
 <div class="sub-header">
- <button class="back-btn" type="button" onclick="showHome()">←</button>
- <div class="sub-title" data-i18n="tasksHeading">Daily Tasks</div>
- <div class="sub-action">📋</div>
+<button class="back-btn" type="button" onclick="showHome()">←</button>
+<div class="sub-title" data-i18n="tasksHeading">Daily Tasks</div>
+<div class="sub-action">📋</div>
 </div>
 <p class="page-description" data-i18n="tasksDescription">Complete available activities to earn rewards.</p>
 <div class="panel"><div class="empty-state"><div>📋</div><p data-i18n="tasksPending">Daily tasks will appear here after backend integration.</p></div></div>
@@ -360,114 +359,114 @@ button{font-family:inherit;cursor:pointer}
 <!-- WATCH ADS PAGE -->
 <section class="page" id="ads">
 <div class="sub-header">
- <button class="back-btn" type="button" onclick="showHome()">←</button>
- <div class="sub-title" data-i18n="adsHeading">Watch Ads</div>
- <div class="sub-action">ⓘ</div>
+<button class="back-btn" type="button" onclick="showHome()">←</button>
+<div class="sub-title" data-i18n="adsHeading">Watch Ads</div>
+<div class="sub-action">ⓘ</div>
 </div>
 <div class="ads-card">
- <div class="ring-wrap">
-  <div class="ring">
-   <svg viewBox="0 0 160 160" aria-hidden="true">
-    <defs>
-     <linearGradient id="adRingGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#21D4FD"/>
-      <stop offset="100%" stop-color="#7B61FF"/>
-     </linearGradient>
-    </defs>
-    <circle class="track" cx="80" cy="80" r="70"/>
-    <circle class="progress" id="adProgressRing" cx="80" cy="80" r="70"/>
-   </svg>
-   <div class="ring-center">
-    <div class="play">▶</div>
-    <div class="count"><span id="adCountValue">0</span><span class="total"> / 1000</span></div>
-    <div class="count-label" data-i18n="todaysAds">Today's Ads</div>
-   </div>
-  </div>
- </div>
+<div class="ring-wrap">
+<div class="ring">
+<svg viewBox="0 0 160 160" aria-hidden="true">
+<defs>
+<linearGradient id="adRingGrad" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#21D4FD"/>
+<stop offset="100%" stop-color="#7B61FF"/>
+</linearGradient>
+</defs>
+<circle class="track" cx="80" cy="80" r="70"/>
+<circle class="progress" id="adProgressRing" cx="80" cy="80" r="70"/>
+</svg>
+<div class="ring-center">
+<div class="play">▶</div>
+<div class="count"><span id="adCountValue">0</span><span class="total"> / 1000</span></div>
+<div class="count-label" data-i18n="todaysAds">Today's Ads</div>
+</div>
+</div>
+</div>
 
- <div class="stats">
-  <div class="stat">
-   <div class="stat-icon">📅</div>
-   <div>
-    <div class="stat-label" data-i18n="dailyLimit">Daily Limit</div>
-    <div class="stat-value" id="dailyLimitStat">1000 Ads</div>
-   </div>
-  </div>
-  <div class="stat">
-   <div class="stat-icon">🪙</div>
-   <div>
-    <div class="stat-label" data-i18n="todayEarnedShort">Today Earned</div>
-    <div class="stat-value gold" id="adsTabEarnings">৳0.00</div>
-   </div>
-  </div>
- </div>
+<div class="stats">
+<div class="stat">
+<div class="stat-icon">📅</div>
+<div>
+<div class="stat-label" data-i18n="dailyLimit">Daily Limit</div>
+<div class="stat-value" id="dailyLimitStat">1000 Ads</div>
+</div>
+</div>
+<div class="stat">
+<div class="stat-icon">🪙</div>
+<div>
+<div class="stat-label" data-i18n="todayEarnedShort">Today Earned</div>
+<div class="stat-value gold" id="adsTabEarnings">৳0.00</div>
+</div>
+</div>
+</div>
 
- <button class="watch" id="watchAdButton" type="button" data-i18n="watchEarn">Watch Next Ad ▶</button>
- <div class="limit-timer-box" id="limitTimerBox">
-  <div class="limit-timer-text" id="limitTimerText"></div>
- </div>
- <p id="adStatus" aria-live="polite" data-i18n="pressWatch">Press the button to start an advertisement.</p>
- <p class="ads-info" data-i18n="rewardPerAd">Reward per valued ad: ৳0.05</p>
+<button class="watch" id="watchAdButton" type="button" data-i18n="watchEarn">Watch Next Ad ▶</button>
+<div class="limit-timer-box" id="limitTimerBox">
+<div class="limit-timer-text" id="limitTimerText"></div>
+</div>
+<p id="adStatus" aria-live="polite" data-i18n="pressWatch">Press the button to start an advertisement.</p>
+<p class="ads-info" data-i18n="rewardPerAd">Reward per valued ad: ৳0.05</p>
 </div>
 </section>
 
 <!-- REFERRAL PAGE -->
 <section class="page" id="referral">
 <div class="sub-header">
- <button class="back-btn" type="button" onclick="showHome()">←</button>
- <div class="sub-title" data-i18n="referralHeading">Referral Program</div>
- <button class="sub-action" type="button" onclick="copyReferral()" title="Copy">📋</button>
+<button class="back-btn" type="button" onclick="showHome()">←</button>
+<div class="sub-title" data-i18n="referralHeading">Referral Program</div>
+<button class="sub-action" type="button" onclick="copyReferral()" title="Copy">📋</button>
 </div>
 
 <div class="ref-hero">
- <div class="ref-hero-icon">🎁</div>
- <div>
-  <h3 data-i18n="refHeroTitle">Invite Friends & Earn ৳1.00 Bonus!</h3>
-  <p data-i18n="referralRuleDesc">Earn ৳1.00 once your invited friend completes 1 task or watches 1 ad.</p>
- </div>
+<div class="ref-hero-icon">🎁</div>
+<div>
+<h3 data-i18n="refHeroTitle">Invite Friends & Earn ৳1.00 Bonus!</h3>
+<p data-i18n="referralRuleDesc">Earn ৳1.00 once your invited friend completes 1 task or watches 1 ad.</p>
+</div>
 </div>
 
 <div class="panel">
- <h3 data-i18n="yourReferral">📌 Your Referral Link</h3>
- <div class="ref-link-row">
-  <input class="input-box" id="referralLink" readonly placeholder="Loading referral link...">
-  <button class="copy-icon-btn" type="button" onclick="copyReferral()" title="Copy Link">📋</button>
- </div>
- <button class="primary-btn" id="copyReferralBtn" type="button" disabled data-i18n="copyLink" onclick="copyReferral()">Copy & Share Link</button>
+<h3 data-i18n="yourReferral">📌 Your Referral Link</h3>
+<div class="ref-link-row">
+<input class="input-box" id="referralLink" readonly placeholder="Loading referral link...">
+<button class="copy-icon-btn" type="button" onclick="copyReferral()" title="Copy Link">📋</button>
+</div>
+<button class="primary-btn" id="copyReferralBtn" type="button" disabled data-i18n="copyLink" onclick="copyReferral()">Copy & Share Link</button>
 </div>
 
 <div class="ref-stats-grid">
- <div class="ref-stat-box">
-  <div class="ref-stat-label" data-i18n="totalInvited">Total Referrals</div>
-  <div class="ref-stat-val" id="refTotalCount">0</div>
- </div>
- <div class="ref-stat-box">
-  <div class="ref-stat-label" data-i18n="referralEarnings">Total Earned</div>
-  <div class="ref-stat-val gold" id="refEarnedAmount">৳0.00</div>
- </div>
- <div class="ref-stat-box">
-  <div class="ref-stat-label" data-i18n="validReferrals">Valid Referrals</div>
-  <div class="ref-stat-val" id="refValidCount">0</div>
- </div>
- <div class="ref-stat-box">
-  <div class="ref-stat-label" data-i18n="pendingReferrals">Pending Referrals</div>
-  <div class="ref-stat-val" id="refPendingCount">0</div>
- </div>
+<div class="ref-stat-box">
+<div class="ref-stat-label" data-i18n="totalInvited">Total Referrals</div>
+<div class="ref-stat-val" id="refTotalCount">0</div>
+</div>
+<div class="ref-stat-box">
+<div class="ref-stat-label" data-i18n="referralEarnings">Total Earned</div>
+<div class="ref-stat-val gold" id="refEarnedAmount">৳0.00</div>
+</div>
+<div class="ref-stat-box">
+<div class="ref-stat-label" data-i18n="validReferrals">Valid Referrals</div>
+<div class="ref-stat-val" id="refValidCount">0</div>
+</div>
+<div class="ref-stat-box">
+<div class="ref-stat-label" data-i18n="pendingReferrals">Pending Referrals</div>
+<div class="ref-stat-val" id="refPendingCount">0</div>
+</div>
 </div>
 </section>
 
 <!-- HISTORY PAGE -->
 <section class="page" id="history">
 <div class="sub-header">
- <button class="back-btn" type="button" onclick="showHome()">←</button>
- <div class="sub-title" data-i18n="historyHeading">History</div>
- <div class="sub-action">⏳</div>
+<button class="back-btn" type="button" onclick="showHome()">←</button>
+<div class="sub-title" data-i18n="historyHeading">History</div>
+<div class="sub-action">⏳</div>
 </div>
 <div class="filter-tabs">
- <button class="filter-tab active" onclick="filterHistory('all', this)" data-i18n="filterAll">All</button>
- <button class="filter-tab" onclick="filterHistory('ad', this)" data-i18n="filterAds">Ads</button>
- <button class="filter-tab" onclick="filterHistory('ref', this)" data-i18n="filterRef">Referral</button>
- <button class="filter-tab" onclick="filterHistory('bonus', this)" data-i18n="filterBonus">Bonus</button>
+<button class="filter-tab active" onclick="filterHistory('all', this)" data-i18n="filterAll">All</button>
+<button class="filter-tab" onclick="filterHistory('ad', this)" data-i18n="filterAds">Ads</button>
+<button class="filter-tab" onclick="filterHistory('ref', this)" data-i18n="filterRef">Referral</button>
+<button class="filter-tab" onclick="filterHistory('bonus', this)" data-i18n="filterBonus">Bonus</button>
 </div>
 <div class="panel" id="historyContainer"><div class="empty-state"><div>🕒</div><p data-i18n="historyPending">Transaction history is not available yet.</p></div></div>
 </section>
@@ -475,67 +474,67 @@ button{font-family:inherit;cursor:pointer}
 <!-- PROFILE PAGE -->
 <section class="page" id="profile">
 <div class="sub-header">
- <button class="back-btn" type="button" onclick="showHome()">←</button>
- <div class="sub-title" data-i18n="profileHeading">My Profile</div>
- <button class="sub-action" type="button" onclick="toggleLanguage()">🌐</button>
+<button class="back-btn" type="button" onclick="showHome()">←</button>
+<div class="sub-title" data-i18n="profileHeading">My Profile</div>
+<button class="sub-action" type="button" onclick="toggleLanguage()">🌐</button>
 </div>
 
 <div class="panel">
- <div class="profile-header-card">
-  <div class="profile-avatar">👤</div>
-  <div>
-   <div class="profile-name" id="profileFullName">User</div>
-   <div class="profile-sub" id="telegramUsername">Telegram User</div>
-   <div class="verified-badge">★ Verified User</div>
-  </div>
- </div>
+<div class="profile-header-card">
+<div class="profile-avatar">👤</div>
+<div>
+<div class="profile-name" id="profileFullName">User</div>
+<div class="profile-sub" id="telegramUsername">Telegram User</div>
+<div class="verified-badge">★ Verified User</div>
+</div>
+</div>
 </div>
 
 <div class="profile-mini-stats">
- <div class="p-mini-box">
-  <div class="p-mini-val" id="profileBalance">৳0.00</div>
-  <div class="p-mini-lbl" data-i18n="balanceShort">Balance</div>
- </div>
- <div class="p-mini-box">
-  <div class="p-mini-val" id="profileRefCount">0</div>
-  <div class="p-mini-lbl" data-i18n="referralShort">Referrals</div>
- </div>
- <div class="p-mini-box">
-  <div class="p-mini-val" id="profileRefEarned" style="color:var(--gold)">৳0.00</div>
-  <div class="p-mini-lbl" data-i18n="earnedShort">Earned</div>
- </div>
+<div class="p-mini-box">
+<div class="p-mini-val" id="profileBalance">৳0.00</div>
+<div class="p-mini-lbl" data-i18n="balanceShort">Balance</div>
+</div>
+<div class="p-mini-box">
+<div class="p-mini-val" id="profileRefCount">0</div>
+<div class="p-mini-lbl" data-i18n="referralShort">Referrals</div>
+</div>
+<div class="p-mini-box">
+<div class="p-mini-val" id="profileRefEarned" style="color:var(--gold)">৳0.00</div>
+<div class="p-mini-lbl" data-i18n="earnedShort">Earned</div>
+</div>
 </div>
 
 <div class="panel">
- <div class="menu-list-item">
-  <div class="menu-left">
-   <div class="menu-icon">✈️</div>
-   <div>
-    <div class="menu-title" data-i18n="accountInfo">Telegram Info</div>
-    <div class="menu-sub" id="userDetails">Telegram profile information</div>
-   </div>
-  </div>
- </div>
- <div class="menu-list-item" onclick="toggleLanguage()">
-  <div class="menu-left">
-   <div class="menu-icon">🌐</div>
-   <div>
-    <div class="menu-title" data-i18n="languageTitle">Language</div>
-    <div class="menu-sub" id="profileLanguageButton">English (Tap to switch বাংলা)</div>
-   </div>
-  </div>
-  <span style="color:var(--muted)">›</span>
- </div>
- <div class="menu-list-item" onclick="openPage('history')">
-  <div class="menu-left">
-   <div class="menu-icon">🕒</div>
-   <div>
-    <div class="menu-title" data-i18n="history">History</div>
-    <div class="menu-sub" data-i18n="viewDetails">View Details</div>
-   </div>
-  </div>
-  <span style="color:var(--muted)">›</span>
- </div>
+<div class="menu-list-item">
+<div class="menu-left">
+<div class="menu-icon">✈️</div>
+<div>
+<div class="menu-title" data-i18n="accountInfo">Telegram Info</div>
+<div class="menu-sub" id="userDetails">Telegram profile information</div>
+</div>
+</div>
+</div>
+<div class="menu-list-item" onclick="toggleLanguage()">
+<div class="menu-left">
+<div class="menu-icon">🌐</div>
+<div>
+<div class="menu-title" data-i18n="languageTitle">Language</div>
+<div class="menu-sub" id="profileLanguageButton">English (Tap to switch বাংলা)</div>
+</div>
+</div>
+<span style="color:var(--muted)">›</span>
+</div>
+<div class="menu-list-item" onclick="openPage('history')">
+<div class="menu-left">
+<div class="menu-icon">🕒</div>
+<div>
+<div class="menu-title" data-i18n="history">History</div>
+<div class="menu-sub" data-i18n="viewDetails">View Details</div>
+</div>
+</div>
+<span style="color:var(--muted)">›</span>
+</div>
 </div>
 </section>
 
@@ -552,13 +551,13 @@ button{font-family:inherit;cursor:pointer}
 
 <!-- CONGRATULATION POPUP -->
 <div class="popup" id="rewardPopup">
- <div class="popup-box">
-  <button class="popup-close" onclick="closePopup()">✕</button>
-  <div class="popup-check">✓</div>
-  <h2 id="popupTitle">Congratulations!</h2>
-  <p id="popupMessage">Your reward is awaiting server verification.</p>
-  <button class="primary-btn" onclick="closePopup()" data-i18n="okBtn">OK</button>
- </div>
+<div class="popup-box">
+<button class="popup-close" onclick="closePopup()">✕</button>
+<div class="popup-check">✓</div>
+<h2 id="popupTitle">Congratulations!</h2>
+<p id="popupMessage">Your reward is awaiting server verification.</p>
+<button class="primary-btn" onclick="closePopup()" data-i18n="okBtn">OK</button>
+</div>
 </div>
 
 <script>
@@ -575,10 +574,10 @@ let activeHistoryFilter = "all";
 let currentTodayEarned = 0;
 let currentTodayAdsCount = 0;
 let latestReferralStats = {
- totalReferrals: 0,
- validReferrals: 0,
- pendingReferrals: 0,
- referralEarnings: 0
+totalReferrals: 0,
+validReferrals: 0,
+pendingReferrals: 0,
+referralEarnings: 0
 };
 let isAdRunning = false;
 
@@ -602,297 +601,297 @@ historyHeading:"হিস্ট্রি",historyPending:"লেনদেনে�
 };
 
 function getActiveTelegramUser(){
- return tg?.initDataUnsafe?.user || null;
+return tg?.initDataUnsafe?.user || null;
 }
 
 function getTodayDateKey(){
- const now = new Date();
- const y = now.getFullYear();
- const m = String(now.getMonth() + 1).padStart(2, "0");
- const d = String(now.getDate()).padStart(2, "0");
- return `${y}-${m}-${d}`;
+const now = new Date();
+const y = now.getFullYear();
+const m = String(now.getMonth() + 1).padStart(2, "0");
+const d = String(now.getDate()).padStart(2, "0");
+return `${y}-${m}-${d}`;
 }
 
 function getDailyTrackerKey(){
- const uid = getActiveTelegramUser()?.id || "guest";
- return `earnnova_daily_${uid}`;
+const uid = getActiveTelegramUser()?.id || "guest";
+return `earnnova_daily_${uid}`;
 }
 
 function getDailyLocalStats(){
- const todayKey = getTodayDateKey();
- try{
-  const raw = localStorage.getItem(getDailyTrackerKey());
-  if(!raw) return { date: todayKey, adsCount: 0, todayEarned: 0 };
-  const parsed = JSON.parse(raw);
-  if(parsed.date !== todayKey){
-   const resetObj = { date: todayKey, adsCount: 0, todayEarned: 0 };
-   localStorage.setItem(getDailyTrackerKey(), JSON.stringify(resetObj));
-   return resetObj;
-  }
-  return {
-   date: todayKey,
-   adsCount: Math.max(0, Number(parsed.adsCount || 0)),
-   todayEarned: Math.max(0, Number(parsed.todayEarned || 0))
-  };
- }catch(e){
-  return { date: todayKey, adsCount: 0, todayEarned: 0 };
- }
+const todayKey = getTodayDateKey();
+try{
+const raw = localStorage.getItem(getDailyTrackerKey());
+if(!raw) return { date: todayKey, adsCount: 0, todayEarned: 0 };
+const parsed = JSON.parse(raw);
+if(parsed.date !== todayKey){
+const resetObj = { date: todayKey, adsCount: 0, todayEarned: 0 };
+localStorage.setItem(getDailyTrackerKey(), JSON.stringify(resetObj));
+return resetObj;
+}
+return {
+date: todayKey,
+adsCount: Math.max(0, Number(parsed.adsCount || 0)),
+todayEarned: Math.max(0, Number(parsed.todayEarned || 0))
+};
+}catch(e){
+return { date: todayKey, adsCount: 0, todayEarned: 0 };
+}
 }
 
 function saveDailyLocalStats(adsCount, todayEarned){
- const todayKey = getTodayDateKey();
- try{
-  localStorage.setItem(getDailyTrackerKey(), JSON.stringify({
-   date: todayKey,
-   adsCount: Math.min(DAILY_AD_LIMIT, Math.max(0, Number(adsCount || 0))),
-   todayEarned: Math.max(0, Number(Number(todayEarned || 0).toFixed(2)))
-  }));
- }catch(e){}
+const todayKey = getTodayDateKey();
+try{
+localStorage.setItem(getDailyTrackerKey(), JSON.stringify({
+date: todayKey,
+adsCount: Math.min(DAILY_AD_LIMIT, Math.max(0, Number(adsCount || 0))),
+todayEarned: Math.max(0, Number(Number(todayEarned || 0).toFixed(2)))
+}));
+}catch(e){}
 }
 
 function incrementDailyLocalAd(){
- const local = getDailyLocalStats();
- const nextAds = Math.min(DAILY_AD_LIMIT, Math.max(local.adsCount, currentTodayAdsCount) + 1);
- const nextEarned = Number((Math.max(local.todayEarned, currentTodayEarned) + AD_REWARD_AMOUNT).toFixed(2));
- saveDailyLocalStats(nextAds, nextEarned);
- currentTodayAdsCount = nextAds;
- currentTodayEarned = nextEarned;
+const local = getDailyLocalStats();
+const nextAds = Math.min(DAILY_AD_LIMIT, Math.max(local.adsCount, currentTodayAdsCount) + 1);
+const nextEarned = Number((Math.max(local.todayEarned, currentTodayEarned) + AD_REWARD_AMOUNT).toFixed(2));
+saveDailyLocalStats(nextAds, nextEarned);
+currentTodayAdsCount = nextAds;
+currentTodayEarned = nextEarned;
 
- const homeEarnings = document.getElementById("homeEarnings");
- if(homeEarnings) homeEarnings.textContent = "৳" + currentTodayEarned.toFixed(2);
- updateAdsUI(currentTodayEarned, latestTransactions);
+const homeEarnings = document.getElementById("homeEarnings");
+if(homeEarnings) homeEarnings.textContent = "৳" + currentTodayEarned.toFixed(2);
+updateAdsUI(currentTodayEarned, latestTransactions);
 }
 
 function getLangStorageKey(){
- const uid = getActiveTelegramUser()?.id;
- return uid ? `earnnova_lang_${uid}` : "earnnova_lang_guest";
+const uid = getActiveTelegramUser()?.id;
+return uid ? `earnnova_lang_${uid}` : "earnnova_lang_guest";
 }
 
 function loadSavedLanguage(){
- try{
-  const saved = localStorage.getItem(getLangStorageKey());
-  return saved === "bn" || saved === "en" ? saved : "en";
- }catch(e){
-  return "en";
- }
+try{
+const saved = localStorage.getItem(getLangStorageKey());
+return saved === "bn" || saved === "en" ? saved : "en";
+}catch(e){
+return "en";
+}
 }
 
 function saveLanguage(lang){
- try{
-  localStorage.setItem(getLangStorageKey(), lang);
- }catch(e){}
+try{
+localStorage.setItem(getLangStorageKey(), lang);
+}catch(e){}
 }
 
 function renderReferralStats(stats){
- latestReferralStats = {
-  totalReferrals: Number(stats?.totalReferrals || 0),
-  validReferrals: Number(stats?.validReferrals || 0),
-  pendingReferrals: Number(stats?.pendingReferrals || 0),
-  referralEarnings: Number(stats?.referralEarnings || 0)
- };
- const totalEl = document.getElementById("refTotalCount");
- const validEl = document.getElementById("refValidCount");
- const pendingEl = document.getElementById("refPendingCount");
- const earnedEl = document.getElementById("refEarnedAmount");
- const pRefEl = document.getElementById("profileRefCount");
- const pEarnedEl = document.getElementById("profileRefEarned");
+latestReferralStats = {
+totalReferrals: Number(stats?.totalReferrals || 0),
+validReferrals: Number(stats?.validReferrals || 0),
+pendingReferrals: Number(stats?.pendingReferrals || 0),
+referralEarnings: Number(stats?.referralEarnings || 0)
+};
+const totalEl = document.getElementById("refTotalCount");
+const validEl = document.getElementById("refValidCount");
+const pendingEl = document.getElementById("refPendingCount");
+const earnedEl = document.getElementById("refEarnedAmount");
+const pRefEl = document.getElementById("profileRefCount");
+const pEarnedEl = document.getElementById("profileRefEarned");
 
- if(totalEl) totalEl.textContent = String(latestReferralStats.totalReferrals);
- if(validEl) validEl.textContent = String(latestReferralStats.validReferrals);
- if(pendingEl) pendingEl.textContent = String(latestReferralStats.pendingReferrals);
- if(earnedEl) earnedEl.textContent = "৳" + latestReferralStats.referralEarnings.toFixed(2);
- if(pRefEl) pRefEl.textContent = String(latestReferralStats.totalReferrals);
- if(pEarnedEl) pEarnedEl.textContent = "৳" + latestReferralStats.referralEarnings.toFixed(2);
+if(totalEl) totalEl.textContent = String(latestReferralStats.totalReferrals);
+if(validEl) validEl.textContent = String(latestReferralStats.validReferrals);
+if(pendingEl) pendingEl.textContent = String(latestReferralStats.pendingReferrals);
+if(earnedEl) earnedEl.textContent = "৳" + latestReferralStats.referralEarnings.toFixed(2);
+if(pRefEl) pRefEl.textContent = String(latestReferralStats.totalReferrals);
+if(pEarnedEl) pEarnedEl.textContent = "৳" + latestReferralStats.referralEarnings.toFixed(2);
 }
 
 function getTimeUntilMidnight(){
- const now = new Date();
- const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
- const diffMs = Math.max(0, nextMidnight.getTime() - now.getTime());
- const totalSeconds = Math.floor(diffMs / 1000);
- const hours = Math.floor(totalSeconds / 3600);
- const minutes = Math.floor((totalSeconds % 3600) / 60);
- const seconds = totalSeconds % 60;
- return { hours, minutes, seconds };
+const now = new Date();
+const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
+const diffMs = Math.max(0, nextMidnight.getTime() - now.getTime());
+const totalSeconds = Math.floor(diffMs / 1000);
+const hours = Math.floor(totalSeconds / 3600);
+const minutes = Math.floor((totalSeconds % 3600) / 60);
+const seconds = totalSeconds % 60;
+return { hours, minutes, seconds };
 }
 
 function updateLimitCountdown(){
- const box = document.getElementById("limitTimerBox");
- const textEl = document.getElementById("limitTimerText");
- const watchBtn = document.getElementById("watchAdButton");
- const statusEl = document.getElementById("adStatus");
- const reached = currentTodayAdsCount >= DAILY_AD_LIMIT;
+const box = document.getElementById("limitTimerBox");
+const textEl = document.getElementById("limitTimerText");
+const watchBtn = document.getElementById("watchAdButton");
+const statusEl = document.getElementById("adStatus");
+const reached = currentTodayAdsCount >= DAILY_AD_LIMIT;
 
- if(!reached){
-  if(box) box.classList.remove("show");
-  if(watchBtn && !isAdRunning){
-   watchBtn.disabled = false;
-   watchBtn.textContent = translations[currentLanguage].watchEarn;
-  }
-  return;
- }
+if(!reached){
+if(box) box.classList.remove("show");
+if(watchBtn && !isAdRunning){
+watchBtn.disabled = false;
+watchBtn.textContent = translations[currentLanguage].watchEarn;
+}
+return;
+}
 
- if(watchBtn){
-  watchBtn.disabled = true;
-  watchBtn.textContent = translations[currentLanguage].limitReachedBtn;
- }
+if(watchBtn){
+watchBtn.disabled = true;
+watchBtn.textContent = translations[currentLanguage].limitReachedBtn;
+}
 
- const { hours, minutes, seconds } = getTimeUntilMidnight();
- if(box) box.classList.add("show");
- if(textEl){
-  if(currentLanguage === "bn"){
-   textEl.textContent = `⏳ রাত ১২:০০ টা থেকে আবার শুরু হবে — আর ${hours} ঘণ্টা ${minutes} মিনিট ${seconds} সেকেন্ড বাকি আছে।`;
-  }else{
-   textEl.textContent = `⏳ Resets at 12:00 AM — ${hours}h ${minutes}m ${seconds}s remaining.`;
-  }
- }
- if(statusEl && !isAdRunning){
-  statusEl.textContent = translations[currentLanguage].limitReachedStatus;
- }
+const { hours, minutes, seconds } = getTimeUntilMidnight();
+if(box) box.classList.add("show");
+if(textEl){
+if(currentLanguage === "bn"){
+textEl.textContent = `⏳ রাত ১২:০০ টা থেকে আবার শুরু হবে — আর ${hours} ঘণ্টা ${minutes} মিনিট ${seconds} সেকেন্ড বাকি আছে।`;
+}else{
+textEl.textContent = `⏳ Resets at 12:00 AM — ${hours}h ${minutes}m ${seconds}s remaining.`;
+}
+}
+if(statusEl && !isAdRunning){
+statusEl.textContent = translations[currentLanguage].limitReachedStatus;
+}
 }
 
 function updateAdsUI(serverTodayEarned, transactions, serverTodayAdsCount){
- const local = getDailyLocalStats();
- const sEarned = Number(serverTodayEarned || 0);
+const local = getDailyLocalStats();
+const sEarned = Number(serverTodayEarned || 0);
 
- const now = new Date();
- const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
- let txAdsCount = 0;
- let txTodayEarned = 0;
+const now = new Date();
+const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+let txAdsCount = 0;
+let txTodayEarned = 0;
 
- if(Array.isArray(transactions)){
-  for(const tx of transactions){
-   if(tx.direction === "credit" && tx.status !== "failed" && tx.created_at){
-    const txDate = new Date(tx.created_at);
-    if(txDate >= startOfToday){
-     const amt = Number(tx.amount || 0);
-     txTodayEarned += amt;
-     const desc = String(tx.description || tx.transaction_type || "").toLowerCase();
-     if(desc.includes("ad") || amt === AD_REWARD_AMOUNT){
-      txAdsCount += 1;
-     }
-    }
-   }
-  }
- }
+if(Array.isArray(transactions)){
+for(const tx of transactions){
+if(tx.direction === "credit" && tx.status !== "failed" && tx.created_at){
+const txDate = new Date(tx.created_at);
+if(txDate >= startOfToday){
+const amt = Number(tx.amount || 0);
+txTodayEarned += amt;
+const desc = String(tx.description || tx.transaction_type || "").toLowerCase();
+if(desc.includes("ad") || amt === AD_REWARD_AMOUNT){
+txAdsCount += 1;
+}
+}
+}
+}
+}
 
- const explicitServerAds = Number(serverTodayAdsCount || 0);
- const derivedFromServerEarned = sEarned > 0 ? Math.round(sEarned / AD_REWARD_AMOUNT) : 0;
+const explicitServerAds = Number(serverTodayAdsCount || 0);
+const derivedFromServerEarned = sEarned > 0 ? Math.round(sEarned / AD_REWARD_AMOUNT) : 0;
 
- const resolvedAdsCount = Math.min(
-  DAILY_AD_LIMIT,
-  Math.max(local.adsCount, explicitServerAds, txAdsCount, derivedFromServerEarned)
- );
+const resolvedAdsCount = Math.min(
+DAILY_AD_LIMIT,
+Math.max(local.adsCount, explicitServerAds, txAdsCount, derivedFromServerEarned)
+);
 
- const derivedFromResolvedAds = Number((resolvedAdsCount * AD_REWARD_AMOUNT).toFixed(2));
- const resolvedTodayEarned = Number(
-  Math.max(local.todayEarned, sEarned, txTodayEarned, derivedFromResolvedAds).toFixed(2)
- );
+const derivedFromResolvedAds = Number((resolvedAdsCount * AD_REWARD_AMOUNT).toFixed(2));
+const resolvedTodayEarned = Number(
+Math.max(local.todayEarned, sEarned, txTodayEarned, derivedFromResolvedAds).toFixed(2)
+);
 
- saveDailyLocalStats(resolvedAdsCount, resolvedTodayEarned);
- currentTodayAdsCount = resolvedAdsCount;
- currentTodayEarned = resolvedTodayEarned;
+saveDailyLocalStats(resolvedAdsCount, resolvedTodayEarned);
+currentTodayAdsCount = resolvedAdsCount;
+currentTodayEarned = resolvedTodayEarned;
 
- const homeEarnings = document.getElementById("homeEarnings");
- if(homeEarnings){
-  homeEarnings.textContent = "৳" + currentTodayEarned.toFixed(2);
- }
- const adsTabEarnings = document.getElementById("adsTabEarnings");
- if(adsTabEarnings){
-  adsTabEarnings.textContent = "৳" + currentTodayEarned.toFixed(2);
- }
+const homeEarnings = document.getElementById("homeEarnings");
+if(homeEarnings){
+homeEarnings.textContent = "৳" + currentTodayEarned.toFixed(2);
+}
+const adsTabEarnings = document.getElementById("adsTabEarnings");
+if(adsTabEarnings){
+adsTabEarnings.textContent = "৳" + currentTodayEarned.toFixed(2);
+}
 
- const countEl = document.getElementById("adCountValue");
- const ringEl = document.getElementById("adProgressRing");
- if(countEl) countEl.textContent = String(currentTodayAdsCount);
- if(ringEl){
-  const ratio = Math.min(1, currentTodayAdsCount / DAILY_AD_LIMIT);
-  ringEl.style.strokeDashoffset = String(RING_CIRCUMFERENCE * (1 - ratio));
- }
+const countEl = document.getElementById("adCountValue");
+const ringEl = document.getElementById("adProgressRing");
+if(countEl) countEl.textContent = String(currentTodayAdsCount);
+if(ringEl){
+const ratio = Math.min(1, currentTodayAdsCount / DAILY_AD_LIMIT);
+ringEl.style.strokeDashoffset = String(RING_CIRCUMFERENCE * (1 - ratio));
+}
 
- updateLimitCountdown();
+updateLimitCountdown();
 }
 
 function filterHistory(type, btn){
- activeHistoryFilter = type;
- document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
- if(btn) btn.classList.add("active");
- renderHistory(latestTransactions);
+activeHistoryFilter = type;
+document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+if(btn) btn.classList.add("active");
+renderHistory(latestTransactions);
 }
 
 function renderHistory(transactions){
- latestTransactions = Array.isArray(transactions) ? transactions : [];
- const container = document.getElementById("historyContainer");
- if(!container) return;
+latestTransactions = Array.isArray(transactions) ? transactions : [];
+const container = document.getElementById("historyContainer");
+if(!container) return;
 
- const filtered = latestTransactions.filter(item => {
-  if(activeHistoryFilter === "all") return true;
-  const text = String(item.description || item.transaction_type || "").toLowerCase();
-  if(activeHistoryFilter === "ad") return text.includes("ad");
-  if(activeHistoryFilter === "ref") return text.includes("ref");
-  if(activeHistoryFilter === "bonus") return text.includes("bonus") || text.includes("daily");
-  return true;
- });
+const filtered = latestTransactions.filter(item => {
+if(activeHistoryFilter === "all") return true;
+const text = String(item.description || item.transaction_type || "").toLowerCase();
+if(activeHistoryFilter === "ad") return text.includes("ad");
+if(activeHistoryFilter === "ref") return text.includes("ref");
+if(activeHistoryFilter === "bonus") return text.includes("bonus") || text.includes("daily");
+return true;
+});
 
- if(!filtered.length){
-  container.innerHTML = `<div class="empty-state"><div>🕒</div><p>${translations[currentLanguage].historyPending}</p></div>`;
-  return;
- }
- container.innerHTML = filtered.map(item => {
-  const isCredit = item.direction === "credit";
-  const sign = isCredit ? "+" : "-";
-  const title = item.description || item.transaction_type || "Activity";
-  const status = item.status || "completed";
-  const dateStr = item.created_at ? new Date(item.created_at).toLocaleString() : "";
-  const lower = title.toLowerCase();
-  const badge = lower.includes("ad") ? "▶" : (lower.includes("ref") ? "🎁" : (isCredit ? "⭐" : "💳"));
-  return `
-   <div class="tx-item">
-    <div class="tx-left">
-     <div class="tx-badge">${badge}</div>
-     <div>
-      <div class="tx-title">${title}</div>
-      <div class="tx-sub">${status}${dateStr ? " • " + dateStr : ""}</div>
-     </div>
-    </div>
-    <div class="${isCredit ? "tx-amount-credit" : "tx-amount-debit"}">${sign}৳${Number(item.amount || 0).toFixed(2)}</div>
-   </div>
-  `;
- }).join("");
+if(!filtered.length){
+container.innerHTML = `<div class="empty-state"><div>🕒</div><p>${translations[currentLanguage].historyPending}</p></div>`;
+return;
+}
+container.innerHTML = filtered.map(item => {
+const isCredit = item.direction === "credit";
+const sign = isCredit ? "+" : "-";
+const title = item.description || item.transaction_type || "Activity";
+const status = item.status || "completed";
+const dateStr = item.created_at ? new Date(item.created_at).toLocaleString() : "";
+const lower = title.toLowerCase();
+const badge = lower.includes("ad") ? "▶" : (lower.includes("ref") ? "🎁" : (isCredit ? "⭐" : "💳"));
+return `
+<div class="tx-item">
+<div class="tx-left">
+<div class="tx-badge">${badge}</div>
+<div>
+<div class="tx-title">${title}</div>
+<div class="tx-sub">${status}${dateStr ? " • " + dateStr : ""}</div>
+</div>
+</div>
+<div class="${isCredit ? "tx-amount-credit" : "tx-amount-debit"}">${sign}৳${Number(item.amount || 0).toFixed(2)}</div>
+</div>
+`;
+}).join("");
 }
 
 function setLanguage(lang, shouldSave = true){
- currentLanguage = lang === "bn" ? "bn" : "en";
- document.documentElement.lang = currentLanguage;
- document.querySelectorAll("[data-i18n]").forEach(el=>{
-  const key = el.dataset.i18n;
-  if(translations[currentLanguage][key]) el.textContent = translations[currentLanguage][key];
- });
- const dailyLimitStat = document.getElementById("dailyLimitStat");
- if(dailyLimitStat) dailyLimitStat.textContent = translations[currentLanguage].dailyLimitValue;
- const label = currentLanguage === "en" ? "English (Tap for বাংলা)" : "বাংলা (English করতে চাপুন)";
- const profileButton = document.getElementById("profileLanguageButton");
- if(profileButton) profileButton.textContent = label;
- if(shouldSave) saveLanguage(currentLanguage);
- renderHistory(latestTransactions);
- renderReferralStats(latestReferralStats);
- updateAdsUI(currentTodayEarned, latestTransactions, currentTodayAdsCount);
- if(tg) tg.HapticFeedback?.selectionChanged();
+currentLanguage = lang === "bn" ? "bn" : "en";
+document.documentElement.lang = currentLanguage;
+document.querySelectorAll("[data-i18n]").forEach(el=>{
+const key = el.dataset.i18n;
+if(translations[currentLanguage][key]) el.textContent = translations[currentLanguage][key];
+});
+const dailyLimitStat = document.getElementById("dailyLimitStat");
+if(dailyLimitStat) dailyLimitStat.textContent = translations[currentLanguage].dailyLimitValue;
+const label = currentLanguage === "en" ? "English (Tap for বাংলা)" : "বাংলা (English করতে চাপুন)";
+const profileButton = document.getElementById("profileLanguageButton");
+if(profileButton) profileButton.textContent = label;
+if(shouldSave) saveLanguage(currentLanguage);
+renderHistory(latestTransactions);
+renderReferralStats(latestReferralStats);
+updateAdsUI(currentTodayEarned, latestTransactions, currentTodayAdsCount);
+if(tg) tg.HapticFeedback?.selectionChanged();
 }
 
 function toggleLanguage(){
- setLanguage(currentLanguage === "en" ? "bn" : "en", true);
+setLanguage(currentLanguage === "en" ? "bn" : "en", true);
 }
 
 if(tg){
- tg.ready();tg.expand();
- const user=getActiveTelegramUser();
- if(user){
- const name=user.first_name||"User";
- document.getElementById("profileFullName").textContent=name;
- document.getElementById("telegramUsername").textContent=user.username?"@"+user.username:"Telegram User";
- document.getElementById("userDetails").textContent="ID: "+user.id+(user.username?" • @"+user.username:"");
- }
+tg.ready();tg.expand();
+const user=getActiveTelegramUser();
+if(user){
+const name=user.first_name||"User";
+document.getElementById("profileFullName").textContent=name;
+document.getElementById("telegramUsername").textContent=user.username?"@"+user.username:"Telegram User";
+document.getElementById("userDetails").textContent="ID: "+user.id+(user.username?" • @"+user.username:"");
+}
 }
 
 setLanguage(loadSavedLanguage(), false);
@@ -901,142 +900,142 @@ const initialDaily = getDailyLocalStats();
 updateAdsUI(initialDaily.todayEarned, [], initialDaily.adsCount);
 
 async function loadUserDashboard(){
- const user = getActiveTelegramUser();
- const initData = tg?.initData || "";
- if(!initData && !user?.id) return;
+const user = getActiveTelegramUser();
+const initData = tg?.initData || "";
+if(!initData && !user?.id) return;
 
- try{
-  const params = new URLSearchParams();
-  if(initData) params.set("initData", initData);
-  if(user) params.set("user", JSON.stringify(user));
+try{
+const params = new URLSearchParams();
+if(initData) params.set("initData", initData);
+if(user) params.set("user", JSON.stringify(user));
 
-  const res = await fetch(`${BACKEND_URL}/user/dashboard?${params.toString()}`);
-  const data = await res.json();
-  if(!res.ok || !data.success) return;
+const res = await fetch(`${BACKEND_URL}/user/dashboard?${params.toString()}`);
+const data = await res.json();
+if(!res.ok || !data.success) return;
 
-  const formattedBal = "৳" + Number(data.balance || 0).toFixed(2);
-  const balanceEl = document.getElementById("homeBalance");
-  const pBalanceEl = document.getElementById("profileBalance");
-  if(balanceEl) balanceEl.textContent = formattedBal;
-  if(pBalanceEl) pBalanceEl.textContent = formattedBal;
+const formattedBal = "৳" + Number(data.balance || 0).toFixed(2);
+const balanceEl = document.getElementById("homeBalance");
+const pBalanceEl = document.getElementById("profileBalance");
+if(balanceEl) balanceEl.textContent = formattedBal;
+if(pBalanceEl) pBalanceEl.textContent = formattedBal;
 
-  if(data.referralCode){
-   const refInput = document.getElementById("referralLink");
-   const copyBtn = document.getElementById("copyReferralBtn");
-   if(refInput) refInput.value = `https://t.me/${BOT_USERNAME}?start=ref_${data.referralCode}`;
-   if(copyBtn) copyBtn.disabled = false;
-  }
+if(data.referralCode){
+const refInput = document.getElementById("referralLink");
+const copyBtn = document.getElementById("copyReferralBtn");
+if(refInput) refInput.value = `https://t.me/${BOT_USERNAME}?start=ref_${data.referralCode}`;
+if(copyBtn) copyBtn.disabled = false;
+}
 
-  renderReferralStats(data.referralStats || {});
-  renderHistory(data.transactions || []);
-  updateAdsUI(
-   data.todayEarned || 0,
-   data.transactions || [],
-   data.todayAdsCount || data.adsWatchedToday || 0
-  );
- }catch(err){
-  console.error("Dashboard load error:", err);
- }
+renderReferralStats(data.referralStats || {});
+renderHistory(data.transactions || []);
+updateAdsUI(
+data.todayEarned || 0,
+data.transactions || [],
+data.todayAdsCount || data.adsWatchedToday || 0
+);
+}catch(err){
+console.error("Dashboard load error:", err);
+}
 }
 
 function copyReferral(){
- const input = document.getElementById("referralLink");
- if(!input || !input.value) return;
- navigator.clipboard?.writeText(input.value);
- if(tg)tg.HapticFeedback?.notificationOccurred("success");
+const input = document.getElementById("referralLink");
+if(!input || !input.value) return;
+navigator.clipboard?.writeText(input.value);
+if(tg)tg.HapticFeedback?.notificationOccurred("success");
 }
 
 function hideAllPages(){
- document.getElementById("homePage").style.display="none";
- document.querySelectorAll(".page").forEach(page=>page.classList.remove("active"));
- document.querySelectorAll(".nav-item").forEach(item=>item.classList.remove("active"));
- window.scrollTo(0,0);
+document.getElementById("homePage").style.display="none";
+document.querySelectorAll(".page").forEach(page=>page.classList.remove("active"));
+document.querySelectorAll(".nav-item").forEach(item=>item.classList.remove("active"));
+window.scrollTo(0,0);
 }
 function showHome(){
- hideAllPages();document.getElementById("homePage").style.display="block";
- document.querySelector('[data-page="home"]').classList.add("active");
- loadUserDashboard();
- if(tg)tg.HapticFeedback?.selectionChanged();
+hideAllPages();document.getElementById("homePage").style.display="block";
+document.querySelector('[data-page="home"]').classList.add("active");
+loadUserDashboard();
+if(tg)tg.HapticFeedback?.selectionChanged();
 }
 function openPage(pageId){
- hideAllPages();const page=document.getElementById(pageId);if(page)page.classList.add("active");
- const nav=document.querySelector('[data-page="'+pageId+'"]');if(nav)nav.classList.add("active");
- if(pageId==="history" || pageId==="referral" || pageId==="ads" || pageId==="profile") loadUserDashboard();
- if(tg)tg.HapticFeedback?.selectionChanged();
+hideAllPages();const page=document.getElementById(pageId);if(page)page.classList.add("active");
+const nav=document.querySelector('[data-page="'+pageId+'"]');if(nav)nav.classList.add("active");
+if(pageId==="history" || pageId==="referral" || pageId==="ads" || pageId==="profile") loadUserDashboard();
+if(tg)tg.HapticFeedback?.selectionChanged();
 }
 function closePopup(){
- document.getElementById("rewardPopup").classList.remove("show");
- loadUserDashboard();
+document.getElementById("rewardPopup").classList.remove("show");
+loadUserDashboard();
 }
 function showVerificationPopup(){
- document.getElementById("popupTitle").textContent=currentLanguage==="bn"?"অভিনন্দন!":"Congratulations!";
- document.getElementById("popupMessage").textContent=currentLanguage==="bn"?"বিজ্ঞাপন সম্পূর্ণ দেখার জন্য আপনার ৳০.০৫ পুরস্কার সার্ভার যাচাইয়ের অপেক্ষায় আছে।":"Your ৳0.05 reward is awaiting server verification and will be added shortly.";
- document.getElementById("rewardPopup").classList.add("show");
- setTimeout(loadUserDashboard, 2000);
+document.getElementById("popupTitle").textContent=currentLanguage==="bn"?"অভিনন্দন!":"Congratulations!";
+document.getElementById("popupMessage").textContent=currentLanguage==="bn"?"বিজ্ঞাপন সম্পূর্ণ দেখার জন্য আপনার ৳০.০৫ পুরস্কার সার্ভার যাচাইয়ের অপেক্ষায় আছে।":"Your ৳0.05 reward is awaiting server verification and will be added shortly.";
+document.getElementById("rewardPopup").classList.add("show");
+setTimeout(loadUserDashboard, 2000);
 }
 
 const watchAdButton=document.getElementById("watchAdButton");
 const adStatus=document.getElementById("adStatus");
 watchAdButton.addEventListener("click",async()=>{
- if(currentTodayAdsCount >= DAILY_AD_LIMIT){
-  updateLimitCountdown();
-  return;
- }
- if(!tg){adStatus.textContent=currentLanguage==="bn"?"দয়া করে Telegram থেকে EarnNova খুলুন।":"Please open EarnNova from Telegram.";return}
- const unsafeUser=getActiveTelegramUser();
- if(!tg.initData && !unsafeUser){
-  adStatus.textContent=currentLanguage==="bn"?"Telegram ইউজার তথ্য পাওয়া যায়নি। বট থেকে পুনরায় খুলুন।":"Telegram user data not found. Please reopen from the bot.";
-  return;
- }
- if(typeof window.show_12287336!=="function"){
-  adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন SDK প্রস্তুত নয়। কিছুক্ষণ পর আবার চেষ্টা করুন।":"Advertisement SDK is not ready. Please try again later.";
-  return;
- }
- isAdRunning = true;
- watchAdButton.disabled=true;
- adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন প্রস্তুত করা হচ্ছে...":"Preparing your advertisement...";
- try{
- const payload={
-  initData: tg.initData || "",
-  user: unsafeUser,
-  source: tg.initData ? "bot_webview" : "chat_list_open"
- };
- const response=await fetch(BACKEND_URL+"/ad/start",{
-  method:"POST",
-  headers:{"Content-Type":"application/json"},
-  body:JSON.stringify(payload)
- });
- const data=await response.json();
- if(!response.ok||!data.success||!data.ymid)throw new Error(data.error||"Could not start advertisement.");
- adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন শুরু হচ্ছে। সম্পূর্ণ দেখুন।":"Advertisement is starting. Please watch it completely.";
- const result=await window.show_12287336({ymid:data.ymid});
- if(result?.reward_event_type==="valued"){
-  incrementDailyLocalAd();
-  adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন সম্পন্ন! সার্ভার যাচাই চলছে।":"Ad completed! Server verification is pending.";
-  showVerificationPopup();
- }else{
-  adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন শেষ হয়েছে, কিন্তু Valued Completion নিশ্চিত হয়নি। কোনো পুরস্কার যোগ করা হয়নি।":"Advertisement ended, but no valued completion was confirmed. No reward has been added.";
- }
- }catch(error){
- console.error("Rewarded ad error:",error);
- adStatus.textContent="Error: "+(error.message||String(error));
- }finally{
- isAdRunning = false;
- updateLimitCountdown();
- if(currentTodayAdsCount < DAILY_AD_LIMIT){
-  watchAdButton.disabled=false;
- }
- }
+if(currentTodayAdsCount >= DAILY_AD_LIMIT){
+updateLimitCountdown();
+return;
+}
+if(!tg){adStatus.textContent=currentLanguage==="bn"?"দয়া করে Telegram থেকে EarnNova খুলুন।":"Please open EarnNova from Telegram.";return}
+const unsafeUser=getActiveTelegramUser();
+if(!tg.initData && !unsafeUser){
+adStatus.textContent=currentLanguage==="bn"?"Telegram ইউজার তথ্য পাওয়া যায়নি। বট থেকে পুনরায় খুলুন।":"Telegram user data not found. Please reopen from the bot.";
+return;
+}
+if(typeof window.show_12287336!=="function"){
+adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন SDK প্রস্তুত নয়। কিছুক্ষণ পর আবার চেষ্টা করুন।":"Advertisement SDK is not ready. Please try again later.";
+return;
+}
+isAdRunning = true;
+watchAdButton.disabled=true;
+adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন প্রস্তুত করা হচ্ছে...":"Preparing your advertisement...";
+try{
+const payload={
+initData: tg.initData || "",
+user: unsafeUser,
+source: tg.initData ? "bot_webview" : "chat_list_open"
+};
+const response=await fetch(BACKEND_URL+"/ad/start",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(payload)
+});
+const data=await response.json();
+if(!response.ok||!data.success||!data.ymid)throw new Error(data.error||"Could not start advertisement.");
+adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন শুরু হচ্ছে। সম্পূর্ণ দেখুন।":"Advertisement is starting. Please watch it completely.";
+const result=await window.show_12287336({ymid:data.ymid});
+if(result?.reward_event_type==="valued"){
+incrementDailyLocalAd();
+adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন সম্পন্ন! সার্ভার যাচাই চলছে।":"Ad completed! Server verification is pending.";
+showVerificationPopup();
+}else{
+adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন শেষ হয়েছে, কিন্তু Valued Completion নিশ্চিত হয়নি। কোনো পুরস্কার যোগ করা হয়নি।":"Advertisement ended, but no valued completion was confirmed. No reward has been added.";
+}
+}catch(error){
+console.error("Rewarded ad error:",error);
+adStatus.textContent="Error: "+(error.message||String(error));
+}finally{
+isAdRunning = false;
+updateLimitCountdown();
+if(currentTodayAdsCount < DAILY_AD_LIMIT){
+watchAdButton.disabled=false;
+}
+}
 });
 
 setInterval(()=>{
- const local = getDailyLocalStats();
- if(local.adsCount === 0 && currentTodayAdsCount > 0){
-  currentTodayAdsCount = 0;
-  currentTodayEarned = 0;
-  updateAdsUI(0, [], 0);
- }
- updateLimitCountdown();
+const local = getDailyLocalStats();
+if(local.adsCount === 0 && currentTodayAdsCount > 0){
+currentTodayAdsCount = 0;
+currentTodayEarned = 0;
+updateAdsUI(0, [], 0);
+}
+updateLimitCountdown();
 }, 1000);
 loadUserDashboard();
 </script>
