@@ -3,201 +3,248 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#061827">
+<meta name="theme-color" content="#0B112B">
 <title>EarnNova</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="//libtl.com/sdk.js" data-zone="12287336" data-sdk="show_12287336"></script>
 <style>
 :root{
- --bg:#031522; --panel:#0D2435; --card:#10283B; --border:#124451;
- --teal:#00D7A0; --green:#18D88D; --text:#F5FAFF; --muted:#A7BBCB; --gold:#FFE05B;
+ --bg:#0B112B; --panel:#162247; --card:#19264E; --border:#2B3E78;
+ --cyan:#21D4FD; --purple:#9353F3; --text:#F5F8FF; --muted:#9EB0D8; --gold:#FFD54F;
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body{background:radial-gradient(ellipse at 50% 0%,#092338 0%,var(--bg) 55%);color:var(--text);min-height:100vh;padding-bottom:94px}
+body{background:radial-gradient(ellipse at 50% 0%,#1B295A 0%,var(--bg) 60%);color:var(--text);min-height:100vh;padding-bottom:94px}
 button{font-family:inherit;cursor:pointer}
 .container{width:100%;max-width:480px;margin:auto;padding:17px 16px 24px}
 
-/* Header inspired by the reference */
-.header{display:grid;grid-template-columns:42px 1fr 42px;align-items:center;margin-bottom:25px;min-height:48px}
+/* Header */
+.header{display:grid;grid-template-columns:42px 1fr 42px;align-items:center;margin-bottom:22px;min-height:48px}
 .header-menu,.notification-btn{background:transparent;color:white;border:0;display:grid;place-items:center;position:relative}
-.header-menu{font-size:28px;width:40px;height:42px}
-.logo{display:flex;justify-content:center;align-items:center;gap:9px;font-size:27px;font-weight:800;letter-spacing:-1px}
-.logo-mark{width:39px;height:39px;display:inline-block;transform:rotate(45deg);border:5px solid #12D992;border-radius:5px;position:relative;box-shadow:0 0 13px #08c98a44}
-.logo-mark:before{content:"";position:absolute;inset:5px;border:3px solid #12D992;border-radius:2px}
-.logo span{color:#14D98C}
+.header-menu{font-size:26px;width:40px;height:42px}
+.logo{display:flex;justify-content:center;align-items:center;gap:9px;font-size:26px;font-weight:800;letter-spacing:-0.8px}
+.logo-mark{width:34px;height:34px;display:inline-block;transform:rotate(45deg);border:4px solid #21D4FD;border-radius:5px;position:relative;box-shadow:0 0 14px rgba(33,212,253,.4)}
+.logo-mark:before{content:"";position:absolute;inset:4px;border:2.5px solid #21D4FD;border-radius:2px}
+.logo span{color:#21D4FD}
 .header-actions{display:flex;justify-content:flex-end}
 .notification-btn{font-size:25px;width:40px;height:42px}
 .icon-svg{width:1em;height:1em;display:block;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.wallet-svg{width:62px;height:62px;filter:drop-shadow(0 4px 2px #003a3540)}
-.growth-svg{width:47px;height:47px;stroke:#3BEBAE;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.quick-icon svg{width:43px;height:43px}
-.nav-item .nav-svg{width:29px;height:29px;margin:0 auto 4px}
-.notification-btn .icon-svg{width:31px;height:31px}
-.notification-dot{position:absolute;top:0;right:-1px;background:#F04455;color:#fff;font-size:11px;font-weight:bold;width:18px;height:18px;border-radius:50%;display:grid;place-items:center}
+.wallet-svg{width:60px;height:60px;filter:drop-shadow(0 6px 10px rgba(30,20,80,.35))}
+.growth-svg{width:46px;height:46px;stroke:#47E5FF;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.quick-icon svg{width:44px;height:44px}
+.nav-item .nav-svg{width:26px;height:26px;margin:0 auto 4px}
+.notification-btn .icon-svg{width:28px;height:28px}
+.notification-dot{position:absolute;top:2px;right:1px;background:#FF4B6E;color:#fff;font-size:11px;font-weight:bold;width:18px;height:18px;border-radius:50%;display:grid;place-items:center}
 
-/* Balance card */
-.balance-card{position:relative;overflow:hidden;border:1px solid rgba(38,255,191,.24);border-radius:27px;padding:23px 19px 15px;margin-bottom:30px;background:linear-gradient(125deg,#08786D 0%,#007E72 38%,#00A983 75%,#0AC18C 100%);box-shadow:0 9px 28px rgba(0,194,142,.12),inset 0 0 25px rgba(0,255,198,.08)}
-.balance-card:before{content:"";position:absolute;width:210px;height:210px;border:30px solid rgba(255,255,255,.055);border-radius:50%;right:-65px;top:-75px}
-.balance-card:after{content:"";position:absolute;width:290px;height:90px;background:rgba(0,39,45,.11);border-radius:50%;right:-50px;bottom:-45px;transform:rotate(-18deg)}
-.balance-main{position:relative;z-index:1;display:grid;grid-template-columns:66px 1fr 45px;align-items:center;gap:12px}
-.wallet-icon{font-size:49px;filter:drop-shadow(0 4px 2px #003a3540)}
-.balance-label{font-size:17px;color:#E3FFF6;margin-bottom:6px;font-weight:600}
-.balance{font-size:39px;font-weight:800;letter-spacing:-1.2px;white-space:nowrap}
-.growth-icon{font-size:40px;color:#3BEBAE;text-align:center;font-weight:bold}
-.today-earned{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:8px;margin:17px auto 0;padding:10px 15px;width:fit-content;max-width:100%;background:rgba(0,60,55,.36);border:1px solid rgba(255,255,255,.08);border-radius:32px;font-size:15px;color:white;white-space:nowrap}
-.today-earned strong{color:var(--gold);font-size:17px}
+/* Balance Card (Blue-Purple Gradient from reference) */
+.balance-card{position:relative;overflow:hidden;border:1px solid rgba(130,170,255,.32);border-radius:26px;padding:22px 19px 16px;margin-bottom:26px;background:linear-gradient(125deg,#3B5BDB 0%,#6347D1 52%,#8E44AD 100%);box-shadow:0 12px 30px rgba(68,75,210,.28),inset 0 0 24px rgba(255,255,255,.12)}
+.balance-card:before{content:"";position:absolute;width:210px;height:210px;border:28px solid rgba(255,255,255,.07);border-radius:50%;right:-65px;top:-75px}
+.balance-card:after{content:"";position:absolute;width:280px;height:90px;background:rgba(15,18,55,.16);border-radius:50%;right:-50px;bottom:-45px;transform:rotate(-18deg)}
+.balance-main{position:relative;z-index:1;display:grid;grid-template-columns:64px 1fr 45px;align-items:center;gap:12px}
+.balance-label{font-size:16px;color:#E2EAFF;margin-bottom:5px;font-weight:600}
+.balance{font-size:38px;font-weight:800;letter-spacing:-1px;white-space:nowrap}
+.today-earned{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:7px;margin:16px auto 0;padding:8px 16px;width:fit-content;max-width:100%;background:rgba(16,22,64,.42);border:1px solid rgba(255,255,255,.14);border-radius:32px;font-size:14px;color:#F0F4FF;white-space:nowrap}
+.today-earned strong{color:var(--gold);font-size:16px}
 
-/* section and quick tiles */
-.section-title{font-size:22px;font-weight:800;margin:26px 0 17px}
+/* Quick Access */
+.section-title{font-size:20px;font-weight:800;margin:22px 0 15px}
 .quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.quick-card{min-height:154px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(150deg,#102C40,#0B2436);border:1px solid #13505A;border-radius:23px;padding:15px 9px;cursor:pointer;box-shadow:inset 0 0 12px rgba(10,180,150,.035);transition:transform .15s,border-color .15s}
-.quick-card:active{transform:scale(.97);border-color:#16C99A}
-.quick-icon{font-size:40px;margin-bottom:11px;filter:drop-shadow(0 0 7px rgba(0,220,155,.12))}
-.quick-card h3{font-size:18px;margin-bottom:5px;font-weight:750}
-.quick-card p{font-size:15px;color:#E1EDF5;line-height:1.4}
-.quick-card .highlight{color:var(--gold);font-weight:750;font-size:17px}
+.quick-card{min-height:148px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(155deg,#1D2B5B,#131D42);border:1px solid #2D4080;border-radius:22px;padding:15px 10px;cursor:pointer;box-shadow:0 8px 20px rgba(6,10,30,.28);transition:transform .15s,border-color .15s}
+.quick-card:active{transform:scale(.97);border-color:#21D4FD}
+.quick-icon{margin-bottom:10px}
+.quick-card h3{font-size:17px;margin-bottom:4px;font-weight:750}
+.quick-card p{font-size:14px;color:var(--muted);line-height:1.4}
+.quick-card .highlight{color:var(--gold);font-weight:750;font-size:16px}
 
-/* invite banner */
-.invite-card{margin-top:23px;width:100%;display:flex;align-items:center;gap:14px;padding:20px 16px;border-radius:24px;border:1px solid rgba(40,230,170,.28);background:linear-gradient(120deg,#087A70,#078F7A 52%,#0ABF8B);box-shadow:0 7px 22px rgba(0,190,140,.08);cursor:pointer;text-align:left;color:white}
-.invite-icon{font-size:53px;flex-shrink:0}
+/* Invite Banner */
+.invite-card{margin-top:20px;width:100%;display:flex;align-items:center;gap:14px;padding:18px 16px;border-radius:23px;border:1px solid rgba(135,165,255,.32);background:linear-gradient(120deg,#324EC8,#5D44C8 55%,#7E3FB5);box-shadow:0 9px 24px rgba(55,65,190,.22);cursor:pointer;text-align:left;color:white}
+.invite-icon{font-size:48px;flex-shrink:0}
 .invite-text{flex:1;min-width:0}
-.invite-text h3{font-size:21px;margin-bottom:8px}
-.invite-text p{font-size:15px;line-height:1.45;color:#E4FFF6}
-.invite-text strong{color:var(--gold);font-size:20px}
-.invite-arrow{font-size:22px;flex-shrink:0;background:#14D99B;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;box-shadow:0 2px 10px #005a4833}
+.invite-text h3{font-size:19px;margin-bottom:5px}
+.invite-text p{font-size:14px;line-height:1.4;color:#E5ECFF}
+.invite-text strong{color:var(--gold);font-size:18px}
+.invite-arrow{font-size:22px;flex-shrink:0;background:#21D4FD;color:#0A1538;font-weight:800;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;box-shadow:0 3px 12px rgba(33,212,253,.35)}
 
-/* pages and common cards */
+/* Sub-page Top Navigation Bar (Back + Title + Action) */
+.sub-header{display:grid;grid-template-columns:38px 1fr 38px;align-items:center;margin-bottom:18px;min-height:42px}
+.back-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#fff;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-size:18px}
+.sub-title{text-align:center;font-size:20px;font-weight:800}
+.sub-action{background:transparent;border:0;color:#C4D2F5;width:36px;height:36px;display:grid;place-items:center;font-size:19px}
+
+/* Pages and Common Cards */
 .page{display:none;animation:fade .18s ease}
 .page.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.page-heading{font-size:22px;margin:8px 0 7px;font-weight:800}
-.page-description{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px}
-.panel{background:linear-gradient(145deg,#102B3D,#0C2334);border:1px solid var(--border);border-radius:19px;padding:18px;margin-bottom:14px}
-.panel h3{font-size:16px;margin-bottom:9px}
-.panel p{font-size:12px;color:var(--muted);line-height:1.7}
-.input-box{width:100%;padding:12px;background:#071B29;border:1px solid var(--border);color:var(--text);border-radius:11px;margin-top:11px;outline:none;font-size:12px}
-.primary-btn{border:0;background:linear-gradient(135deg,var(--teal),var(--green));color:#06251D;font-weight:800;padding:12px 14px;border-radius:12px;margin-top:14px;width:100%;font-size:13px}
-.primary-btn:disabled{opacity:.5;cursor:not-allowed}
+.page-description{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;text-align:center}
+.panel{background:linear-gradient(155deg,#1A2754,#131D42);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 6px 18px rgba(5,9,28,.22)}
+.panel h3{font-size:16px;margin-bottom:8px}
+.panel p{font-size:12.5px;color:var(--muted);line-height:1.65}
+.input-box{width:100%;padding:12px;background:#0D1536;border:1px solid var(--border);color:var(--text);border-radius:12px;margin-top:10px;outline:none;font-size:12.5px}
+.primary-btn{border:0;background:linear-gradient(110deg,#21D4FD,#4EA8FF);color:#061333;font-weight:800;padding:13px 16px;border-radius:14px;margin-top:14px;width:100%;font-size:14px;box-shadow:0 6px 18px rgba(33,212,253,.22)}
+.primary-btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
 
-.ref-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.ref-stat-box{background:#081D2C;border:1px solid rgba(18,68,81,.9);border-radius:14px;padding:12px}
-.ref-stat-label{font-size:11px;color:var(--muted);margin-bottom:4px}
-.ref-stat-val{font-size:18px;font-weight:800;color:var(--teal)}
-.ref-stat-val.gold{color:var(--gold)}
-
-/* Upgraded Ads UI */
-.ads-card{position:relative;overflow:hidden;background:linear-gradient(160deg,#0C2236,#071B2B);border:1px solid #173B50;border-radius:25px;padding:19px 15px 20px;box-shadow:0 12px 28px rgba(0,0,0,.18)}
-.ads-card:before{content:"";position:absolute;width:230px;height:230px;border-radius:50%;background:#00D7A0;opacity:.04;filter:blur(32px);top:-90px;right:-70px}
+/* Watch Ads UI */
+.ads-card{position:relative;overflow:hidden;background:linear-gradient(160deg,#18244E,#10193B);border:1px solid #2C3F7A;border-radius:25px;padding:20px 15px 22px;box-shadow:0 12px 28px rgba(4,8,25,.3)}
 .ring-wrap{display:flex;justify-content:center;margin:4px auto 18px}
-.ring{width:210px;height:210px;position:relative;display:grid;place-items:center}
+.ring{width:205px;height:205px;position:relative;display:grid;place-items:center}
 .ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
-.track{fill:none;stroke:#18374B;stroke-width:12}
-.progress{fill:none;stroke:url(#adRingGrad);stroke-width:12;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440;transition:stroke-dashoffset .6s}
+.track{fill:none;stroke:#233368;stroke-width:13}
+.progress{fill:none;stroke:url(#adRingGrad);stroke-width:13;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440;transition:stroke-dashoffset .6s}
 .ring-center{text-align:center;position:relative;z-index:1}
-.play{font-size:34px;color:#68D8E9;margin-bottom:6px}
-.count{font-size:27px;font-weight:800;letter-spacing:-.7px}
-.count .total{color:#71899D;font-size:18px}
-.count-label{color:#A7BBCB;font-size:13px;margin-top:5px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:17px 0 22px}
-.stat{min-height:103px;border-radius:19px;background:linear-gradient(145deg,#132C42,#102638);border:1px solid #1C4054;padding:13px 10px;display:flex;align-items:center;gap:10px}
-.stat-icon{font-size:29px;flex-shrink:0}
-.stat-label{color:#A8BDCE;font-size:12px;margin-bottom:6px}
-.stat-value{font-size:19px;font-weight:800;color:#69AFFF;white-space:nowrap}
-.stat-value.gold{color:#FFE05B}
-.watch{width:100%;min-height:64px;border:none;border-radius:36px;color:#03271D;background:linear-gradient(110deg,#00C98D,#16E3A3);font-size:17px;font-weight:800;box-shadow:0 8px 24px rgba(0,215,154,.16);cursor:pointer;transition:transform .15s;padding:12px 16px}
+.play{font-size:32px;color:#47E5FF;margin-bottom:5px}
+.count{font-size:26px;font-weight:800;letter-spacing:-.7px}
+.count .total{color:#8A9EC9;font-size:17px}
+.count-label{color:#A8B9DF;font-size:13px;margin-top:4px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:16px 0 20px}
+.stat{min-height:94px;border-radius:18px;background:linear-gradient(145deg,#1F2E63,#17234E);border:1px solid #2E4280;padding:12px 11px;display:flex;align-items:center;gap:10px}
+.stat-icon{font-size:28px;flex-shrink:0}
+.stat-label{color:#A8B9DF;font-size:12px;margin-bottom:5px}
+.stat-value{font-size:18px;font-weight:800;color:#62B5FF;white-space:nowrap}
+.stat-value.gold{color:#FFD54F}
+.watch{width:100%;min-height:58px;border:none;border-radius:32px;color:#051333;background:linear-gradient(110deg,#21D4FD,#569EFF);font-size:16px;font-weight:800;box-shadow:0 8px 24px rgba(33,212,253,.24);cursor:pointer;transition:transform .15s;padding:12px 16px}
 .watch:active:not(:disabled){transform:scale(.97)}
-.watch:disabled{opacity:.45;cursor:not-allowed;background:linear-gradient(110deg,#264658,#1C3442);color:#9AB2C4;box-shadow:none}
-#adStatus{text-align:center;margin-top:15px;min-height:40px;font-size:12px;line-height:1.7;color:#7DE6C4;overflow-wrap:anywhere}
-.limit-timer-box{display:none;margin-top:12px;padding:12px 14px;border-radius:16px;background:rgba(255,224,91,.08);border:1px solid rgba(255,224,91,.28);text-align:center}
+.watch:disabled{opacity:.45;cursor:not-allowed;background:#263566;color:#9AB2D4;box-shadow:none}
+#adStatus{text-align:center;margin-top:14px;min-height:36px;font-size:12.5px;line-height:1.6;color:#7EE7FF;overflow-wrap:anywhere}
+.limit-timer-box{display:none;margin-top:12px;padding:12px 14px;border-radius:16px;background:rgba(255,213,79,.1);border:1px solid rgba(255,213,79,.3);text-align:center}
 .limit-timer-box.show{display:block}
 .limit-timer-text{font-size:13px;font-weight:700;color:var(--gold);line-height:1.6}
-.ads-info{text-align:center;margin-top:12px;font-size:11px;line-height:1.7;color:#7F99AE}
+.ads-info{text-align:center;margin-top:10px;font-size:11.5px;line-height:1.6;color:#8CA0C9}
 
-.profile-avatar{width:65px;height:65px;background:linear-gradient(135deg,var(--teal),var(--green));color:#06251D;display:grid;place-items:center;border-radius:50%;font-size:27px;margin-bottom:12px}
-.profile-name{font-size:17px;margin-bottom:5px}
-.profile-sub{font-size:12px;color:var(--muted)}
+/* Referral Hero & Stats */
+.ref-hero{display:flex;align-items:center;gap:14px;padding:18px;border-radius:22px;background:linear-gradient(130deg,#2A43A8,#5A3EC0 60%,#7D37AC);border:1px solid rgba(145,175,255,.3);margin-bottom:14px}
+.ref-hero-icon{font-size:52px;flex-shrink:0}
+.ref-hero h3{font-size:18px;margin-bottom:6px;line-height:1.35}
+.ref-hero p{font-size:12.5px;color:#E1E9FF;line-height:1.45}
+.ref-link-row{display:flex;gap:8px;margin-top:10px;align-items:center}
+.ref-link-row .input-box{margin-top:0;flex:1}
+.copy-icon-btn{background:#24356E;border:1px solid #3B529E;color:#fff;width:44px;height:42px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}
+.ref-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.ref-stat-box{background:#121B3E;border:1px solid #293B75;border-radius:15px;padding:13px;text-align:center}
+.ref-stat-label{font-size:11.5px;color:var(--muted);margin-bottom:5px}
+.ref-stat-val{font-size:19px;font-weight:800;color:#47E5FF}
+.ref-stat-val.gold{color:var(--gold)}
+
+/* History Filter Tabs & Items */
+.filter-tabs{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto}
+.filter-tab{flex:1;padding:9px 10px;border-radius:20px;border:1px solid #2A3D78;background:#152047;color:#A6B7DE;font-size:12.5px;font-weight:700;text-align:center}
+.filter-tab.active{background:linear-gradient(110deg,#21D4FD,#4EA8FF);color:#061333;border-color:transparent}
 .empty-state{text-align:center;padding:30px 12px;color:var(--muted)}
 .empty-state div{font-size:32px;margin-bottom:10px}
-.empty-state p{font-size:12px;line-height:1.7}
-.tx-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(18,68,81,.65)}
-.tx-item:last-child{border-bottom:0;padding-bottom:0}
-.tx-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+.empty-state p{font-size:12.5px;line-height:1.7}
+.tx-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 14px;background:#16224A;border:1px solid #273972;border-radius:16px;margin-bottom:10px}
+.tx-item:last-child{margin-bottom:0}
+.tx-left{display:flex;align-items:center;gap:11px;min-width:0}
+.tx-badge{width:38px;height:38px;border-radius:12px;background:#23346D;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.tx-title{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:3px}
 .tx-sub{font-size:11px;color:var(--muted)}
-.tx-amount-credit{font-size:14px;font-weight:800;color:#18D88D;text-align:right}
-.tx-amount-debit{font-size:14px;font-weight:800;color:#F04455;text-align:right}
-.notice{color:var(--muted);font-size:10px;text-align:center;margin-top:24px}
+.tx-amount-credit{font-size:14.5px;font-weight:800;color:#3CE8FF;text-align:right;white-space:nowrap}
+.tx-amount-debit{font-size:14.5px;font-weight:800;color:#FF5A79;text-align:right;white-space:nowrap}
 
-/* bottom navigation */
-.bottom-nav{position:fixed;bottom:0;left:0;width:100%;z-index:20;background:rgba(4,20,33,.96);backdrop-filter:blur(14px);border-top:1px solid #143B4A;display:flex;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
-.nav-item{border:0;background:none;color:#9CAFC0;flex:1;font-size:11px;padding:3px 2px;min-width:0}
-.nav-item span:first-child{display:block;font-size:25px;margin-bottom:4px}
-.nav-item span:last-child{display:block;font-size:12px}
-.nav-item.active{color:#16D99A}
-.nav-item.active span:first-child{filter:drop-shadow(0 0 6px rgba(0,220,155,.3))}
+/* Profile UI */
+.profile-header-card{display:flex;align-items:center;gap:14px}
+.profile-avatar{width:64px;height:64px;background:linear-gradient(135deg,#21D4FD,#7E3FB5);color:#fff;display:grid;place-items:center;border-radius:50%;font-size:28px;border:2.5px solid #47E5FF;flex-shrink:0}
+.profile-name{font-size:18px;font-weight:800;margin-bottom:3px}
+.profile-sub{font-size:12.5px;color:var(--muted);margin-bottom:6px}
+.verified-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;background:rgba(33,212,253,.15);border:1px solid rgba(33,212,253,.35);color:#47E5FF;font-size:11px;font-weight:700}
+.profile-mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
+.p-mini-box{background:#16224A;border:1px solid #2A3C75;border-radius:16px;padding:12px 8px;text-align:center}
+.p-mini-val{font-size:16px;font-weight:800;color:#fff;margin-bottom:3px}
+.p-mini-lbl{font-size:11px;color:var(--muted)}
+.menu-list-item{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(43,62,120,.65);cursor:pointer}
+.menu-list-item:last-child{border-bottom:0;padding-bottom:0}
+.menu-list-item:first-child{padding-top:0}
+.menu-left{display:flex;align-items:center;gap:11px}
+.menu-icon{width:34px;height:34px;border-radius:10px;background:#223269;display:grid;place-items:center;font-size:16px}
+.menu-title{font-size:13.5px;font-weight:700}
+.menu-sub{font-size:11.5px;color:var(--muted);margin-top:2px}
 
-/* popup */
-.popup{display:none;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.75);align-items:center;justify-content:center;padding:20px}
+.notice{color:var(--muted);font-size:10.5px;text-align:center;margin-top:22px}
+
+/* Bottom Navigation */
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;z-index:20;background:rgba(11,17,43,.95);backdrop-filter:blur(14px);border-top:1px solid #233368;display:flex;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+.nav-item{border:0;background:none;color:#8E9EC6;flex:1;font-size:11px;padding:3px 2px;min-width:0}
+.nav-item span:first-child{display:block;margin-bottom:3px}
+.nav-item span:last-child{display:block;font-size:11.5px;font-weight:600}
+.nav-item.active{color:#21D4FD}
+.nav-item.active span:first-child{filter:drop-shadow(0 0 7px rgba(33,212,253,.45))}
+
+/* Light Congratulation Popup (Matches reference white card popup) */
+.popup{display:none;position:fixed;inset:0;z-index:50;background:rgba(6,10,28,.78);align-items:center;justify-content:center;padding:20px}
 .popup.show{display:flex}
-.popup-box{width:100%;max-width:340px;background:linear-gradient(160deg,#F8FCFF,#E9F3FA);color:#0A2032;border:1px solid rgba(255,255,255,.7);border-radius:27px;padding:26px 20px 22px;text-align:center;position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.55)}
-.popup-icon{font-size:42px;margin-bottom:10px}
-.popup-box h2{font-size:19px;margin-bottom:9px;color:#0A2032}
-.popup-box p{font-size:12px;color:#3E586C;line-height:1.7}
-.popup-box .primary-btn{margin-top:16px}
+.popup-box{width:100%;max-width:340px;background:#F7FAFF;color:#111B3A;border-radius:26px;padding:26px 20px 22px;text-align:center;position:relative;box-shadow:0 22px 60px rgba(0,0,0,.6)}
+.popup-close{position:absolute;top:14px;right:16px;background:transparent;border:0;font-size:20px;color:#7A89A8}
+.popup-check{width:56px;height:56px;margin:0 auto 12px;border-radius:50%;background:linear-gradient(135deg,#21D4FD,#4EA8FF);color:#061333;display:grid;place-items:center;font-size:28px;font-weight:800;box-shadow:0 8px 20px rgba(33,212,253,.35)}
+.popup-box h2{font-size:21px;margin-bottom:8px;color:#101938;font-weight:800}
+.popup-box p{font-size:13px;color:#465578;line-height:1.6}
+.popup-box .primary-btn{margin-top:18px;border-radius:24px;font-size:15px}
+
 @media(max-width:360px){
  .container{padding-left:13px;padding-right:13px}
- .balance{font-size:31px}.wallet-icon{font-size:39px}
- .quick-card{min-height:137px}.quick-card h3{font-size:16px}
- .invite-text h3{font-size:18px}.invite-text strong{font-size:18px}
- .logo{font-size:24px}.logo-mark{width:34px;height:34px}
- .stat-value{font-size:17px}
+ .balance{font-size:32px}
+ .quick-card{min-height:136px}.quick-card h3{font-size:16px}
+ .logo{font-size:23px}.logo-mark{width:30px;height:30px}
+ .stat-value{font-size:16px}
 }
 </style>
 </head>
 <body>
 <div class="container">
+
+<!-- HOME PAGE -->
+<main id="homePage">
 <header class="header">
  <button class="header-menu" aria-label="Open profile" onclick="openPage('profile')">☰</button>
  <div class="logo"><span class="logo-mark" aria-hidden="true"></span><div>Earn<span>Nova</span></div></div>
  <div class="header-actions"><button class="notification-btn" type="button" aria-label="Notifications" onclick="openPage('history')"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="notification-dot">2</span></button></div>
 </header>
 
-<main id="homePage">
 <section class="balance-card">
  <div class="balance-main">
- <div class="wallet-icon"><svg class="wallet-svg" viewBox="0 0 72 64" aria-label="Wallet"><path d="M10 10 49 3q8-1 9 7v8H12q-7 0-7 7v29q0 6 7 6h45q5 0 5-6V24q0-6-7-6H12" fill="#F8B72E" stroke="#D58A12" stroke-width="3" stroke-linejoin="round"/><path d="M10 14 47 7q6-1 8 6v6H11q-5 0-5 5V53q0 5 6 5h43q5 0 5-5V24q0-6-6-6H12" fill="#FFD34F" stroke="#E3A521" stroke-width="2"/><path d="M45 25h20q5 0 5 5v14q0 5-5 5H45q-7 0-7-7V32q0-7 7-7" fill="#F7C443" stroke="#E2A122" stroke-width="2.5"/><circle cx="52" cy="37" r="4" fill="#58733D" stroke="#A6B16B" stroke-width="2"/></svg></div>
+ <div class="wallet-icon"><svg class="wallet-svg" viewBox="0 0 72 64" aria-label="Wallet"><path d="M10 10 49 3q8-1 9 7v8H12q-7 0-7 7v29q0 6 7 6h45q5 0 5-6V24q0-6-7-6H12" fill="#4B7BFF" stroke="#2D55CC" stroke-width="3" stroke-linejoin="round"/><path d="M10 14 47 7q6-1 8 6v6H11q-5 0-5 5V53q0 5 6 5h43q5 0 5-5V24q0-6-6-6H12" fill="#709BFF" stroke="#4776F5" stroke-width="2"/><path d="M45 25h20q5 0 5 5v14q0 5-5 5H45q-7 0-7-7V32q0-7 7-7" fill="#5D8BFF" stroke="#3A64DB" stroke-width="2.5"/><circle cx="52" cy="37" r="4" fill="#FFE05B" stroke="#FFF2A6" stroke-width="2"/></svg></div>
  <div><div class="balance-label" data-i18n="totalBalance">Total Balance</div><div class="balance" id="homeBalance">৳0.00</div></div>
  <div class="growth-icon"><svg class="growth-svg" viewBox="0 0 52 52"><path d="M7 42 22 27 31 34 45 15"/><path d="M33 15h12v12"/></svg></div>
  </div>
  <div class="today-earned"><span>⭐</span><span data-i18n="todayEarned">Today Earned:</span><strong id="homeEarnings">৳0.00</strong></div>
 </section>
+
 <h3 class="section-title" data-i18n="quickAccess">Quick Access</h3>
 <div class="quick-grid">
- <div class="quick-card" onclick="openPage('ads')"><div class="quick-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21" fill="#12D99A"/><path d="M19 14 34 24 19 34Z" fill="#07352A" stroke="none"/></svg></div><h3 data-i18n="watchAds">Watch Ads</h3><p class="highlight">Earn ৳0.05</p></div>
- <div class="quick-card" onclick="openPage('tasks')"><div class="quick-icon"><svg class="icon-svg" viewBox="0 0 48 48" style="color:#15D99A"><rect x="9" y="9" width="30" height="35" rx="4"/><path d="M17 5h14v9H17z" fill="#15D99A"/><path d="m16 26 5 5 11-12"/></svg></div><h3 data-i18n="tasks">Tasks</h3><p data-i18n="earnMore">Earn More</p></div>
- <div class="quick-card" onclick="openPage('referral')"><div class="quick-icon"><svg class="icon-svg" viewBox="0 0 48 48" style="color:#15D99A"><circle cx="17" cy="15" r="8" fill="#15D99A" stroke="none"/><circle cx="32" cy="18" r="6" fill="#15D99A" stroke="none"/><path d="M3 39c0-8 6-13 14-13s14 5 14 13v3H3z" fill="#15D99A" stroke="none"/><path d="M28 29c7-1 14 3 16 10v3H32" fill="#15D99A" stroke="none"/></svg></div><h3 data-i18n="referral">Referral</h3><p data-i18n="inviteEarn">Invite & Earn</p></div>
- <div class="quick-card" onclick="openPage('history')"><div class="quick-icon"><svg class="icon-svg" viewBox="0 0 48 48" style="color:#15D99A"><circle cx="24" cy="24" r="20" fill="#15D99A" stroke="none"/><path d="M24 12v13l9 5" stroke="#07352A" stroke-width="3.5"/></svg></div><h3 data-i18n="history">History</h3><p data-i18n="viewDetails">View Details</p></div>
+ <div class="quick-card" onclick="openPage('ads')"><div class="quick-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21" fill="#5D7BFF"/><path d="M19 15 33 24 19 33Z" fill="#FFFFFF"/></svg></div><h3 data-i18n="watchAds">Watch Ads</h3><p class="highlight">Earn ৳0.05</p></div>
+ <div class="quick-card" onclick="openPage('tasks')"><div class="quick-icon"><svg class="icon-svg" viewBox="0 0 48 48" style="color:#8B6EFF"><rect x="9" y="9" width="30" height="35" rx="5" fill="#7A5CF5" stroke="none"/><path d="M17 5h14v8H17z" fill="#B5A4FF" stroke="none"/><path d="m16 26 5 5 11-12" stroke="#FFFFFF" stroke-width="3.5"/></svg></div><h3 data-i18n="tasks">Tasks</h3><p data-i18n="earnMore">Earn More</p></div>
+ <div class="quick-card" onclick="openPage('referral')"><div class="quick-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="17" cy="15" r="7.5" fill="#4D8BFF"/><circle cx="32" cy="18" r="5.5" fill="#7DA8FF"/><path d="M4 39c0-7.5 5.5-12.5 13-12.5S30 31.5 30 39v3H4z" fill="#4D8BFF"/><path d="M28 29c6.5-1 13 3 15 10v3H31" fill="#7DA8FF"/></svg></div><h3 data-i18n="referral">Referral</h3><p data-i18n="inviteEarn">Invite & Earn</p></div>
+ <div class="quick-card" onclick="openPage('history')"><div class="quick-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="#6F63F6"/><path d="M24 12v13l9 5" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/></svg></div><h3 data-i18n="history">History</h3><p data-i18n="viewDetails">View Details</p></div>
 </div>
+
 <button class="invite-card" type="button" onclick="openPage('referral')">
- <div class="invite-icon">🎁</div><div class="invite-text"><h3 data-i18n="inviteFriends">Invite Friends</h3><p><strong>Get ৳1.00 Bonus</strong><br><span data-i18n="referralRuleShort">after 1 task or 1 ad!</span></p></div><div class="invite-arrow">›</div>
+ <div class="invite-icon">🎁</div><div class="invite-text"><h3 data-i18n="inviteFriends">Invite Friends</h3><p><strong data-i18n="bonusTitle">Get ৳1.00 Bonus</strong><br><span data-i18n="referralRuleShort">after 1 task or 1 ad!</span></p></div><div class="invite-arrow">›</div>
 </button>
 </main>
 
+<!-- TASKS PAGE -->
 <section class="page" id="tasks">
-<h2 class="page-heading" data-i18n="tasksHeading">📋 Daily Tasks</h2><p class="page-description" data-i18n="tasksDescription">Complete available activities to earn rewards.</p>
+<div class="sub-header">
+ <button class="back-btn" onclick="showHome()">←</button>
+ <div class="sub-title" data-i18n="tasksHeading">Daily Tasks</div>
+ <div class="sub-action">📋</div>
+</div>
+<p class="page-description" data-i18n="tasksDescription">Complete available activities to earn rewards.</p>
 <div class="panel"><div class="empty-state"><div>📋</div><p data-i18n="tasksPending">Daily tasks will appear here after backend integration.</p></div></div>
 </section>
 
+<!-- WATCH ADS PAGE -->
 <section class="page" id="ads">
-<h2 class="page-heading" data-i18n="adsHeading">📺 Watch Ads</h2>
-<p class="page-description" data-i18n="adsDescription">Watch a rewarded advertisement and earn after server verification.</p>
+<div class="sub-header">
+ <button class="back-btn" onclick="showHome()">←</button>
+ <div class="sub-title" data-i18n="adsHeading">Watch Ads</div>
+ <div class="sub-action">ⓘ</div>
+</div>
 <div class="ads-card">
  <div class="ring-wrap">
   <div class="ring">
    <svg viewBox="0 0 160 160" aria-hidden="true">
     <defs>
      <linearGradient id="adRingGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#00D7A0"/>
-      <stop offset="100%" stop-color="#35E7A8"/>
+      <stop offset="0%" stop-color="#21D4FD"/>
+      <stop offset="100%" stop-color="#7B61FF"/>
      </linearGradient>
     </defs>
     <circle class="track" cx="80" cy="80" r="70"/>
@@ -205,7 +252,7 @@ button{font-family:inherit;cursor:pointer}
    </svg>
    <div class="ring-center">
     <div class="play">▶</div>
-    <div class="count"><span id="adCountValue">0</span><span class="total">/1000</span></div>
+    <div class="count"><span id="adCountValue">0</span><span class="total"> / 1000</span></div>
     <div class="count-label" data-i18n="todaysAds">Today's Ads</div>
    </div>
   </div>
@@ -213,14 +260,14 @@ button{font-family:inherit;cursor:pointer}
 
  <div class="stats">
   <div class="stat">
-   <div class="stat-icon">🛡️</div>
+   <div class="stat-icon">📅</div>
    <div>
     <div class="stat-label" data-i18n="dailyLimit">Daily Limit</div>
     <div class="stat-value" id="dailyLimitStat">1000 Ads</div>
    </div>
   </div>
   <div class="stat">
-   <div class="stat-icon">💰</div>
+   <div class="stat-icon">🪙</div>
    <div>
     <div class="stat-label" data-i18n="todayEarnedShort">Today Earned</div>
     <div class="stat-value gold" id="adsTabEarnings">৳0.00</div>
@@ -228,7 +275,7 @@ button{font-family:inherit;cursor:pointer}
   </div>
  </div>
 
- <button class="watch" id="watchAdButton" type="button" data-i18n="watchEarn">▶ Watch Ad & Earn ৳0.05</button>
+ <button class="watch" id="watchAdButton" type="button" data-i18n="watchEarn">Watch Next Ad ▶</button>
  <div class="limit-timer-box" id="limitTimerBox">
   <div class="limit-timer-text" id="limitTimerText"></div>
  </div>
@@ -237,46 +284,138 @@ button{font-family:inherit;cursor:pointer}
 </div>
 </section>
 
+<!-- REFERRAL PAGE -->
 <section class="page" id="referral">
-<h2 class="page-heading" data-i18n="referralHeading">👥 Referral Program</h2><p class="page-description" data-i18n="referralRuleDesc">Invite friends and earn ৳1.00 once they complete 1 task or watch 1 ad.</p>
-<div class="panel"><h3 data-i18n="yourReferral">🎁 Your Referral Link</h3><p data-i18n="referralPending">Share your personal referral link with friends.</p><input class="input-box" id="referralLink" readonly placeholder="Loading referral link..."><button class="primary-btn" id="copyReferralBtn" type="button" disabled data-i18n="copyLink" onclick="copyReferral()">Copy Referral Link</button></div>
+<div class="sub-header">
+ <button class="back-btn" onclick="showHome()">←</button>
+ <div class="sub-title" data-i18n="referralHeading">Referral Program</div>
+ <button class="sub-action" onclick="copyReferral()">🔗</button>
+</div>
+
+<div class="ref-hero">
+ <div class="ref-hero-icon">🎁</div>
+ <div>
+  <h3 data-i18n="refHeroTitle">Invite Friends & Earn ৳1.00 Bonus!</h3>
+  <p data-i18n="referralRuleDesc">Earn ৳1.00 once your invited friend completes 1 task or watches 1 ad.</p>
+ </div>
+</div>
+
 <div class="panel">
- <h3 data-i18n="referralStats">Referral Statistics</h3>
- <div class="ref-stats-grid">
-  <div class="ref-stat-box">
-   <div class="ref-stat-label" data-i18n="totalInvited">Total Invited</div>
-   <div class="ref-stat-val" id="refTotalCount">0</div>
-  </div>
-  <div class="ref-stat-box">
-   <div class="ref-stat-label" data-i18n="validReferrals">Valid Referrals</div>
-   <div class="ref-stat-val" id="refValidCount">0</div>
-  </div>
-  <div class="ref-stat-box">
-   <div class="ref-stat-label" data-i18n="pendingReferrals">Pending Referrals</div>
-   <div class="ref-stat-val" id="refPendingCount">0</div>
-  </div>
-  <div class="ref-stat-box">
-   <div class="ref-stat-label" data-i18n="referralEarnings">Referral Earned</div>
-   <div class="ref-stat-val gold" id="refEarnedAmount">৳0.00</div>
-  </div>
+ <h3 data-i18n="yourReferral">🔗 Your Referral Link</h3>
+ <div class="ref-link-row">
+  <input class="input-box" id="referralLink" readonly placeholder="Loading referral link...">
+  <button class="copy-icon-btn" type="button" onclick="copyReferral()" title="Copy">📋</button>
+ </div>
+ <button class="primary-btn" id="copyReferralBtn" type="button" disabled data-i18n="copyLink" onclick="copyReferral()">Copy & Share Link</button>
+</div>
+
+<div class="ref-stats-grid">
+ <div class="ref-stat-box">
+  <div class="ref-stat-label" data-i18n="totalInvited">Total Referrals</div>
+  <div class="ref-stat-val" id="refTotalCount">0</div>
+ </div>
+ <div class="ref-stat-box">
+  <div class="ref-stat-label" data-i18n="referralEarnings">Total Earned</div>
+  <div class="ref-stat-val gold" id="refEarnedAmount">৳0.00</div>
+ </div>
+ <div class="ref-stat-box">
+  <div class="ref-stat-label" data-i18n="validReferrals">Valid Referrals</div>
+  <div class="ref-stat-val" id="refValidCount">0</div>
+ </div>
+ <div class="ref-stat-box">
+  <div class="ref-stat-label" data-i18n="pendingReferrals">Pending Referrals</div>
+  <div class="ref-stat-val" id="refPendingCount">0</div>
  </div>
 </div>
 </section>
 
+<!-- HISTORY PAGE -->
 <section class="page" id="history">
-<h2 class="page-heading" data-i18n="historyHeading">🕒 History</h2><p class="page-description" data-i18n="historyDescription">Your earning activity will appear here.</p>
+<div class="sub-header">
+ <button class="back-btn" onclick="showHome()">←</button>
+ <div class="sub-title" data-i18n="historyHeading">History</div>
+ <div class="sub-action">⏳</div>
+</div>
+<div class="filter-tabs">
+ <button class="filter-tab active" onclick="filterHistory('all', this)" data-i18n="filterAll">All</button>
+ <button class="filter-tab" onclick="filterHistory('ad', this)" data-i18n="filterAds">Ads</button>
+ <button class="filter-tab" onclick="filterHistory('ref', this)" data-i18n="filterRef">Referral</button>
+ <button class="filter-tab" onclick="filterHistory('bonus', this)" data-i18n="filterBonus">Bonus</button>
+</div>
 <div class="panel" id="historyContainer"><div class="empty-state"><div>🕒</div><p data-i18n="historyPending">Transaction history is not available yet.</p></div></div>
 </section>
 
+<!-- PROFILE PAGE -->
 <section class="page" id="profile">
-<h2 class="page-heading" data-i18n="profileHeading">👤 My Profile</h2>
-<div class="panel"><div class="profile-avatar">👤</div><div class="profile-name" id="profileFullName">User</div><div class="profile-sub" id="telegramUsername">Telegram User</div></div>
-<div class="panel"><h3 data-i18n="accountInfo">Account Information</h3><p id="userDetails">Telegram profile information will appear here.</p></div>
-<div class="panel"><h3 data-i18n="settings">⚙️ Settings</h3><p data-i18n="languageSetting">Choose your preferred language.</p><button class="primary-btn" onclick="toggleLanguage()" id="profileLanguageButton">🇧🇩 বাংলা</button></div>
+<div class="sub-header">
+ <button class="back-btn" onclick="showHome()">←</button>
+ <div class="sub-title" data-i18n="profileHeading">My Profile</div>
+ <button class="sub-action" onclick="toggleLanguage()">🌐</button>
+</div>
+
+<div class="panel">
+ <div class="profile-header-card">
+  <div class="profile-avatar">👤</div>
+  <div>
+   <div class="profile-name" id="profileFullName">User</div>
+   <div class="profile-sub" id="telegramUsername">Telegram User</div>
+   <div class="verified-badge">★ Verified User</div>
+  </div>
+ </div>
+</div>
+
+<div class="profile-mini-stats">
+ <div class="p-mini-box">
+  <div class="p-mini-val" id="profileBalance">৳0.00</div>
+  <div class="p-mini-lbl" data-i18n="balanceShort">Balance</div>
+ </div>
+ <div class="p-mini-box">
+  <div class="p-mini-val" id="profileRefCount">0</div>
+  <div class="p-mini-lbl" data-i18n="referralShort">Referrals</div>
+ </div>
+ <div class="p-mini-box">
+  <div class="p-mini-val" id="profileRefEarned" style="color:var(--gold)">৳0.00</div>
+  <div class="p-mini-lbl" data-i18n="earnedShort">Earned</div>
+ </div>
+</div>
+
+<div class="panel">
+ <div class="menu-list-item">
+  <div class="menu-left">
+   <div class="menu-icon">✈️</div>
+   <div>
+    <div class="menu-title" data-i18n="accountInfo">Telegram Info</div>
+    <div class="menu-sub" id="userDetails">Telegram profile information</div>
+   </div>
+  </div>
+ </div>
+ <div class="menu-list-item" onclick="toggleLanguage()">
+  <div class="menu-left">
+   <div class="menu-icon">🌐</div>
+   <div>
+    <div class="menu-title" data-i18n="languageTitle">Language</div>
+    <div class="menu-sub" id="profileLanguageButton">English (Tap to switch বাংলা)</div>
+   </div>
+  </div>
+  <span style="color:var(--muted)">›</span>
+ </div>
+ <div class="menu-list-item" onclick="openPage('history')">
+  <div class="menu-left">
+   <div class="menu-icon">🕒</div>
+   <div>
+    <div class="menu-title" data-i18n="history">History</div>
+    <div class="menu-sub" data-i18n="viewDetails">View Details</div>
+   </div>
+  </div>
+  <span style="color:var(--muted)">›</span>
+ </div>
+</div>
 </section>
+
 <p class="notice">EarnNova • Your Journey, Your Rewards</p>
 </div>
 
+<!-- BOTTOM NAVIGATION -->
 <nav class="bottom-nav">
 <button class="nav-item active" onclick="showHome()" data-page="home"><span><svg class="icon-svg nav-svg" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11H3z"/><path d="M9 21v-8h6v8"/></svg></span><span data-i18n="home">Home</span></button>
 <button class="nav-item" onclick="openPage('tasks')" data-page="tasks"><span><svg class="icon-svg nav-svg" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span data-i18n="tasksShort">Tasks</span></button>
@@ -284,7 +423,16 @@ button{font-family:inherit;cursor:pointer}
 <button class="nav-item" onclick="openPage('profile')" data-page="profile"><span><svg class="icon-svg nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2z"/></svg></span><span data-i18n="profileShort">Profile</span></button>
 </nav>
 
-<div class="popup" id="rewardPopup"><div class="popup-box"><div class="popup-icon">🎉</div><h2 id="popupTitle">Ad completed!</h2><p id="popupMessage">Your reward is awaiting server verification.</p><button class="primary-btn" onclick="closePopup()" data-i18n="continue">Continue</button></div></div>
+<!-- CONGRATULATION POPUP -->
+<div class="popup" id="rewardPopup">
+ <div class="popup-box">
+  <button class="popup-close" onclick="closePopup()">✕</button>
+  <div class="popup-check">✓</div>
+  <h2 id="popupTitle">Congratulations!</h2>
+  <p id="popupMessage">Your reward is awaiting server verification.</p>
+  <button class="primary-btn" onclick="closePopup()" data-i18n="okBtn">OK</button>
+ </div>
+</div>
 
 <script>
 const tg = window.Telegram?.WebApp;
@@ -296,6 +444,7 @@ const RING_CIRCUMFERENCE = 440;
 
 let currentLanguage = "en";
 let latestTransactions = [];
+let activeHistoryFilter = "all";
 let currentTodayEarned = 0;
 let currentTodayAdsCount = 0;
 let latestReferralStats = {
@@ -308,20 +457,20 @@ let isAdRunning = false;
 
 const translations = {
 en:{
-totalBalance:"Total Balance",todayEarned:"Today Earned:",todayEarnedShort:"Today Earned",dailyLimit:"Daily Limit",dailyLimitValue:"1000 Ads",todaysAds:"Today's Ads",quickAccess:"Quick Access",watchAds:"Watch Ads",tasks:"Tasks",earnMore:"Earn More",referral:"Referral",inviteEarn:"Invite & Earn",history:"History",viewDetails:"View Details",inviteFriends:"Invite Friends",referralRuleShort:"after 1 task or 1 ad!",
-tasksHeading:"📋 Daily Tasks",tasksDescription:"Complete available activities to earn rewards.",tasksPending:"Daily tasks will appear here after backend integration.",
-adsHeading:"📺 Watch Ads",adsDescription:"Watch a rewarded advertisement and earn after server verification.",rewardedAd:"Rewarded Advertisement",rewardPerAd:"Reward per valued ad: ৳0.05",watchEarn:"▶ Watch Ad & Earn ৳0.05",limitReachedBtn:"🔒 Daily Limit Reached",pressWatch:"Press the button to start an advertisement.",limitReachedStatus:"Today's 1000 ad limit is completed.",
-referralHeading:"👥 Referral Program",referralRuleDesc:"Invite friends and earn ৳1.00 once they complete 1 task or watch 1 ad.",yourReferral:"🎁 Your Referral Link",referralPending:"Share your personal referral link with friends.",copyLink:"Copy Referral Link",referralStats:"Referral Statistics",totalInvited:"Total Invited",validReferrals:"Valid Referrals",pendingReferrals:"Pending Referrals",referralEarnings:"Referral Earned",
-profileHeading:"👤 My Profile",accountInfo:"Account Information",settings:"⚙️ Settings",languageSetting:"Choose your preferred language.",home:"Home",tasksShort:"Tasks",referralShort:"Referral",profileShort:"Profile",continue:"Continue",
-historyHeading:"🕒 History",historyDescription:"Your earning activity will appear here.",historyPending:"Transaction history is not available yet."
+totalBalance:"Total Balance",todayEarned:"Today Earned:",todayEarnedShort:"Today Earned",dailyLimit:"Daily Limit",dailyLimitValue:"1000 Ads",todaysAds:"Today's Ads",quickAccess:"Quick Access",watchAds:"Watch Ads",tasks:"Tasks",earnMore:"Earn More",referral:"Referral",inviteEarn:"Invite & Earn",history:"History",viewDetails:"View Details",inviteFriends:"Invite Friends",bonusTitle:"Get ৳1.00 Bonus",referralRuleShort:"after 1 task or 1 ad!",
+tasksHeading:"Daily Tasks",tasksDescription:"Complete available activities to earn rewards.",tasksPending:"Daily tasks will appear here after backend integration.",
+adsHeading:"Watch Ads",rewardPerAd:"Reward per valued ad: ৳0.05",watchEarn:"Watch Next Ad ▶",limitReachedBtn:"🔒 Daily Limit Reached",pressWatch:"Press the button to start an advertisement.",limitReachedStatus:"Today's 1000 ad limit is completed.",
+referralHeading:"Referral Program",refHeroTitle:"Invite Friends & Earn ৳1.00 Bonus!",referralRuleDesc:"Earn ৳1.00 once your invited friend completes 1 task or watches 1 ad.",yourReferral:"🔗 Your Referral Link",copyLink:"Copy & Share Link",totalInvited:"Total Referrals",validReferrals:"Valid Referrals",pendingReferrals:"Pending Referrals",referralEarnings:"Total Earned",
+profileHeading:"My Profile",accountInfo:"Telegram Info",languageTitle:"Language",balanceShort:"Balance",earnedShort:"Earned",home:"Home",tasksShort:"Tasks",referralShort:"Referral",profileShort:"Profile",okBtn:"OK",
+historyHeading:"History",historyPending:"Transaction history is not available yet.",filterAll:"All",filterAds:"Ads",filterRef:"Referral",filterBonus:"Bonus"
 },
 bn:{
-totalBalance:"মোট ব্যালেন্স",todayEarned:"আজকের আয়:",todayEarnedShort:"আজকের আয়",dailyLimit:"দৈনিক সীমা",dailyLimitValue:"১০০০ অ্যাড",todaysAds:"আজকের বিজ্ঞাপন",quickAccess:"দ্রুত প্রবেশ",watchAds:"বিজ্ঞাপন দেখুন",tasks:"কাজ",earnMore:"আরও আয় করুন",referral:"রেফারেল",inviteEarn:"বন্ধু আনুন ও আয় করুন",history:"হিস্ট্রি",viewDetails:"বিস্তারিত দেখুন",inviteFriends:"বন্ধুদের আমন্ত্রণ জানান",referralRuleShort:"১টি কাজ বা ১টি বিজ্ঞাপনেই!",
-tasksHeading:"📋 দৈনিক কাজ",tasksDescription:"পুরস্কার পেতে উপলব্ধ কাজ সম্পন্ন করুন।",tasksPending:"Backend যুক্ত হলে দৈনিক কাজ এখানে দেখা যাবে।",
-adsHeading:"📺 বিজ্ঞাপন দেখুন",adsDescription:"বিজ্ঞাপন সম্পূর্ণ করে সার্ভার যাচাইয়ের পর পুরস্কার পান।",rewardedAd:"পুরস্কারযুক্ত বিজ্ঞাপন",rewardPerAd:"প্রতিটি Valued বিজ্ঞাপনে ৳০.০৫",watchEarn:"▶ বিজ্ঞাপন দেখুন ও ৳০.০৫ পান",limitReachedBtn:"🔒 আজকের লিমিট শেষ",pressWatch:"বিজ্ঞাপন শুরু করতে বাটনে চাপ দিন।",limitReachedStatus:"আজকের ১০০০টি বিজ্ঞাপনের লিমিট পূর্ণ হয়েছে।",
-referralHeading:"👥 রেফারেল প্রোগ্রাম",referralRuleDesc:"বন্ধুকে আমন্ত্রণ জানান—১টি কাজ অথবা ১টি বিজ্ঞাপন দেখলেই আপনি পাবেন ৳১.০০।",yourReferral:"🎁 আপনার রেফারেল লিংক",referralPending:"আপনার ব্যক্তিগত রেফারেল লিংক বন্ধুদের সাথে শেয়ার করুন।",copyLink:"রেফারেল লিংক কপি",referralStats:"রেফারেল পরিসংখ্যান",totalInvited:"মোট আমন্ত্রিত",validReferrals:"ভ্যালিড রেফারেল",pendingReferrals:"পেন্ডিং রেফারেল",referralEarnings:"রেফারেল আয়",
-profileHeading:"👤 আমার প্রোফাইল",accountInfo:"অ্যাকাউন্টের তথ্য",settings:"⚙️ সেটিংস",languageSetting:"আপনার পছন্দের ভাষা নির্বাচন করুন।",home:"হোম",tasksShort:"কাজ",referralShort:"রেফারেল",profileShort:"প্রোফাইল",continue:"চালিয়ে যান",
-historyHeading:"🕒 হিস্ট্রি",historyDescription:"আপনার আয়ের কার্যক্রম এখানে দেখা যাবে।",historyPending:"লেনদেনের হিস্ট্রি এখনো উপলব্ধ নয়।"
+totalBalance:"মোট ব্যালেন্স",todayEarned:"আজকের আয়:",todayEarnedShort:"আজকের আয়",dailyLimit:"দৈনিক সীমা",dailyLimitValue:"১০০০ অ্যাড",todaysAds:"আজকের বিজ্ঞাপন",quickAccess:"দ্রুত প্রবেশ",watchAds:"বিজ্ঞাপন দেখুন",tasks:"কাজ",earnMore:"আরও আয় করুন",referral:"রেফারেল",inviteEarn:"বন্ধু আনুন ও আয় করুন",history:"হিস্ট্রি",viewDetails:"বিস্তারিত দেখুন",inviteFriends:"বন্ধুদের আমন্ত্রণ জানান",bonusTitle:"৳১.০০ বোনাস পান",referralRuleShort:"১টি কাজ বা ১টি বিজ্ঞাপনেই!",
+tasksHeading:"দৈনিক কাজ",tasksDescription:"পুরস্কার পেতে উপলব্ধ কাজ সম্পন্ন করুন।",tasksPending:"Backend যুক্ত হলে দৈনিক কাজ এখানে দেখা যাবে।",
+adsHeading:"বিজ্ঞাপন দেখুন",rewardPerAd:"প্রতিটি Valued বিজ্ঞাপনে ৳০.০৫",watchEarn:"পরবর্তী বিজ্ঞাপন দেখুন ▶",limitReachedBtn:"🔒 আজকের লিমিট শেষ",pressWatch:"বিজ্ঞাপন শুরু করতে বাটনে চাপ দিন।",limitReachedStatus:"আজকের ১০০০টি বিজ্ঞাপনের লিমিট পূর্ণ হয়েছে।",
+referralHeading:"রেফারেল প্রোগ্রাম",refHeroTitle:"বন্ধুদের আমন্ত্রণ জানান ও ৳১.০০ বোনাস পান!",referralRuleDesc:"বন্ধুকে আমন্ত্রণ জানান—১টি কাজ অথবা ১টি বিজ্ঞাপন দেখলেই আপনি পাবেন ৳১.০০।",yourReferral:"🔗 আপনার রেফারেল লিংক",copyLink:"লিংক কপি ও শেয়ার করুন",totalInvited:"মোট রেফারেল",validReferrals:"ভ্যালিড রেফারেল",pendingReferrals:"পেন্ডিং রেফারেল",referralEarnings:"মোট আয়",
+profileHeading:"আমার প্রোফাইল",accountInfo:"টেলিগ্রাম তথ্য",languageTitle:"ভাষা (Language)",balanceShort:"ব্যালেন্স",earnedShort:"মোট আয়",home:"হোম",tasksShort:"কাজ",referralShort:"রেফারেল",profileShort:"প্রোফাইল",okBtn:"OK",
+historyHeading:"হিস্ট্রি",historyPending:"লেনদেনের হিস্ট্রি এখনো উপলব্ধ নয়।",filterAll:"সব",filterAds:"বিজ্ঞাপন",filterRef:"রেফারেল",filterBonus:"বোনাস"
 }
 };
 
@@ -360,11 +509,15 @@ function renderReferralStats(stats){
  const validEl = document.getElementById("refValidCount");
  const pendingEl = document.getElementById("refPendingCount");
  const earnedEl = document.getElementById("refEarnedAmount");
+ const pRefEl = document.getElementById("profileRefCount");
+ const pEarnedEl = document.getElementById("profileRefEarned");
 
  if(totalEl) totalEl.textContent = String(latestReferralStats.totalReferrals);
  if(validEl) validEl.textContent = String(latestReferralStats.validReferrals);
  if(pendingEl) pendingEl.textContent = String(latestReferralStats.pendingReferrals);
  if(earnedEl) earnedEl.textContent = "৳" + latestReferralStats.referralEarnings.toFixed(2);
+ if(pRefEl) pRefEl.textContent = String(latestReferralStats.totalReferrals);
+ if(pEarnedEl) pEarnedEl.textContent = "৳" + latestReferralStats.referralEarnings.toFixed(2);
 }
 
 function getTimeUntilMidnight(){
@@ -454,25 +607,47 @@ function updateAdsUI(todayEarned, transactions){
  updateLimitCountdown();
 }
 
+function filterHistory(type, btn){
+ activeHistoryFilter = type;
+ document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+ if(btn) btn.classList.add("active");
+ renderHistory(latestTransactions);
+}
+
 function renderHistory(transactions){
  latestTransactions = Array.isArray(transactions) ? transactions : [];
  const container = document.getElementById("historyContainer");
  if(!container) return;
- if(!latestTransactions.length){
+
+ const filtered = latestTransactions.filter(item => {
+  if(activeHistoryFilter === "all") return true;
+  const text = String(item.description || item.transaction_type || "").toLowerCase();
+  if(activeHistoryFilter === "ad") return text.includes("ad");
+  if(activeHistoryFilter === "ref") return text.includes("ref");
+  if(activeHistoryFilter === "bonus") return text.includes("bonus") || text.includes("daily");
+  return true;
+ });
+
+ if(!filtered.length){
   container.innerHTML = `<div class="empty-state"><div>🕒</div><p>${translations[currentLanguage].historyPending}</p></div>`;
   return;
  }
- container.innerHTML = latestTransactions.map(item => {
+ container.innerHTML = filtered.map(item => {
   const isCredit = item.direction === "credit";
   const sign = isCredit ? "+" : "-";
   const title = item.description || item.transaction_type || "Activity";
   const status = item.status || "completed";
   const dateStr = item.created_at ? new Date(item.created_at).toLocaleString() : "";
+  const lower = title.toLowerCase();
+  const badge = lower.includes("ad") ? "▶" : (lower.includes("ref") ? "🎁" : (isCredit ? "⭐" : "💳"));
   return `
    <div class="tx-item">
-    <div>
-     <div class="tx-title">${title}</div>
-     <div class="tx-sub">${status}${dateStr ? " • " + dateStr : ""}</div>
+    <div class="tx-left">
+     <div class="tx-badge">${badge}</div>
+     <div>
+      <div class="tx-title">${title}</div>
+      <div class="tx-sub">${status}${dateStr ? " • " + dateStr : ""}</div>
+     </div>
     </div>
     <div class="${isCredit ? "tx-amount-credit" : "tx-amount-debit"}">${sign}৳${Number(item.amount || 0).toFixed(2)}</div>
    </div>
@@ -489,7 +664,7 @@ function setLanguage(lang, shouldSave = true){
  });
  const dailyLimitStat = document.getElementById("dailyLimitStat");
  if(dailyLimitStat) dailyLimitStat.textContent = translations[currentLanguage].dailyLimitValue;
- const label = currentLanguage === "en" ? "🇧🇩 বাংলা" : "🇬🇧 English";
+ const label = currentLanguage === "en" ? "English (Tap for বাংলা)" : "বাংলা (English করতে চাপুন)";
  const profileButton = document.getElementById("profileLanguageButton");
  if(profileButton) profileButton.textContent = label;
  if(shouldSave) saveLanguage(currentLanguage);
@@ -511,7 +686,7 @@ if(tg){
  const name=user.first_name||"User";
  document.getElementById("profileFullName").textContent=name;
  document.getElementById("telegramUsername").textContent=user.username?"@"+user.username:"Telegram User";
- document.getElementById("userDetails").textContent="Name: "+name+" | Telegram ID: "+user.id+(user.username?" | Username: @"+user.username:"");
+ document.getElementById("userDetails").textContent="ID: "+user.id+(user.username?" • @"+user.username:"");
  }
 }
 
@@ -531,9 +706,12 @@ async function loadUserDashboard(){
   const data = await res.json();
   if(!res.ok || !data.success) return;
 
+  const formattedBal = "৳" + Number(data.balance || 0).toFixed(2);
   const balanceEl = document.getElementById("homeBalance");
+  const pBalanceEl = document.getElementById("profileBalance");
   const earningsEl = document.getElementById("homeEarnings");
-  if(balanceEl) balanceEl.textContent = "৳" + Number(data.balance || 0).toFixed(2);
+  if(balanceEl) balanceEl.textContent = formattedBal;
+  if(pBalanceEl) pBalanceEl.textContent = formattedBal;
   if(earningsEl) earningsEl.textContent = "৳" + Number(data.todayEarned || 0).toFixed(2);
 
   if(data.referralCode){
@@ -573,7 +751,7 @@ function showHome(){
 function openPage(pageId){
  hideAllPages();const page=document.getElementById(pageId);if(page)page.classList.add("active");
  const nav=document.querySelector('[data-page="'+pageId+'"]');if(nav)nav.classList.add("active");
- if(pageId==="history" || pageId==="referral" || pageId==="ads") loadUserDashboard();
+ if(pageId==="history" || pageId==="referral" || pageId==="ads" || pageId==="profile") loadUserDashboard();
  if(tg)tg.HapticFeedback?.selectionChanged();
 }
 function closePopup(){
@@ -581,8 +759,8 @@ function closePopup(){
  loadUserDashboard();
 }
 function showVerificationPopup(){
- document.getElementById("popupTitle").textContent=currentLanguage==="bn"?"বিজ্ঞাপন সম্পন্ন হয়েছে!":"Ad completed!";
- document.getElementById("popupMessage").textContent=currentLanguage==="bn"?"তোমার ৳০.০৫ পুরস্কার সার্ভার যাচাইয়ের অপেক্ষায় আছে। যাচাই সম্পন্ন না হওয়া পর্যন্ত ব্যালেন্সে যোগ হয়েছে বলে দেখানো হবে না।":"Your ৳0.05 reward is awaiting server verification. It will not be shown as credited until verification is complete.";
+ document.getElementById("popupTitle").textContent=currentLanguage==="bn"?"অভিনন্দন!":"Congratulations!";
+ document.getElementById("popupMessage").textContent=currentLanguage==="bn"?"বিজ্ঞাপন সম্পূর্ণ দেখার জন্য আপনার ৳০.০৫ পুরস্কার সার্ভার যাচাইয়ের অপেক্ষায় আছে।":"Your ৳0.05 reward is awaiting server verification and will be added shortly.";
  document.getElementById("rewardPopup").classList.add("show");
  setTimeout(loadUserDashboard, 2000);
 }
