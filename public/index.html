@@ -138,7 +138,7 @@ button{font-family:inherit;cursor:pointer}
 .quick-card p{font-size:12px;color:var(--muted);line-height:1.3}
 .quick-card .highlight{color:var(--gold);font-weight:750;font-size:13.5px}
 
-/* Invite Banner (Positioned so it appears partially / half visible above bottom nav) */
+/* Invite Banner */
 .invite-card{
  margin-top:14px;
  width:100%;
@@ -605,6 +605,64 @@ function getActiveTelegramUser(){
  return tg?.initDataUnsafe?.user || null;
 }
 
+function getTodayDateKey(){
+ const now = new Date();
+ const y = now.getFullYear();
+ const m = String(now.getMonth() + 1).padStart(2, "0");
+ const d = String(now.getDate()).padStart(2, "0");
+ return `${y}-${m}-${d}`;
+}
+
+function getDailyTrackerKey(){
+ const uid = getActiveTelegramUser()?.id || "guest";
+ return `earnnova_daily_${uid}`;
+}
+
+function getDailyLocalStats(){
+ const todayKey = getTodayDateKey();
+ try{
+  const raw = localStorage.getItem(getDailyTrackerKey());
+  if(!raw) return { date: todayKey, adsCount: 0, todayEarned: 0 };
+  const parsed = JSON.parse(raw);
+  if(parsed.date !== todayKey){
+   const resetObj = { date: todayKey, adsCount: 0, todayEarned: 0 };
+   localStorage.setItem(getDailyTrackerKey(), JSON.stringify(resetObj));
+   return resetObj;
+  }
+  return {
+   date: todayKey,
+   adsCount: Math.max(0, Number(parsed.adsCount || 0)),
+   todayEarned: Math.max(0, Number(parsed.todayEarned || 0))
+  };
+ }catch(e){
+  return { date: todayKey, adsCount: 0, todayEarned: 0 };
+ }
+}
+
+function saveDailyLocalStats(adsCount, todayEarned){
+ const todayKey = getTodayDateKey();
+ try{
+  localStorage.setItem(getDailyTrackerKey(), JSON.stringify({
+   date: todayKey,
+   adsCount: Math.min(DAILY_AD_LIMIT, Math.max(0, Number(adsCount || 0))),
+   todayEarned: Math.max(0, Number(Number(todayEarned || 0).toFixed(2)))
+  }));
+ }catch(e){}
+}
+
+function incrementDailyLocalAd(){
+ const local = getDailyLocalStats();
+ const nextAds = Math.min(DAILY_AD_LIMIT, Math.max(local.adsCount, currentTodayAdsCount) + 1);
+ const nextEarned = Number((Math.max(local.todayEarned, currentTodayEarned) + AD_REWARD_AMOUNT).toFixed(2));
+ saveDailyLocalStats(nextAds, nextEarned);
+ currentTodayAdsCount = nextAds;
+ currentTodayEarned = nextEarned;
+
+ const homeEarnings = document.getElementById("homeEarnings");
+ if(homeEarnings) homeEarnings.textContent = "৳" + currentTodayEarned.toFixed(2);
+ updateAdsUI(currentTodayEarned, latestTransactions);
+}
+
 function getLangStorageKey(){
  const uid = getActiveTelegramUser()?.id;
  return uid ? `earnnova_lang_${uid}` : "earnnova_lang_guest";
@@ -693,36 +751,57 @@ function updateLimitCountdown(){
  }
 }
 
-function updateAdsUI(todayEarned, transactions){
- currentTodayEarned = Number(todayEarned || 0);
- const adsTabEarnings = document.getElementById("adsTabEarnings");
- if(adsTabEarnings){
-  adsTabEarnings.textContent = "৳" + currentTodayEarned.toFixed(2);
- }
+function updateAdsUI(serverTodayEarned, transactions, serverTodayAdsCount){
+ const local = getDailyLocalStats();
+ const sEarned = Number(serverTodayEarned || 0);
 
  const now = new Date();
  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
- let todayAdsCount = 0;
+ let txAdsCount = 0;
+ let txTodayEarned = 0;
 
  if(Array.isArray(transactions)){
   for(const tx of transactions){
    if(tx.direction === "credit" && tx.status !== "failed" && tx.created_at){
     const txDate = new Date(tx.created_at);
     if(txDate >= startOfToday){
+     const amt = Number(tx.amount || 0);
+     txTodayEarned += amt;
      const desc = String(tx.description || tx.transaction_type || "").toLowerCase();
-     if(desc.includes("ad") || Number(tx.amount) === AD_REWARD_AMOUNT){
-      todayAdsCount += 1;
+     if(desc.includes("ad") || amt === AD_REWARD_AMOUNT){
+      txAdsCount += 1;
      }
     }
    }
   }
  }
 
- if(todayAdsCount === 0 && currentTodayEarned > 0){
-  todayAdsCount = Math.min(DAILY_AD_LIMIT, Math.round(currentTodayEarned / AD_REWARD_AMOUNT));
+ const explicitServerAds = Number(serverTodayAdsCount || 0);
+ const derivedFromServerEarned = sEarned > 0 ? Math.round(sEarned / AD_REWARD_AMOUNT) : 0;
+
+ const resolvedAdsCount = Math.min(
+  DAILY_AD_LIMIT,
+  Math.max(local.adsCount, explicitServerAds, txAdsCount, derivedFromServerEarned)
+ );
+
+ const derivedFromResolvedAds = Number((resolvedAdsCount * AD_REWARD_AMOUNT).toFixed(2));
+ const resolvedTodayEarned = Number(
+  Math.max(local.todayEarned, sEarned, txTodayEarned, derivedFromResolvedAds).toFixed(2)
+ );
+
+ saveDailyLocalStats(resolvedAdsCount, resolvedTodayEarned);
+ currentTodayAdsCount = resolvedAdsCount;
+ currentTodayEarned = resolvedTodayEarned;
+
+ const homeEarnings = document.getElementById("homeEarnings");
+ if(homeEarnings){
+  homeEarnings.textContent = "৳" + currentTodayEarned.toFixed(2);
+ }
+ const adsTabEarnings = document.getElementById("adsTabEarnings");
+ if(adsTabEarnings){
+  adsTabEarnings.textContent = "৳" + currentTodayEarned.toFixed(2);
  }
 
- currentTodayAdsCount = Math.min(DAILY_AD_LIMIT, todayAdsCount);
  const countEl = document.getElementById("adCountValue");
  const ringEl = document.getElementById("adProgressRing");
  if(countEl) countEl.textContent = String(currentTodayAdsCount);
@@ -797,7 +876,7 @@ function setLanguage(lang, shouldSave = true){
  if(shouldSave) saveLanguage(currentLanguage);
  renderHistory(latestTransactions);
  renderReferralStats(latestReferralStats);
- updateAdsUI(currentTodayEarned, latestTransactions);
+ updateAdsUI(currentTodayEarned, latestTransactions, currentTodayAdsCount);
  if(tg) tg.HapticFeedback?.selectionChanged();
 }
 
@@ -818,6 +897,10 @@ if(tg){
 
 setLanguage(loadSavedLanguage(), false);
 
+// Initialize immediately from local daily storage so counts above 20 / ৳1.00 show right away
+const initialDaily = getDailyLocalStats();
+updateAdsUI(initialDaily.todayEarned, [], initialDaily.adsCount);
+
 async function loadUserDashboard(){
  const user = getActiveTelegramUser();
  const initData = tg?.initData || "";
@@ -835,10 +918,8 @@ async function loadUserDashboard(){
   const formattedBal = "৳" + Number(data.balance || 0).toFixed(2);
   const balanceEl = document.getElementById("homeBalance");
   const pBalanceEl = document.getElementById("profileBalance");
-  const earningsEl = document.getElementById("homeEarnings");
   if(balanceEl) balanceEl.textContent = formattedBal;
   if(pBalanceEl) pBalanceEl.textContent = formattedBal;
-  if(earningsEl) earningsEl.textContent = "৳" + Number(data.todayEarned || 0).toFixed(2);
 
   if(data.referralCode){
    const refInput = document.getElementById("referralLink");
@@ -849,7 +930,11 @@ async function loadUserDashboard(){
 
   renderReferralStats(data.referralStats || {});
   renderHistory(data.transactions || []);
-  updateAdsUI(data.todayEarned || 0, data.transactions || []);
+  updateAdsUI(
+   data.todayEarned || 0,
+   data.transactions || [],
+   data.todayAdsCount || data.adsWatchedToday || 0
+  );
  }catch(err){
   console.error("Dashboard load error:", err);
  }
@@ -927,6 +1012,7 @@ watchAdButton.addEventListener("click",async()=>{
  adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন শুরু হচ্ছে। সম্পূর্ণ দেখুন।":"Advertisement is starting. Please watch it completely.";
  const result=await window.show_12287336({ymid:data.ymid});
  if(result?.reward_event_type==="valued"){
+  incrementDailyLocalAd();
   adStatus.textContent=currentLanguage==="bn"?"বিজ্ঞাপন সম্পন্ন! সার্ভার যাচাই চলছে।":"Ad completed! Server verification is pending.";
   showVerificationPopup();
  }else{
@@ -944,7 +1030,15 @@ watchAdButton.addEventListener("click",async()=>{
  }
 });
 
-setInterval(updateLimitCountdown, 1000);
+setInterval(()=>{
+ const local = getDailyLocalStats();
+ if(local.adsCount === 0 && currentTodayAdsCount > 0){
+  currentTodayAdsCount = 0;
+  currentTodayEarned = 0;
+  updateAdsUI(0, [], 0);
+ }
+ updateLimitCountdown();
+}, 1000);
 loadUserDashboard();
 </script>
 </body>
