@@ -17,63 +17,180 @@ body{
  background:radial-gradient(ellipse at 50% 0%,#1B295A 0%,var(--bg) 62%);
  color:var(--text);
  min-height:100vh;
- padding-top:calc(52px + env(safe-area-inset-top));
- padding-bottom:calc(74px + env(safe-area-inset-bottom));
+ padding-top:calc(46px + env(safe-area-inset-top));
+ padding-bottom:calc(84px + env(safe-area-inset-bottom));
 }
 button{font-family:inherit;cursor:pointer}
-.container{width:100%;max-width:480px;margin:auto;padding:6px 14px 12px}
+.container{width:100%;max-width:480px;margin:auto;padding:6px 14px 14px}
 
-/* Compact Header (Visible below Telegram top bar) */
-.header{display:grid;grid-template-columns:38px 1fr 38px;align-items:center;margin-bottom:12px;min-height:38px}
-.header-menu,.notification-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:11px;display:grid;place-items:center;position:relative;width:36px;height:36px}
-.header-menu{font-size:18px}
-.logo{display:flex;justify-content:center;align-items:center;gap:8px;font-size:22px;font-weight:800;letter-spacing:-0.6px}
-.logo-mark{width:26px;height:26px;display:inline-block;transform:rotate(45deg);border:3.5px solid #21D4FD;border-radius:4px;position:relative;box-shadow:0 0 12px rgba(33,212,253,.35)}
-.logo-mark:before{content:"";position:absolute;inset:3px;border:2px solid #21D4FD;border-radius:2px}
-.logo span{color:#21D4FD}
+/* Top Separate Header Box (Menu + Custom Logo + Bell only, no support icon) */
+.header-box{
+ display:grid;
+ grid-template-columns:44px 1fr 44px;
+ align-items:center;
+ gap:8px;
+ background:linear-gradient(145deg,#1A2857,#121C40);
+ border:1px solid rgba(130,165,255,.28);
+ border-radius:20px;
+ padding:7px 9px;
+ margin-bottom:14px;
+ box-shadow:0 8px 22px rgba(4,8,26,.35);
+}
+.header-menu,.notification-btn{
+ background:rgba(255,255,255,.08);
+ border:1px solid rgba(255,255,255,.12);
+ color:#fff;
+ border-radius:13px;
+ display:grid;
+ place-items:center;
+ position:relative;
+ width:40px;
+ height:40px;
+}
+.header-menu{font-size:20px}
+.notification-btn{font-size:20px}
+.logo{
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ gap:9px;
+ font-size:21px;
+ font-weight:800;
+ letter-spacing:-0.4px;
+ min-width:0;
+}
+.logo-img{
+ width:34px;
+ height:34px;
+ border-radius:50%;
+ object-fit:cover;
+ border:2px solid #FFD54F;
+ box-shadow:0 0 12px rgba(255,213,79,.35);
+ flex-shrink:0;
+ background:#070B14;
+}
+.logo span{color:#FFD54F}
 .header-actions{display:flex;justify-content:flex-end}
-.notification-btn{font-size:18px}
 .icon-svg{width:1em;height:1em;display:block;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.wallet-svg{width:46px;height:46px;filter:drop-shadow(0 4px 8px rgba(20,15,60,.3))}
-.growth-svg{width:34px;height:34px;stroke:#47E5FF;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.quick-icon svg{width:32px;height:32px}
-.nav-item .nav-svg{width:22px;height:22px;margin:0 auto 2px}
-.notification-btn .icon-svg{width:20px;height:20px}
-.notification-dot{position:absolute;top:-4px;right:-4px;background:#FF4B6E;color:#fff;font-size:10px;font-weight:bold;width:16px;height:16px;border-radius:50%;display:grid;place-items:center}
+.notification-btn .icon-svg{width:22px;height:22px}
+.notification-dot{
+ position:absolute;
+ top:-4px;
+ right:-4px;
+ background:#FF4B6E;
+ color:#fff;
+ font-size:10.5px;
+ font-weight:bold;
+ width:18px;
+ height:18px;
+ border-radius:50%;
+ display:grid;
+ place-items:center;
+}
 
-/* Compact Balance Card */
-.balance-card{position:relative;overflow:hidden;border:1px solid rgba(130,170,255,.32);border-radius:22px;padding:14px 15px 12px;margin-bottom:14px;background:linear-gradient(125deg,#3B5BDB 0%,#6347D1 52%,#8E44AD 100%);box-shadow:0 10px 24px rgba(68,75,210,.24)}
-.balance-card:before{content:"";position:absolute;width:170px;height:170px;border:24px solid rgba(255,255,255,.06);border-radius:50%;right:-55px;top:-65px}
-.balance-main{position:relative;z-index:1;display:grid;grid-template-columns:50px 1fr 38px;align-items:center;gap:10px}
-.balance-label{font-size:13px;color:#E2EAFF;margin-bottom:2px;font-weight:600}
-.balance{font-size:30px;font-weight:800;letter-spacing:-0.8px;white-space:nowrap}
-.today-earned{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:6px;margin:10px auto 0;padding:5px 13px;width:fit-content;max-width:100%;background:rgba(16,22,64,.42);border:1px solid rgba(255,255,255,.14);border-radius:24px;font-size:12.5px;color:#F0F4FF;white-space:nowrap}
-.today-earned strong{color:var(--gold);font-size:14px}
+.wallet-svg{width:52px;height:52px;filter:drop-shadow(0 5px 10px rgba(20,15,60,.32))}
+.growth-svg{width:38px;height:38px;stroke:#47E5FF;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.quick-icon svg{width:36px;height:36px}
+.nav-item .nav-svg{width:26px;height:26px;margin:0 auto 3px}
 
-/* Compact Quick Access (Fits in 1 screen without scrolling) */
-.section-title{font-size:16px;font-weight:800;margin:0 0 10px}
-.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.quick-card{min-height:106px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(155deg,#1D2B5B,#131D42);border:1px solid #2D4080;border-radius:18px;padding:10px 8px;cursor:pointer;box-shadow:0 6px 16px rgba(6,10,30,.24);transition:transform .14s,border-color .14s}
+/* Balance Card */
+.balance-card{
+ position:relative;
+ overflow:hidden;
+ border:1px solid rgba(130,170,255,.32);
+ border-radius:24px;
+ padding:16px 16px 14px;
+ margin-bottom:16px;
+ background:linear-gradient(125deg,#3B5BDB 0%,#6347D1 52%,#8E44AD 100%);
+ box-shadow:0 10px 26px rgba(68,75,210,.26);
+}
+.balance-card:before{content:"";position:absolute;width:185px;height:185px;border:26px solid rgba(255,255,255,.06);border-radius:50%;right:-60px;top:-70px}
+.balance-main{position:relative;z-index:1;display:grid;grid-template-columns:56px 1fr 40px;align-items:center;gap:11px}
+.balance-label{font-size:14px;color:#E2EAFF;margin-bottom:3px;font-weight:600}
+.balance{font-size:33px;font-weight:800;letter-spacing:-0.8px;white-space:nowrap}
+.today-earned{
+ position:relative;
+ z-index:2;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:6px;
+ margin:12px auto 0;
+ padding:6px 15px;
+ width:fit-content;
+ max-width:100%;
+ background:rgba(16,22,64,.44);
+ border:1px solid rgba(255,255,255,.15);
+ border-radius:26px;
+ font-size:13.5px;
+ color:#F0F4FF;
+ white-space:nowrap;
+}
+.today-earned strong{color:var(--gold);font-size:15px}
+
+/* Quick Access Grid */
+.section-title{font-size:17px;font-weight:800;margin:0 0 11px}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.quick-card{
+ min-height:118px;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ text-align:center;
+ background:linear-gradient(155deg,#1D2B5B,#131D42);
+ border:1px solid #2D4080;
+ border-radius:20px;
+ padding:12px 9px;
+ cursor:pointer;
+ box-shadow:0 6px 18px rgba(6,10,30,.26);
+ transition:transform .14s,border-color .14s;
+}
 .quick-card:active{transform:scale(.97);border-color:#21D4FD}
-.quick-icon{margin-bottom:6px}
-.quick-card h3{font-size:14.5px;margin-bottom:2px;font-weight:750}
-.quick-card p{font-size:12px;color:var(--muted);line-height:1.3}
-.quick-card .highlight{color:var(--gold);font-weight:750;font-size:13px}
+.quick-icon{margin-bottom:7px}
+.quick-card h3{font-size:15.5px;margin-bottom:3px;font-weight:750}
+.quick-card p{font-size:12.5px;color:var(--muted);line-height:1.35}
+.quick-card .highlight{color:var(--gold);font-weight:750;font-size:14px}
 
-/* Compact Invite Banner */
-.invite-card{margin-top:11px;width:100%;display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:19px;border:1px solid rgba(135,165,255,.32);background:linear-gradient(120deg,#324EC8,#5D44C8 55%,#7E3FB5);box-shadow:0 7px 18px rgba(55,65,190,.2);cursor:pointer;text-align:left;color:white}
-.invite-icon{font-size:34px;flex-shrink:0}
+/* Invite Banner */
+.invite-card{
+ margin-top:13px;
+ width:100%;
+ display:flex;
+ align-items:center;
+ gap:12px;
+ padding:13px 14px;
+ border-radius:21px;
+ border:1px solid rgba(135,165,255,.32);
+ background:linear-gradient(120deg,#324EC8,#5D44C8 55%,#7E3FB5);
+ box-shadow:0 8px 20px rgba(55,65,190,.22);
+ cursor:pointer;
+ text-align:left;
+ color:white;
+}
+.invite-icon{font-size:38px;flex-shrink:0}
 .invite-text{flex:1;min-width:0}
-.invite-text h3{font-size:15.5px;margin-bottom:2px}
-.invite-text p{font-size:12px;line-height:1.35;color:#E5ECFF}
-.invite-text strong{color:var(--gold);font-size:14px}
-.invite-arrow{font-size:18px;flex-shrink:0;background:#21D4FD;color:#0A1538;font-weight:800;width:30px;height:30px;border-radius:50%;display:grid;place-items:center}
+.invite-text h3{font-size:16.5px;margin-bottom:2px}
+.invite-text p{font-size:12.5px;line-height:1.35;color:#E5ECFF}
+.invite-text strong{color:var(--gold);font-size:15px}
+.invite-arrow{
+ font-size:20px;
+ flex-shrink:0;
+ background:#21D4FD;
+ color:#0A1538;
+ font-weight:800;
+ width:34px;
+ height:34px;
+ border-radius:50%;
+ display:grid;
+ place-items:center;
+}
 
 /* Sub-page Top Bar */
-.sub-header{display:grid;grid-template-columns:36px 1fr 36px;align-items:center;margin-bottom:14px;min-height:38px}
-.back-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:16px}
-.sub-title{text-align:center;font-size:18px;font-weight:800}
-.sub-action{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#D5E1FF;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:15px}
+.sub-header{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;margin-bottom:14px;min-height:40px}
+.back-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:17px}
+.sub-title{text-align:center;font-size:18.5px;font-weight:800}
+.sub-action{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#D5E1FF;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:16px}
 
 /* Pages and Common Cards */
 .page{display:none;animation:fade .16s ease}
@@ -90,7 +207,7 @@ button{font-family:inherit;cursor:pointer}
 /* Watch Ads UI */
 .ads-card{position:relative;overflow:hidden;background:linear-gradient(160deg,#18244E,#10193B);border:1px solid #2C3F7A;border-radius:22px;padding:16px 14px 18px;box-shadow:0 10px 24px rgba(4,8,25,.28)}
 .ring-wrap{display:flex;justify-content:center;margin:2px auto 14px}
-.ring{width:180px;height:180px;position:relative;display:grid;place-items:center}
+.ring{width:184px;height:184px;position:relative;display:grid;place-items:center}
 .ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
 .track{fill:none;stroke:#233368;stroke-width:12}
 .progress{fill:none;stroke:url(#adRingGrad);stroke-width:12;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440;transition:stroke-dashoffset .6s}
@@ -100,12 +217,12 @@ button{font-family:inherit;cursor:pointer}
 .count .total{color:#8A9EC9;font-size:15px}
 .count-label{color:#A8B9DF;font-size:12px;margin-top:3px}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 16px}
-.stat{min-height:80px;border-radius:16px;background:linear-gradient(145deg,#1F2E63,#17234E);border:1px solid #2E4280;padding:10px;display:flex;align-items:center;gap:9px}
+.stat{min-height:82px;border-radius:16px;background:linear-gradient(145deg,#1F2E63,#17234E);border:1px solid #2E4280;padding:10px;display:flex;align-items:center;gap:9px}
 .stat-icon{font-size:24px;flex-shrink:0}
 .stat-label{color:#A8B9DF;font-size:11.5px;margin-bottom:3px}
 .stat-value{font-size:16px;font-weight:800;color:#62B5FF;white-space:nowrap}
 .stat-value.gold{color:#FFD54F}
-.watch{width:100%;min-height:52px;border:none;border-radius:28px;color:#051333;background:linear-gradient(110deg,#21D4FD,#569EFF);font-size:15px;font-weight:800;box-shadow:0 7px 20px rgba(33,212,253,.22);cursor:pointer;transition:transform .14s;padding:10px 14px}
+.watch{width:100%;min-height:54px;border:none;border-radius:28px;color:#051333;background:linear-gradient(110deg,#21D4FD,#569EFF);font-size:15.5px;font-weight:800;box-shadow:0 7px 20px rgba(33,212,253,.22);cursor:pointer;transition:transform .14s;padding:10px 14px}
 .watch:active:not(:disabled){transform:scale(.97)}
 .watch:disabled{opacity:.45;cursor:not-allowed;background:#263566;color:#9AB2D4;box-shadow:none}
 #adStatus{text-align:center;margin-top:12px;min-height:30px;font-size:12px;line-height:1.5;color:#7EE7FF;overflow-wrap:anywhere}
@@ -162,15 +279,35 @@ button{font-family:inherit;cursor:pointer}
 .menu-title{font-size:13px;font-weight:700}
 .menu-sub{font-size:11px;color:var(--muted);margin-top:1px}
 
-.notice{color:var(--muted);font-size:10px;text-align:center;margin-top:10px}
+.notice{color:var(--muted);font-size:10.5px;text-align:center;margin-top:10px}
 
-/* Bottom Navigation */
-.bottom-nav{position:fixed;bottom:0;left:0;width:100%;z-index:20;background:rgba(11,17,43,.96);backdrop-filter:blur(14px);border-top:1px solid #233368;display:flex;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
-.nav-item{border:0;background:none;color:#8E9EC6;flex:1;font-size:10.5px;padding:2px;min-width:0}
-.nav-item span:first-child{display:block;margin-bottom:2px}
-.nav-item span:last-child{display:block;font-size:11px;font-weight:600}
+/* Bottom Navigation Bar (Full size & clear) */
+.bottom-nav{
+ position:fixed;
+ bottom:0;
+ left:0;
+ width:100%;
+ z-index:20;
+ background:rgba(11,17,43,.97);
+ backdrop-filter:blur(14px);
+ border-top:1px solid #263875;
+ display:flex;
+ justify-content:space-around;
+ padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+}
+.nav-item{
+ border:0;
+ background:none;
+ color:#94A6D0;
+ flex:1;
+ font-size:12px;
+ padding:4px 2px;
+ min-width:0;
+}
+.nav-item span:first-child{display:block;margin-bottom:3px}
+.nav-item span:last-child{display:block;font-size:12.5px;font-weight:700}
 .nav-item.active{color:#21D4FD}
-.nav-item.active span:first-child{filter:drop-shadow(0 0 7px rgba(33,212,253,.45))}
+.nav-item.active span:first-child{filter:drop-shadow(0 0 8px rgba(33,212,253,.45))}
 
 /* Congratulation Popup */
 .popup{display:none;position:fixed;inset:0;z-index:50;background:rgba(6,10,28,.78);align-items:center;justify-content:center;padding:20px}
@@ -181,13 +318,6 @@ button{font-family:inherit;cursor:pointer}
 .popup-box h2{font-size:19px;margin-bottom:6px;color:#101938;font-weight:800}
 .popup-box p{font-size:12.5px;color:#465578;line-height:1.55}
 .popup-box .primary-btn{margin-top:15px;border-radius:22px;font-size:14px}
-
-@media(max-height:740px){
- .balance-card{padding:11px 14px 10px;margin-bottom:10px}
- .balance{font-size:27px}
- .quick-card{min-height:94px}
- .invite-card{margin-top:9px;padding:10px 12px}
-}
 </style>
 </head>
 <body>
@@ -195,17 +325,26 @@ button{font-family:inherit;cursor:pointer}
 
 <!-- HOME PAGE -->
 <main id="homePage">
-<header class="header">
- <button class="header-menu" aria-label="Open profile" onclick="openPage('profile')">☰</button>
- <div class="logo"><span class="logo-mark" aria-hidden="true"></span><div>Earn<span>Nova</span></div></div>
- <div class="header-actions"><button class="notification-btn" type="button" aria-label="Notifications" onclick="openPage('history')"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="notification-dot">2</span></button></div>
+<header class="header-box">
+ <button class="header-menu" type="button" aria-label="Open profile" onclick="openPage('profile')">☰</button>
+ <div class="logo">
+  <!-- Replace src below with your EarnNova logo URL or file path (e.g. earnnova-logo.png) -->
+  <img id="headerLogoImg" class="logo-img" src="earnnova-logo.png" alt="EarnNova Logo" onerror="this.style.display='none'">
+  <div>Earn<span>Nova</span></div>
+ </div>
+ <div class="header-actions">
+  <button class="notification-btn" type="button" aria-label="Notifications" onclick="openPage('history')">
+   <svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+   <span class="notification-dot">2</span>
+  </button>
+ </div>
 </header>
 
 <section class="balance-card">
  <div class="balance-main">
- <div class="wallet-icon"><svg class="wallet-svg" viewBox="0 0 72 64" aria-label="Wallet"><path d="M10 10 49 3q8-1 9 7v8H12q-7 0-7 7v29q0 6 7 6h45q5 0 5-6V24q0-6-7-6H12" fill="#4B7BFF" stroke="#2D55CC" stroke-width="3" stroke-linejoin="round"/><path d="M10 14 47 7q6-1 8 6v6H11q-5 0-5 5V53q0 5 6 5h43q5 0 5-5V24q0-6-6-6H12" fill="#709BFF" stroke="#4776F5" stroke-width="2"/><path d="M45 25h20q5 0 5 5v14q0 5-5 5H45q-7 0-7-7V32q0-7 7-7" fill="#5D8BFF" stroke="#3A64DB" stroke-width="2.5"/><circle cx="52" cy="37" r="4" fill="#FFE05B" stroke="#FFF2A6" stroke-width="2"/></svg></div>
- <div><div class="balance-label" data-i18n="totalBalance">Total Balance</div><div class="balance" id="homeBalance">৳0.00</div></div>
- <div class="growth-icon"><svg class="growth-svg" viewBox="0 0 52 52"><path d="M7 42 22 27 31 34 45 15"/><path d="M33 15h12v12"/></svg></div>
+  <div class="wallet-icon"><svg class="wallet-svg" viewBox="0 0 72 64" aria-label="Wallet"><path d="M10 10 49 3q8-1 9 7v8H12q-7 0-7 7v29q0 6 7 6h45q5 0 5-6V24q0-6-7-6H12" fill="#4B7BFF" stroke="#2D55CC" stroke-width="3" stroke-linejoin="round"/><path d="M10 14 47 7q6-1 8 6v6H11q-5 0-5 5V53q0 5 6 5h43q5 0 5-5V24q0-6-6-6H12" fill="#709BFF" stroke="#4776F5" stroke-width="2"/><path d="M45 25h20q5 0 5 5v14q0 5-5 5H45q-7 0-7-7V32q0-7 7-7" fill="#5D8BFF" stroke="#3A64DB" stroke-width="2.5"/><circle cx="52" cy="37" r="4" fill="#FFE05B" stroke="#FFF2A6" stroke-width="2"/></svg></div>
+  <div><div class="balance-label" data-i18n="totalBalance">Total Balance</div><div class="balance" id="homeBalance">৳0.00</div></div>
+  <div class="growth-icon"><svg class="growth-svg" viewBox="0 0 52 52"><path d="M7 42 22 27 31 34 45 15"/><path d="M33 15h12v12"/></svg></div>
  </div>
  <div class="today-earned"><span>⭐</span><span data-i18n="todayEarned">Today Earned:</span><strong id="homeEarnings">৳0.00</strong></div>
 </section>
@@ -226,7 +365,7 @@ button{font-family:inherit;cursor:pointer}
 <!-- TASKS PAGE -->
 <section class="page" id="tasks">
 <div class="sub-header">
- <button class="back-btn" onclick="showHome()">←</button>
+ <button class="back-btn" type="button" onclick="showHome()">←</button>
  <div class="sub-title" data-i18n="tasksHeading">Daily Tasks</div>
  <div class="sub-action">📋</div>
 </div>
@@ -237,7 +376,7 @@ button{font-family:inherit;cursor:pointer}
 <!-- WATCH ADS PAGE -->
 <section class="page" id="ads">
 <div class="sub-header">
- <button class="back-btn" onclick="showHome()">←</button>
+ <button class="back-btn" type="button" onclick="showHome()">←</button>
  <div class="sub-title" data-i18n="adsHeading">Watch Ads</div>
  <div class="sub-action">ⓘ</div>
 </div>
@@ -291,7 +430,7 @@ button{font-family:inherit;cursor:pointer}
 <!-- REFERRAL PAGE -->
 <section class="page" id="referral">
 <div class="sub-header">
- <button class="back-btn" onclick="showHome()">←</button>
+ <button class="back-btn" type="button" onclick="showHome()">←</button>
  <div class="sub-title" data-i18n="referralHeading">Referral Program</div>
  <button class="sub-action" type="button" onclick="copyReferral()" title="Copy">📋</button>
 </div>
@@ -336,7 +475,7 @@ button{font-family:inherit;cursor:pointer}
 <!-- HISTORY PAGE -->
 <section class="page" id="history">
 <div class="sub-header">
- <button class="back-btn" onclick="showHome()">←</button>
+ <button class="back-btn" type="button" onclick="showHome()">←</button>
  <div class="sub-title" data-i18n="historyHeading">History</div>
  <div class="sub-action">⏳</div>
 </div>
@@ -352,7 +491,7 @@ button{font-family:inherit;cursor:pointer}
 <!-- PROFILE PAGE -->
 <section class="page" id="profile">
 <div class="sub-header">
- <button class="back-btn" onclick="showHome()">←</button>
+ <button class="back-btn" type="button" onclick="showHome()">←</button>
  <div class="sub-title" data-i18n="profileHeading">My Profile</div>
  <button class="sub-action" type="button" onclick="toggleLanguage()">🌐</button>
 </div>
